@@ -4,9 +4,9 @@ const ora = require('ora')
 const path = require('path')
 const config = require('../config')
 
-const spinner = ora('building for production...')
+const spinner = ora('deploying to github pages...')
 spinner.start()
-ghpages.publish(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), function(err) {
+ghpages.publish(config.build.assetsRoot, function(err) {
   spinner.stop()
   if (err) throw err
 
