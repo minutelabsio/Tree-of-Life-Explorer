@@ -1,7 +1,7 @@
 <template lang="pug">
 .container.section
     TOLCommonNameSearch(@select="onSelect")
-    TOLTree(:leafs="leafs", @remove="onRemoveLeaf")
+    TOLTree(:nodes="nodes", @remove="onRemoveLeaf")
 </template>
 
 <script>
@@ -12,10 +12,10 @@ import { findByName } from '@/lib/gbif'
 import _without from 'lodash/without'
 import Promise from 'bluebird'
 
-function Leaf( gbifEntry, node ){
+function Leaf( gbifEntry, otNode ){
   return {
     gbifEntry
-    , node
+    , otNode
   }
 }
 
@@ -42,7 +42,7 @@ export default {
     , TOLCommonNameSearch
   }
   , data: () => ({
-    leafs: []
+    nodes: []
   })
   , watch: {
     names: {
@@ -54,7 +54,7 @@ export default {
   }
   , methods: {
     addLeaf( name ){
-      var names = this.names
+      var names = [].concat(this.names)
       names.push( name )
       this.$router.push({ query: { names } })
     }
@@ -63,8 +63,8 @@ export default {
       this.$router.push({ query: { names: _without( this.names, name ) } })
     }
 
-    , onRemoveLeaf( leaf ){
-      this.removeLeaf( leaf.gbifEntry.canonicalName )
+    , onRemoveLeaf( node ){
+      this.removeLeaf( node.gbifEntry.canonicalName )
     }
 
     , onSelect( gbifEntry ){
@@ -77,7 +77,7 @@ export default {
       }
 
       Promise.map( names, getLeafData )
-        .then( leafs => (this.leafs = leafs) )
+        .then( nodes => (this.nodes = nodes) )
         .catch( e => console.error( e ) )
     }
   }
