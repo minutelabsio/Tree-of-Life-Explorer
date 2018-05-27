@@ -1,22 +1,23 @@
 <template lang="pug">
 .card
     header.card-header.level
-      .level-item
+      .level-left
+        .buttons.has-addons
+          b-dropdown
+            button.button.is-white(slot="trigger")
+              b-icon(icon="dots-vertical")
 
+            b-dropdown-item Action
+            b-dropdown-item Another action
+            b-dropdown-item(@click="showDebugModal") Debug info
       .level-right
         .buttons.has-addons
           button.button.is-white
             b-icon(icon="magnify")
           button.button.is-white(@click="pin = !pin")
             b-icon(icon="pin", :class="{ 'has-text-info': pin }")
-
-          b-dropdown
-            button.button.is-white(slot="trigger")
-              b-icon(icon="dots-horizontal")
-
-            b-dropdown-item Action
-            b-dropdown-item Another action
-            b-dropdown-item(@click="showDebugModal") Debug info
+          button.button.is-white(@click="$emit('close')")
+            b-icon.has-text-danger(icon="close")
 
     .card-content
       .has-text-centered
@@ -42,7 +43,7 @@ const DebugModal = {
 }
 
 export default {
-  name: 'tol-node-card'
+  name: 'TOLNodeCard'
   , props: ['gbifEntry', 'node']
   , data: () => ({
     showImages: false
@@ -64,7 +65,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
 .card
   max-width: 400px
