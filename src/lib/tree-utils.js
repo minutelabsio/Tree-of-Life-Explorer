@@ -2,7 +2,7 @@
 // ---------------------------------------
 import _clone from 'lodash/clone'
 import _mapValues from 'lodash/mapValues'
-import _some from 'lodash/some'
+import _find from 'lodash/find'
 
 function toBranch( node ){
   return {
@@ -32,7 +32,12 @@ function joinTree( tree, branch ){
   }
 
   if ( !tree.split ){
-    return false
+    // this means it splits right at the node
+    branch = _mapValues( branch, _clone )
+    branch.lineage.splice( 0, tree.lineage.length )
+    tree.split = [{ lineage: [], node: tree.node }, branch]
+    delete tree.node
+    return true
   }
 
   branch = _mapValues( branch, _clone )
@@ -40,25 +45,15 @@ function joinTree( tree, branch ){
 
   // if we got here, then we didn't find a place to join in the tree lineage...
   // so let's check the splits
-  if ( !_some( tree.split, stem => stem.lineage[0] === branch.lineage[0] ) ){
-    // if the first split isn't matched then put it in the current split
+  let stem = _find( tree.split, stem => stem.lineage[0].node_id === branch.lineage[0].node_id )
+  if ( !stem ){
+    // if none of the splits match then add to this split
     // #edgecases
     tree.split.push( branch )
     return true
   }
 
-  // continue searching...
-  for ( let i = 0, l = tree.split.length; i < l; i++ ){
-    let stem = tree.split[ i ]
-    let joined = joinTree( stem, branch )
-
-    if ( joined === true ){
-      // if it was joined in a sub-branch...
-      return true
-    }
-  }
-
-  return false
+  return joinTree( stem, branch )
 }
 
 export function buildReducedTree( nodes ){
