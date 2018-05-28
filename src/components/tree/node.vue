@@ -52,7 +52,10 @@ export default {
     }
 
     this.node = drawNode( scene, this.tree, this.x, this.y )
-    this.node.on( 'click', () => this.$emit('click', this.tree) )
+    this.node.on( 'click', (e) => {
+      e.stopPropagation()
+      this.$emit('click', { subtree: this.tree, x: this.x, y: this.y })
+    })
     return null
   }
 }

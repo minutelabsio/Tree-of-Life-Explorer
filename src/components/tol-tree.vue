@@ -1,5 +1,5 @@
 <template lang="pug">
-.tree(:style="{ width: (2 * x) + 'px', height: height + 'px' }")
+.tree(:style="{ width: (2 * x) + 'px', height: height + 'px' }", @click="nodeContext = null")
   .svg(ref="svg")
   Tree(
     v-if="tree"
@@ -12,6 +12,10 @@
     , @remove="$emit('remove', arguments[0])"
     , @node-click="showNodeDetails"
     )
+  .dropdown.is-active(v-if="nodeContext", :style="{ top: nodeContext.y + 'px', left: nodeContext.x + 'px' }")
+    .dropdown-menu
+      .dropdown-content
+        a.dropdown-item(v-for="parent in nodeContext.subtree.lineage", :class="{ 'has-text-grey': !parent.taxon }") {{ parent.taxon ? parent.taxon.name : parent.node_id }}
 </template>
 
 <script>
@@ -39,6 +43,7 @@ export default {
     provider: {
       svg: null
     }
+    , nodeContext: null
     , width: 260
     , padding: 10
     , branchHeight: 200
@@ -58,6 +63,9 @@ export default {
 
     , tree(){
       if (!this.nodes || !this.nodes.length){ return null }
+      if ( this.provider.svg ){
+        this.provider.svg.clear()
+      }
       return buildReducedTree( this.nodes )
     }
   }
@@ -69,14 +77,9 @@ export default {
   , mounted(){
     this.provider.svg = SVG(this.$refs['svg']).size('100%', '100%')
   }
-  , beforeUpdate(){
-    if ( this.provider.svg ){
-      this.provider.svg.clear()
-    }
-  }
   , methods: {
-    showNodeDetails( subtree ){
-      console.log(subtree)
+    showNodeDetails( node ){
+      this.nodeContext = node
     }
   }
 }
