@@ -17,6 +17,7 @@
 
 <script>
 import debounce from 'lodash/debounce'
+import { getNodeByName } from '@/lib/otol'
 import { searchByCommonName } from '@/lib/gbif'
 
 export default {
@@ -44,7 +45,17 @@ export default {
     }, 500)
 
     , selectResult( gbifEntry ){
-      this.$emit( 'select', gbifEntry )
+      getNodeByName( gbifEntry.canonicalName )
+        .then( () => this.$emit( 'select', gbifEntry ) )
+        .catch( error => this.errorMsg(error) )
+    }
+
+    , errorMsg( error ){
+      this.$toast.open({
+        duration: 5000
+        , message: `Error: ${error.message}`
+        , type: 'is-danger'
+      })
     }
   }
 }

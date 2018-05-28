@@ -7,12 +7,16 @@ import _find from 'lodash/find'
 function toBranch( node ){
   return {
     lineage: [].concat(node.otNode.lineage).reverse()
+    , nTips: 1
     , node: node
     // split:
   }
 }
 
 function joinTree( tree, branch ){
+
+  tree.nTips++
+
   for ( let i = 0, l = tree.lineage.length; i < l; i++ ){
     // check if branch can join the tree's branch
     if ( tree.lineage[ i ].node_id !== branch.lineage[ i ].node_id ){
@@ -23,6 +27,7 @@ function joinTree( tree, branch ){
       branch.lineage.splice( 0, i )
 
       let subtree = _clone(tree)
+      subtree.nTips--
       tree.lineage = lineage
       tree.split = [ subtree, branch ]
       delete tree.node
@@ -35,7 +40,7 @@ function joinTree( tree, branch ){
     // this means it splits right at the node
     branch = _mapValues( branch, _clone )
     branch.lineage.splice( 0, tree.lineage.length )
-    tree.split = [{ lineage: [], node: tree.node }, branch]
+    tree.split = [{ lineage: [], nTips: 1, node: tree.node }, branch]
     delete tree.node
     return true
   }
