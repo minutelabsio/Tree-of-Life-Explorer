@@ -1,7 +1,8 @@
 <template lang="pug">
 .container.section
     TOLCommonNameSearch(@select="onSelect")
-    TOLTree(:nodes="nodes", @remove="onRemoveLeaf")
+    .wrapper
+      TOLTree(:nodes="nodes", @remove="onRemoveLeaf")
 </template>
 
 <script>
@@ -86,5 +87,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
-
+.wrapper
+  height: 800px
 </style>

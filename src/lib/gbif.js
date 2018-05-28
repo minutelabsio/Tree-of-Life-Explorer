@@ -12,7 +12,7 @@ function setVernacularNames( entry ){
     entry.vernacularNames = []
 
     if ( entry.vernacularName ){
-      entry.vernacularNames.push( entry.vernacularName )
+      entry.vernacularNames.push({ vernacularName: entry.vernacularName, language: 'eng' })
     }
   }
 
