@@ -2,7 +2,8 @@
 .container.section
     TOLCommonNameSearch(@select="onSelect")
     .wrapper
-      TOLTree(:nodes="nodes", @remove="onRemoveLeaf")
+      .inner
+        TOLTree(:nodes="nodes", @remove="onRemoveLeaf")
 </template>
 
 <script>
@@ -88,5 +89,9 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
 .wrapper
-  height: 800px
+  overflow: hidden
+  .inner
+    position: relative
+  .tree
+    margin: auto
 </style>
