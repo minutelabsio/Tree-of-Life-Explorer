@@ -1,27 +1,27 @@
 <template lang="pug">
-.tol-node(v-if="tree", :style="{ 'left': (x-px) + 'px', 'top': (y-py) + 'px', width: width + 'px' }")
+.tol-node(v-if="tree", :style="{ width: width + 'px' }")
   template(v-if="tree.node")
     Connection(v-if="entryPadding", :from="[x, y]", :to="[x, y + entryPadding]")
     TOLNodeCard(
       :gbif-entry="tree.node.gbifEntry"
       , :node="tree.node.otNode"
-      , :style="{ 'top': entryPadding + 'px', right: (0.5 * width) + 'px', width: width + 'px' }"
+      , :style="{ transform: `translate3d(${x-(0.5 * width)}px, ${y+entryPadding}px, 0)`, width: width + 'px' }"
       , @close="$emit( 'remove', tree.node )"
       )
   template(v-for="branch in branches")
-    Connection(:from="[x, y]", :to="[branch.x, branch.y]")
-    Tree(
-      :tree="branch.tree"
-      , :x="branch.x"
-      , :y="branch.y"
-      , :px="x"
-      , :py="y"
-      , :width="width"
-      , :padding="padding"
-      , :branchHeight="branchHeight"
-      , @remove="$emit('remove', arguments[0])"
-      , @node-click="$emit('node-click', arguments[0])"
-      )
+    Motion(:values="{ x2: branch.x, y2: branch.y }")
+      template(slot-scope="props")
+        Connection(:from="[x, y]", :to="[props.x2, props.y2]")
+        Tree(
+          :tree="branch.tree"
+          , :x="props.x2"
+          , :y="props.y2"
+          , :width="width"
+          , :padding="padding"
+          , :branchHeight="branchHeight"
+          , @remove="$emit('remove', arguments[0])"
+          , @node-click="$emit('node-click', arguments[0])"
+          )
   Node(:tree="tree", :x="x", :y="y", @click="$emit('node-click', arguments[0])")
 </template>
 
@@ -96,10 +96,14 @@ export default {
 
 <style lang="scss" scoped>
 .tol-node {
-  position: absolute;
+  // position: absolute;
+  top: 0;
+  left: 0;
 
   .card {
     position: absolute;
+    top: 0;
+    left: 0;
   }
 }
 </style>

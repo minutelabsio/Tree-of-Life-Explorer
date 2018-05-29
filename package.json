@@ -19,6 +19,7 @@
     "pug": "^2.0.3",
     "svg.js": "^2.6.5",
     "vue": "^2.5.2",
+    "vue-motion": "^0.2.2",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

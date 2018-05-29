@@ -12,6 +12,7 @@ import TOLCommonNameSearch from '@/components/tol-common-name-search'
 import { getNodeByName } from '@/lib/otol'
 import { findByName } from '@/lib/gbif'
 import _without from 'lodash/without'
+import _uniq from 'lodash/uniq'
 import Promise from 'bluebird'
 
 function Leaf( gbifEntry, otNode ){
@@ -58,7 +59,7 @@ export default {
     addLeaf( name ){
       var names = [].concat(this.names)
       names.push( name )
-      this.$router.push({ query: { names } })
+      this.$router.push({ query: { names: _uniq(names) } })
     }
 
     , removeLeaf( name ){

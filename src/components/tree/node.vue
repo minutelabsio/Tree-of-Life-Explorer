@@ -11,9 +11,8 @@ function drawLabel( scene, text, color ){
     .attr('y', 2)
 }
 
-function drawNode( scene, tree, x, y ){
+function drawNode( group, tree, x, y ){
   let nodeRadius = 25
-  let group = scene.group().addClass('svg-node').move( x, y ).front()
 
   if ( tree.lineage.length ){
     group.circle(2 * nodeRadius).center(0, 0)
@@ -42,21 +41,24 @@ export default {
   , data: () => ({
 
   })
+  , beforeDestroy(){
+    this.node.off( 'click' )
+    this.node.remove()
+  }
   , render( h ){
-    if ( !this.provider.svg ){ return }
-    if ( !this.tree ){ return }
     let scene = this.provider.svg
-
-    if ( this.node ){
-      this.node.off( 'click' )
+    if ( !scene ){ return }
+    // console.log('render')
+    if ( !this.node ){
+      this.node = scene.group().addClass('svg-node').move( this.x, this.y ).front()
+      this.node.on( 'click', (e) => {
+        e.stopPropagation()
+        this.$emit('click', { subtree: this.tree, x: this.x, y: this.y })
+      })
     }
-
-    this.node = drawNode( scene, this.tree, this.x, this.y )
-    this.node.on( 'click', (e) => {
-      e.stopPropagation()
-      this.$emit('click', { subtree: this.tree, x: this.x, y: this.y })
-    })
-    return null
+    drawNode( this.node, this.tree, this.x, this.y )
+    this.node.move( this.x, this.y )
+    return this.node
   }
 }
 </script>

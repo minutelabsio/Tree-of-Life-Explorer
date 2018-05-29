@@ -1,14 +1,5 @@
 <script>
-function drawConnection( scene, x1, y1, x2, y2 ){
-  const spacing = 40
-  return scene.polyline([
-    [ x1, y1 ]
-    , [ x1, y1 + spacing ]
-    , [ x2, y1 + spacing ]
-    , [ x2, y2 ]
-  ]).addClass('svg-connection')
-}
-
+const spacing = 40
 export default {
   name: 'Connection'
   , inject: [ 'provider' ]
@@ -16,12 +7,32 @@ export default {
   , data: () => ({
 
   })
+  , beforeDestroy(){
+    this.node.remove()
+  }
   , render( h ){
-    if ( !this.provider.svg ){ return }
     let scene = this.provider.svg
+    if ( !this.node ){
+      this.node = scene.polyline([]).addClass('svg-connection')
+    }
 
-    drawConnection( scene, this.from[0], this.from[1], this.to[0], this.to[1] )
-    return null
+    this.plot()
+    return this.node
+  }
+  , methods: {
+    plot(){
+      let x1 = this.from[0]
+      let y1 = this.from[1]
+      let x2 = this.to[0]
+      let y2 = this.to[1]
+
+      this.node.plot([
+        [ x1, y1 ]
+        , [ x1, y1 + spacing ]
+        , [ x2, y1 + spacing ]
+        , [ x2, y2 ]
+      ]).back()
+    }
   }
 }
 </script>

@@ -64,7 +64,7 @@ export default {
     , tree(){
       if (!this.nodes || !this.nodes.length){ return null }
       if ( this.provider.svg ){
-        this.provider.svg.clear()
+        // this.provider.svg.clear()
       }
       return buildReducedTree( this.nodes )
     }
