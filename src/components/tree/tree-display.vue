@@ -1,5 +1,7 @@
 <template lang="pug">
 .tol-node(v-if="tree", :style="{ width: width + 'px' }")
+  Node(:tree="tree", :x="x", :y="y", @click="$emit('node-click', arguments[0])")
+
   template(v-if="tree.node")
     Connection(v-if="entryPadding", :from="[x, y]", :to="[x, y + entryPadding]")
     TOLNodeCard(
@@ -8,6 +10,7 @@
       , :style="{ transform: `translate3d(${x-(0.5 * width)}px, ${y+entryPadding}px, 0)`, width: width + 'px' }"
       , @close="$emit( 'remove', tree.node )"
       )
+
   template(v-for="branch in branches")
     Motion(:values="{ x2: branch.x, y2: branch.y }")
       template(slot-scope="props")
@@ -19,10 +22,8 @@
           , :width="width"
           , :padding="padding"
           , :branchHeight="branchHeight"
-          , @remove="$emit('remove', arguments[0])"
-          , @node-click="$emit('node-click', arguments[0])"
+          , v-on="$listeners"
           )
-  Node(:tree="tree", :x="x", :y="y", @click="$emit('node-click', arguments[0])")
 </template>
 
 <script>

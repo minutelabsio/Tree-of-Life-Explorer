@@ -1,17 +1,17 @@
 <template lang="pug">
 .tree(:style="{ width: (2 * x) + 'px', height: height + 'px' }", @click="nodeContext = null")
-  .svg(ref="svg")
-  Tree(
-    v-if="tree"
-    , :tree="tree"
-    , :x="x"
-    , :y="topPadding"
-    , :width="width"
-    , :padding="padding"
-    , :branchHeight="branchHeight"
-    , @remove="$emit('remove', arguments[0])"
-    , @node-click="showNodeDetails"
-    )
+  TreeCanvas
+    Tree(
+      v-if="tree"
+      , :tree="tree"
+      , :x="x"
+      , :y="topPadding"
+      , :width="width"
+      , :padding="padding"
+      , :branchHeight="branchHeight"
+      , @remove="$emit('remove', arguments[0])"
+      , @node-click="showNodeDetails"
+      )
   .dropdown.is-active(v-if="nodeContext", :style="{ top: nodeContext.y + 'px', left: nodeContext.x + 'px' }")
     .dropdown-menu
       .dropdown-content
@@ -20,9 +20,9 @@
 
 <script>
 import Tree from '@/components/tree/tree-display'
+import TreeCanvas from '@/components/tree/tree-canvas'
 import TOLNodeCard from '@/components/tol-node-card'
 import { buildReducedTree } from '@/lib/tree-utils'
-import SVG from 'svg.js'
 
 function maxDepth( tree, max = 0 ){
   if ( !tree.split ){
@@ -37,13 +37,11 @@ export default {
   , props: [ 'nodes' ]
   , components: {
     Tree
+    , TreeCanvas
     , TOLNodeCard
   }
   , data: () => ({
-    provider: {
-      svg: null
-    }
-    , nodeContext: null
+    nodeContext: null
     , width: 260
     , padding: 10
     , branchHeight: 200
@@ -63,19 +61,8 @@ export default {
 
     , tree(){
       if (!this.nodes || !this.nodes.length){ return null }
-      if ( this.provider.svg ){
-        // this.provider.svg.clear()
-      }
       return buildReducedTree( this.nodes )
     }
-  }
-  , provide(){
-    return {
-      provider: this.provider
-    }
-  }
-  , mounted(){
-    this.provider.svg = SVG(this.$refs['svg']).size('100%', '100%')
   }
   , methods: {
     showNodeDetails( node ){
@@ -88,11 +75,4 @@ export default {
 <style scoped lang="sass">
 .tree
   position: relative;
-.svg
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
 </style>

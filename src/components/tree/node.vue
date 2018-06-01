@@ -1,42 +1,8 @@
 <script>
-function drawLabel( scene, text, color ){
-  return scene.plain( text )
-    .style({
-      'font-size': '20px'
-    })
-    .attr({
-      'text-anchor': 'middle'
-      , 'alignment-baseline': 'middle'
-    })
-    .attr('y', 2)
-}
-
-function drawNode( group, tree, x, y ){
-  let nodeRadius = 25
-
-  if ( tree.lineage.length ){
-    group.circle(2 * nodeRadius).center(0, 0)
-    drawLabel( group, `${tree.lineage.length}`, 'rgb(202, 217, 246)' )
-  }
-
-  // if ( tree.node ){
-  //   let spacing = tree.lineage.length ? 70 : 0
-  //   if ( spacing ){
-  //     drawConnection( group, 0, 0, 0, spacing ).back()
-  //   }
-  //
-  //   let grp = group.group().move( 0, spacing )
-  //   let name = tree.node.gbifEntry.vernacularNames[0].vernacularName
-  //   grp.rect(12 * name.length, nodeRadius).center(0, 0).fill('#c6b731')
-  //   drawLabel( grp, `${name}`, '#494100' )
-  // }
-
-  return group
-}
-
 export default {
   name: 'Node'
-  , inject: [ 'provider' ]
+  // , functional: true
+  , inject: [ 'svg' ]
   , props: [ 'tree', 'x', 'y' ]
   , data: () => ({
 
@@ -45,19 +11,22 @@ export default {
     this.node.off( 'click' )
     this.node.remove()
   }
+  , beforeMount(){
+    let nodeRadius = 25
+    let scene = this.svg
+    this.node = scene.group().addClass('svg-node').move( this.x, this.y )
+    this.node.circle(2 * nodeRadius).center(0, 0)
+
+    this.label = this.node.plain( `${this.tree.lineage.length}` ).attr('y', 2)
+
+    this.node.on( 'click', (e) => {
+      e.stopPropagation()
+      this.$emit( 'click', { subtree: this.tree, x: this.x, y: this.y } )
+    })
+  }
   , render( h ){
-    let scene = this.provider.svg
-    if ( !scene ){ return }
-    // console.log('render')
-    if ( !this.node ){
-      this.node = scene.group().addClass('svg-node').move( this.x, this.y ).front()
-      this.node.on( 'click', (e) => {
-        e.stopPropagation()
-        this.$emit('click', { subtree: this.tree, x: this.x, y: this.y })
-      })
-    }
-    drawNode( this.node, this.tree, this.x, this.y )
-    this.node.move( this.x, this.y )
+    this.node.move( this.x, this.y ).front()
+    this.label.plain( `${this.tree.lineage.length}` )
     return this.node
   }
 }
@@ -74,6 +43,9 @@ export default {
     transition: all 0.15s linear
 
   text
+    font-size: 20px
+    text-anchor: middle
+    alignment-baseline: middle
     fill: #333
     transition: fill 0.15s linear
 

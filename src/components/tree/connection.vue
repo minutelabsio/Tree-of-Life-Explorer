@@ -2,16 +2,15 @@
 const spacing = 40
 export default {
   name: 'Connection'
-  , inject: [ 'provider' ]
+  , inject: [ 'svg' ]
   , props: [ 'from', 'to' ]
   , data: () => ({
-
   })
   , beforeDestroy(){
     this.node.remove()
   }
   , render( h ){
-    let scene = this.provider.svg
+    let scene = this.svg
     if ( !this.node ){
       this.node = scene.polyline([]).addClass('svg-connection')
     }
