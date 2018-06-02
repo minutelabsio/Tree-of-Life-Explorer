@@ -2,9 +2,16 @@
 // ---------------------------------------
 
 import axios from 'axios'
+import { setupCache } from 'axios-cache-adapter'
+
+const cache = setupCache({
+  maxAge: 15 * 60 * 1000
+})
+
 const gbif = axios.create({
   baseURL: 'http://api.gbif.org/v1'
-  , timeout: 1000
+  , timeout: 5000
+  , adapter: cache.adapter
 })
 
 function setVernacularNames( entry ){

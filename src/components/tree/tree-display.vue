@@ -1,28 +1,22 @@
 <template lang="pug">
-.tol-node(v-if="tree", :style="{ width: width + 'px' }")
-  Node(:tree="tree", :x="x", :y="y", @click="$emit('node-click', arguments[0])")
-
-  template(v-if="tree.node")
-    Connection(v-if="entryPadding", :from="[x, y]", :to="[x, y + entryPadding]")
-    TOLNodeCard(
-      :gbif-entry="tree.node.gbifEntry"
-      , :node="tree.node.otNode"
-      , :style="{ transform: `translate3d(${x-(0.5 * width)}px, ${y+entryPadding}px, 0)`, width: width + 'px' }"
-      , @close="$emit( 'remove', tree.node )"
+.tree
+  transition-group(name="tree", appear)
+    .tol-node(
+      v-for="branch in branches"
+      , :key="branch.key"
+      , :style="{ transform: `translate3d(${branch.x-(0.5 * width)}px, ${branch.y+branch.extend}px, 0)`, width: width + 'px' }"
       )
+      Motion(:values="{ x2: branch.x, y2: branch.y, extend: branch.extend }", :spring="{ stiffness: 300, damping: 50, precision: 1 }")
+        template(slot-scope="props")
+          Connection(:from="[branch.px || props.x2, branch.py || props.y2]", :to="[props.x2, props.y2 + props.extend]")
+          Node(:tree="branch.tree", :x="props.x2", :y="props.y2", @click="$emit('node-click', arguments[0])")
 
-  template(v-for="branch in branches")
-    Motion(:values="{ x2: branch.x, y2: branch.y }")
-      template(slot-scope="props")
-        Connection(:from="[x, y]", :to="[props.x2, props.y2]")
-        Tree(
-          :tree="branch.tree"
-          , :x="props.x2"
-          , :y="props.y2"
-          , :width="width"
-          , :padding="padding"
-          , :branchHeight="branchHeight"
-          , v-on="$listeners"
+      template(v-if="branch.tree.node")
+        TOLNodeCard(
+          :gbif-entry="branch.tree.node.gbifEntry"
+          , :node="branch.tree.node.otNode"
+          , :style="{ width: width + 'px' }"
+          , @close="$emit( 'remove', branch.tree.node )"
           )
 </template>
 
@@ -30,6 +24,47 @@
 import TOLNodeCard from '@/components/tol-node-card'
 import Node from './node'
 import Connection from './connection'
+import _flatten from 'lodash/flatten'
+
+function getBranches( tree, opts, x = 0, y = 0, isRoot = true ){
+
+  let nodeAreaRadius = 0.5 * opts.width + opts.padding
+  let count = tree.nTips
+  let colstart = -(count - 1)
+  let branchHeight = opts.branchHeight
+  let branches = []
+
+  branches.push({
+    tree
+    , x
+    , y
+    , px: opts.px
+    , py: opts.py
+    , key: tree.node ? tree.node.otNode.node_id : tree.lineage[0].node_id
+    , extend: tree.node && tree.lineage.length ? 60 : 0
+    , isRoot
+  })
+
+  if (!tree.split){
+    return branches
+  }
+
+  branches = branches.concat(
+    _flatten(
+      tree.split.map( (subtree, idx) => {
+        let col = subtree.nTips - 1
+        let xpos = (col + colstart) * nodeAreaRadius + x
+        let ypos = y + branchHeight
+
+        colstart = 2 * col + colstart + 2
+
+        return getBranches( subtree, {...opts, px: x, py: y}, xpos, ypos, false )
+      })
+    )
+  )
+
+  return branches
+}
 
 export default {
   name: 'Tree'
@@ -37,14 +72,8 @@ export default {
     'tree': Object
     , 'x': Number
     , 'y': Number
-    , 'px': {
-      type: Number
-      , default: 0
-    }
-    , 'py': {
-      type: Number
-      , default: 0
-    }
+    , 'px': Number
+    , 'py': Number
     , 'width': Number
     , 'padding': Number
     , 'branchHeight': Number
@@ -57,39 +86,14 @@ export default {
     , TOLNodeCard
   }
   , computed: {
-
-    entryPadding(){
-      return this.tree.lineage.length ? 60 : 0
-    }
-
-    , branches(){
+    branches(){
       let tree = this.tree
-      let x = this.x
-      let y = this.y
-
-      let nodeAreaRadius = 0.5 * this.width + this.padding
-      let count = tree.nTips
-      let colstart = -(count - 1)
-      let branchHeight = this.branchHeight
-
-      if ( !tree.split ){
-        return []
-      }
-
-      return tree.split.map( (subtree, idx) => {
-        let col = subtree.nTips - 1
-        let xpos = (col + colstart) * nodeAreaRadius + x
-        let ypos = y + branchHeight
-
-        colstart = 2 * col + colstart + 2
-
-        return {
-          idx
-          , tree: subtree
-          , x: xpos
-          , y: ypos
-        }
-      })
+      let b = getBranches(tree, {
+        width: this.width
+        , branchHeight: this.branchHeight
+        , padding: this.padding
+      }, this.x, this.y)
+      return b
     }
   }
 }
@@ -97,14 +101,22 @@ export default {
 
 <style lang="scss" scoped>
 .tol-node {
-  // position: absolute;
+  position: absolute;
   top: 0;
   left: 0;
+  transition: all 0.7s ease-out;
 
   .card {
     position: absolute;
     top: 0;
     left: 0;
   }
+}
+.tree-enter-active, .tree-leave-active {
+
+}
+.tree-enter, .tree-leave-to {
+  opacity: 0;
+  top: 100vh
 }
 </style>

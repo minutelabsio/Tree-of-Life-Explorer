@@ -1,12 +1,12 @@
 <template lang="pug">
-.tree(:style="{ width: (2 * x) + 'px', height: height + 'px' }", @click="nodeContext = null")
+.tree(:style="{ height: height + 'px' }", @click="nodeContext = null")
   TreeCanvas
     Tree(
       v-if="tree"
       , :tree="tree"
       , :x="x"
       , :y="topPadding"
-      , :width="width"
+      , :width="cardWidth"
       , :padding="padding"
       , :branchHeight="branchHeight"
       , @remove="$emit('remove', arguments[0])"
@@ -42,15 +42,16 @@ export default {
   }
   , data: () => ({
     nodeContext: null
-    , width: 260
+    , cardWidth: 260
     , padding: 10
     , branchHeight: 200
     , topPadding: 60
   })
   , computed: {
     x(){
-      if (!this.tree){ return 0 }
-      return this.tree.nTips * (this.width + 2 * this.padding) / 2
+      if (!this.tree || !this.$el){ return 0 }
+      // let width = this.tree.nTips * (this.cardWidth + 2 * this.padding)
+      return 0.5 * this.$el.clientWidth
     }
 
     , height(){
@@ -74,5 +75,6 @@ export default {
 
 <style scoped lang="sass">
 .tree
-  position: relative;
+  position: relative
+  width: 100%
 </style>

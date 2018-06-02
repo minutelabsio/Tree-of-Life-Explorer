@@ -9,12 +9,11 @@ export default {
   , beforeDestroy(){
     this.node.remove()
   }
-  , render( h ){
+  , beforeMount(){
     let scene = this.svg
-    if ( !this.node ){
-      this.node = scene.polyline([]).addClass('svg-connection')
-    }
-
+    this.node = scene.polyline([]).addClass('svg-connection')
+  }
+  , render( h ){
     this.plot()
     return this.node
   }

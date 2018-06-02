@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "axios-cache-adapter": "^2.0.0",
     "buefy": "^0.6.5",
     "lodash": "^4.17.10",
     "material-design-icons": "^3.0.1",
