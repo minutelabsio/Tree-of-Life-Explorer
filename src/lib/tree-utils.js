@@ -3,6 +3,7 @@
 import _clone from 'lodash/clone'
 import _mapValues from 'lodash/mapValues'
 import _find from 'lodash/find'
+import _sortBy from 'lodash/sortBy'
 
 function toBranch( node ){
   return {
@@ -13,25 +14,47 @@ function toBranch( node ){
   }
 }
 
+function equals( nodeOrBranch1, nodeOrBranch2 ){
+  var id1 = nodeOrBranch1.node_id || nodeOrBranch1.otNode.node_id
+  var id2 = nodeOrBranch2.node_id || nodeOrBranch2.otNode.node_id
+  return id1 === id2
+}
+
+function mergeAt( branch1, branch2, i ){
+  let lineage = branch1.lineage.splice( 0, i )
+  // shallow clone
+  branch2 = _mapValues( branch2, _clone )
+  branch2.lineage.splice( 0, i )
+
+  let subtree = _clone(branch1)
+
+  if ( !branch2.lineage.length ){
+    // check if we're adding a node in the middle
+    console.log(branch2.node, branch1.lineage)
+    if ( branch2.node && equals(branch1.lineage[0], branch2.node) ){
+      branch1.node = branch2.node
+      branch1.lineage = lineage
+      branch1.split = [subtree]
+      return
+    }
+  }
+
+  subtree.nTips--
+  branch1.lineage = lineage
+  branch1.split = [ subtree, branch2 ]
+  delete branch1.node
+}
+
 function joinTree( tree, branch ){
 
   tree.nTips++
 
   for ( let i = 0, l = tree.lineage.length; i < l; i++ ){
     // check if branch can join the tree's branch
-    if ( tree.lineage[ i ].node_id !== branch.lineage[ i ].node_id ){
+    let branchParent = branch.lineage[ i ]
+    if ( !branchParent || tree.lineage[ i ].node_id !== branchParent.node_id ){
       // this means we found a branch
-      let lineage = tree.lineage.splice( 0, i )
-      // shallow clone
-      branch = _mapValues( branch, _clone )
-      branch.lineage.splice( 0, i )
-
-      let subtree = _clone(tree)
-      subtree.nTips--
-      tree.lineage = lineage
-      tree.split = [ subtree, branch ]
-      delete tree.node
-
+      mergeAt( tree, branch, i )
       return true
     }
   }
@@ -62,6 +85,8 @@ function joinTree( tree, branch ){
 }
 
 export function buildReducedTree( nodes ){
+  // longest first
+  nodes = _sortBy(nodes, n => n.otNode.lineage.length).reverse()
   var tree = toBranch( nodes[0] )
 
   for ( let i = 1, l = nodes.length; i < l; i++ ){

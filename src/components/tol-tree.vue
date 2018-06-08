@@ -12,10 +12,10 @@
       , @remove="$emit('remove', arguments[0])"
       , @node-click="showNodeDetails"
       )
-  .dropdown.is-active(v-if="nodeContext", :style="{ top: nodeContext.y + 'px', left: nodeContext.x + 'px' }")
+  .dropdown.is-active(v-if="nodeContext", :style="{ top: (nodeContext.y-100) + 'px', left: (nodeContext.x + 40) + 'px' }")
     .dropdown-menu
       .dropdown-content
-        a.dropdown-item(v-for="parent in nodeContext.subtree.lineage", :class="{ 'has-text-grey': !parent.taxon }") {{ parent.taxon ? parent.taxon.name : parent.node_id }}
+        a.dropdown-item(v-for="parent in nodeContext.subtree.lineage", :class="{ 'has-text-grey': !parent.taxon }", @click="$emit('add-node', parent.node_id)") {{ parent.taxon ? parent.taxon.name : parent.node_id }}
 </template>
 
 <script>

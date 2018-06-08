@@ -28,6 +28,11 @@ function setVernacularNames( entry ){
   return { ...entry, vernacularNameList }
 }
 
+export function getById( id ){
+  return gbif(`/species/${id}`)
+    .then( res => setVernacularNames( res.data ) )
+}
+
 export function searchByCommonName( q ){
   var params = {
     rank: 'SPECIES'

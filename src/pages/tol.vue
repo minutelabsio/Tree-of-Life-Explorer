@@ -1,16 +1,17 @@
 <template lang="pug">
 .container.section
-    TOLCommonNameSearch(@select="onSelect")
-    .wrapper
-      .inner
-        TOLTree(:nodes="nodes", @remove="onRemoveLeaf")
+  TOLCommonNameSearch(@select="onSelect")
+  .wrapper
+    .inner
+      TOLTree(:nodes="nodes", @remove="onRemoveLeaf", @add-node="addNode")
 </template>
 
 <script>
 import TOLTree from '@/components/tol-tree'
 import TOLCommonNameSearch from '@/components/tol-common-name-search'
-import { getNodeByName } from '@/lib/otol'
-import { findByName } from '@/lib/gbif'
+import { getNodeByName, getNode } from '@/lib/otol'
+// import { findByName } from '@/lib/gbif'
+import { getTaxonomyInfo } from '@/lib/taxonomy'
 import _without from 'lodash/without'
 import _uniq from 'lodash/uniq'
 import Promise from 'bluebird'
@@ -22,20 +23,17 @@ function Leaf( gbifEntry, otNode ){
   }
 }
 
-function getLeafData( name ){
-  return Promise.join(
-    getNodeByName( name )
-    , findByName( name )
-    , function( otResult, gbifResults ){
-      return Leaf( gbifResults[0], otResult )
-    }
+function getLeafData( id ){
+  return getNode( id ).then( node =>
+    getTaxonomyInfo( node )
+      .then( info => Leaf( info, node ) )
   )
 }
 
 export default {
   name: 'page-tol'
   , props: {
-    'names': {
+    'ids': {
       type: Array
       , default: () => []
     }
@@ -48,40 +46,52 @@ export default {
     nodes: []
   })
   , watch: {
-    names: {
+    ids: {
       handler(){
-        this.setLeafs( this.names )
+        this.setLeafs( this.ids )
       }
       , immediate: true
     }
   }
   , methods: {
-    addLeaf( name ){
-      var names = [].concat(this.names)
-      names.push( name )
-      this.$router.push({ query: { names: _uniq(names) } })
+
+    showError( e ){
+      console.error( e )
     }
 
-    , removeLeaf( name ){
-      this.$router.push({ query: { names: _without( this.names, name ) } })
+    , addLeaf( id ){
+      var ids = [].concat( this.ids )
+      ids.push( id )
+      this.$router.push({ query: { ids: _uniq( ids ) } })
     }
 
-    , onRemoveLeaf( node ){
-      this.removeLeaf( node.gbifEntry.canonicalName )
+    , removeLeaf( id ){
+      this.$router.push({ query: { ids: _without( this.ids, id ) } })
+    }
+
+    , onRemoveLeaf( leaf ){
+      this.removeLeaf( leaf.otNode.node_id )
     }
 
     , onSelect( gbifEntry ){
-      this.addLeaf( gbifEntry.canonicalName )
+      getNodeByName( gbifEntry.canonicalName ).then( (node) => {
+        this.addLeaf( node.node_id )
+      }).catch( e => this.showError( e ) )
     }
 
-    , setLeafs( names ){
-      if ( !names ){
-        return
-      }
+    , addNode( nodeId ){
+      return getNode( nodeId )
+        .then( node => {
+          this.addLeaf( node.taxon.unique_name )
+        })
+    }
 
-      Promise.map( names, getLeafData )
+    , setLeafs( ids ){
+      if ( !ids ){ return }
+
+      Promise.map( ids, getLeafData )
         .then( nodes => (this.nodes = nodes) )
-        .catch( e => console.error( e ) )
+        .catch( e => this.showError( e ) )
     }
   }
 }

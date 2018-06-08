@@ -9,7 +9,7 @@
       Motion(:values="{ x2: branch.x, y2: branch.y, extend: branch.extend }", :spring="{ stiffness: 300, damping: 50, precision: 1 }")
         template(slot-scope="props")
           Connection(:from="[branch.px || props.x2, branch.py || props.y2]", :to="[props.x2, props.y2 + props.extend]")
-          Node(:tree="branch.tree", :x="props.x2", :y="props.y2", @click="$emit('node-click', arguments[0])")
+          Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="props.x2", :y="props.y2", @click="$emit('node-click', arguments[0])")
 
       template(v-if="branch.tree.node")
         TOLNodeCard(
@@ -93,6 +93,7 @@ export default {
         , branchHeight: this.branchHeight
         , padding: this.padding
       }, this.x, this.y)
+      console.log(tree, b)
       return b
     }
   }

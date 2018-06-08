@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import PageTOL from '@/pages/tol'
 import _castArray from 'lodash/castArray'
 import _uniq from 'lodash/uniq'
+import _compact from 'lodash/compact'
 
 Vue.use(Router)
 
@@ -12,7 +13,7 @@ export default new Router({
       path: '/'
       , name: 'index'
       , component: PageTOL
-      , props: (route) => ({ names: _uniq(_castArray(route.query.names)) })
+      , props: (route) => ({ ids: _compact(_uniq(_castArray(route.query.ids))) })
     }
   ]
 })

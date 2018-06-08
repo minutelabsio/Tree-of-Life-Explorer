@@ -44,3 +44,7 @@ export const getNodeByName = _memoize(function( name ){
     })
     .then( getNode )
 })
+
+export function getGbifId( node ){
+  return _find(node.taxon.tax_sources, (x) => _startsWith(x, 'gbif')).replace('gbif:', '')
+}
