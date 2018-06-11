@@ -29,6 +29,10 @@ function maxDepth( tree, max = 0 ){
     return max + 1
   }
 
+  if ( tree.node ){
+    max++
+  }
+
   return tree.split.reduce( (max, tree) => Math.max(max, maxDepth(tree, max)), max )
 }
 

@@ -13,8 +13,7 @@
 
       template(v-if="branch.tree.node")
         TOLNodeCard(
-          :gbif-entry="branch.tree.node.gbifEntry"
-          , :node="branch.tree.node.otNode"
+          :node="branch.tree.node"
           , :style="{ width: width + 'px' }"
           , @close="$emit( 'remove', branch.tree.node )"
           )
@@ -26,7 +25,9 @@ import Node from './node'
 import Connection from './connection'
 import _flatten from 'lodash/flatten'
 
-function getBranches( tree, opts, x = 0, y = 0, isRoot = true ){
+const cardHeight = 200
+
+function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
 
   let nodeAreaRadius = 0.5 * opts.width + opts.padding
   let count = tree.nTips
@@ -40,9 +41,9 @@ function getBranches( tree, opts, x = 0, y = 0, isRoot = true ){
     , y
     , px: opts.px
     , py: opts.py
-    , key: tree.node ? tree.node.otNode.node_id : tree.lineage[0].node_id
+    , key: (tree.node ? tree.node.node_id : tree.lineage[0].node_id) + level
     , extend: tree.node && tree.lineage.length ? 60 : 0
-    , isRoot
+    , isRoot: level === 0
   })
 
   if (!tree.split){
@@ -54,11 +55,11 @@ function getBranches( tree, opts, x = 0, y = 0, isRoot = true ){
       tree.split.map( (subtree, idx) => {
         let col = subtree.nTips - 1
         let xpos = (col + colstart) * nodeAreaRadius + x
-        let ypos = y + branchHeight
+        let ypos = y + branchHeight + (tree.node && tree.split ? cardHeight : 0)
 
         colstart = 2 * col + colstart + 2
 
-        return getBranches( subtree, {...opts, px: x, py: y}, xpos, ypos, false )
+        return getBranches( subtree, {...opts, px: x, py: y}, xpos, ypos, level + 1 )
       })
     )
   )

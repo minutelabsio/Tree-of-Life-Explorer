@@ -16,17 +16,17 @@ import _without from 'lodash/without'
 import _uniq from 'lodash/uniq'
 import Promise from 'bluebird'
 
-function Leaf( gbifEntry, otNode ){
+function Leaf( node, txn ){
   return {
-    gbifEntry
-    , otNode
+    ...node
+    , txnInfo: txn
   }
 }
 
 function getLeafData( id ){
   return getNode( id ).then( node =>
     getTaxonomyInfo( node )
-      .then( info => Leaf( info, node ) )
+      .then( info => Leaf( node, info ) )
   )
 }
 
@@ -70,7 +70,7 @@ export default {
     }
 
     , onRemoveLeaf( leaf ){
-      this.removeLeaf( leaf.otNode.node_id )
+      this.removeLeaf( leaf.node_id )
     }
 
     , onSelect( gbifEntry ){
@@ -82,7 +82,7 @@ export default {
     , addNode( nodeId ){
       return getNode( nodeId )
         .then( node => {
-          this.addLeaf( node.taxon.unique_name )
+          this.addLeaf( node.node_id )
         })
     }
 

@@ -45,6 +45,18 @@ export const getNodeByName = _memoize(function( name ){
     .then( getNode )
 })
 
+export function getTxnSourceId( type, node ){
+  let str = _find(node.taxon.tax_sources, (x) => _startsWith(x, type))
+  if ( !str ){
+    return str
+  }
+  return str.replace(`${type}:`, '')
+}
+
 export function getGbifId( node ){
-  return _find(node.taxon.tax_sources, (x) => _startsWith(x, 'gbif')).replace('gbif:', '')
+  return getTxnSourceId( 'gbif', node )
+}
+
+export function getWormsId( node ){
+  return getTxnSourceId( 'worms', node )
 }

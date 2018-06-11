@@ -21,8 +21,8 @@
 
     .card-content
       .has-text-centered
-        h1.has-text-info.is-size-3 {{ gbifEntry.canonicalName }}
-        h2.has-text-grey.is-size-5 {{ gbifEntry.vernacularNameList }}
+        h1.has-text-info.is-size-3 {{ node.txnInfo.canonicalName || node.taxon.name }}
+        h2.has-text-grey.is-size-5 {{ node.txnInfo.vernacularNameList }}
       .columns.is-centered(v-if="showImages")
         .column.is-narrow
           figure.image.is-48x48
@@ -38,13 +38,13 @@
 
 <script>
 const DebugModal = {
-  props: ['gbifEntry', 'node']
-  , template: `<div class="box"><pre>{{ JSON.stringify(gbifEntry, null, 2) }}</pre><pre>{{ JSON.stringify(node, null, 2) }}</pre></div>`
+  props: ['node']
+  , template: `<div class="box"><pre>{{ JSON.stringify(node, null, 2) }}</pre></div>`
 }
 
 export default {
   name: 'TOLNodeCard'
-  , props: ['gbifEntry', 'node']
+  , props: ['node']
   , data: () => ({
     showImages: false
     , pin: false
@@ -55,8 +55,7 @@ export default {
         parent: this
         , component: DebugModal
         , props: {
-          gbifEntry: this.gbifEntry
-          , node: this.node
+          node: this.node
         }
         , hasModalCard: false
       })
