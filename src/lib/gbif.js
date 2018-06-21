@@ -3,6 +3,9 @@
 
 import axios from 'axios'
 import { setupCache } from 'axios-cache-adapter'
+import _startCase from 'lodash/startCase'
+import _uniq from 'lodash/uniq'
+import _flow from 'lodash/flow'
 
 const cache = setupCache({
   maxAge: 15 * 60 * 1000
@@ -24,7 +27,11 @@ function setVernacularNames( entry ){
   }
 
   var vernacularNameList = entry.vernacularNames.filter(n => n.language === 'eng')
-  vernacularNameList = vernacularNameList.map( n => n.vernacularName ).join(', ')
+  vernacularNameList = vernacularNameList.map( _flow([
+    n => n.vernacularName
+    , _startCase
+  ]) )
+  vernacularNameList = _uniq(vernacularNameList).join(', ')
   return { ...entry, vernacularNameList }
 }
 

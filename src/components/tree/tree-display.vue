@@ -41,7 +41,7 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
     , y
     , px: opts.px
     , py: opts.py
-    , key: (tree.node ? tree.node.node_id : tree.lineage[0].node_id) + level
+    , key: (tree.node ? tree.node.node_id : tree.lineage[0].node_id + level)
     , extend: tree.node && tree.lineage.length ? 60 : 0
     , isRoot: level === 0
   })

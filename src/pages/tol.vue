@@ -1,6 +1,7 @@
 <template lang="pug">
-.container.section
-  TOLCommonNameSearch(@select="onSelect")
+.app
+  nav.top-nav.box.is-radiusless
+    TOLCommonNameSearch.search-box(@select="onSelect")
   .wrapper
     .inner
       TOLTree(:nodes="nodes", @remove="onRemoveLeaf", @add-node="addNode")
@@ -74,7 +75,7 @@ export default {
     }
 
     , onSelect( gbifEntry ){
-      getNodeByName( gbifEntry.canonicalName ).then( (node) => {
+      getNodeByName( gbifEntry.canonicalName || gbifEntry.scientificName ).then( (node) => {
         this.addLeaf( node.node_id )
       }).catch( e => this.showError( e ) )
     }
@@ -99,6 +100,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
+.search-box
+  width: 420px
 .wrapper
   overflow: hidden
   .inner

@@ -1,18 +1,20 @@
 <template lang="pug">
 .search
-  b-field(label="Search by common name")
+  b-field(label="Search by common name", :message="!searchEntry || results.length || isFetching ? '&nbsp;' : 'Nothing found. Try being more specific'")
     b-autocomplete(
       placeholder="eg. Snow Leopard"
+      , icon="magnify"
       , :keep-first="true"
       , :data="results"
+      , :v-model="searchEntry"
       , :loading="isFetching"
       , @input="search"
       , @select="selectResult"
     )
       template(slot-scope="props")
-        | {{ props.option.scientificName }}
-        br/
-        small(v-if="props.option.vernacularNameList") ({{ props.option.vernacularNameList }})
+        .columns
+          .common-names.column.is-half.has-text-info {{ props.option.vernacularNameList }}
+          .scientific-name.column.is-half {{ props.option.canonicalName || props.option.scientificName }}
 </template>
 
 <script>
@@ -28,6 +30,7 @@ export default {
   }
   , data: () => ({
     results: []
+    , searchEntry: ''
     , isFetching: false
   })
   , methods: {
@@ -62,5 +65,6 @@ export default {
 </script>
 
 <style scoped lang="sass">
-
+.common-names, .scientific-names
+  white-space: normal
 </style>

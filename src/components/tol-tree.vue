@@ -30,7 +30,7 @@ function maxDepth( tree, max = 0 ){
   }
 
   if ( tree.node ){
-    max++
+    max += 1.5
   }
 
   return tree.split.reduce( (max, tree) => Math.max(max, maxDepth(tree, max)), max )
@@ -77,8 +77,11 @@ export default {
 }
 </script>
 
-<style scoped lang="sass">
+<style lang="sass">
 .tree
   position: relative
   width: 100%
+
+  .svg
+    cursor: move
 </style>
