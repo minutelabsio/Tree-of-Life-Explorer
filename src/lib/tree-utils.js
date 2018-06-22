@@ -5,6 +5,18 @@ import _mapValues from 'lodash/mapValues'
 import _find from 'lodash/find'
 import _sortBy from 'lodash/sortBy'
 
+export function getDepth( tree, max = 0 ){
+  if ( !tree.split ){
+    return max + 1
+  }
+
+  if ( tree.node ){
+    max += 1
+  }
+
+  return tree.split.reduce( (max, tree) => Math.max(max, getDepth(tree, max)), max )
+}
+
 function toBranch( node ){
   return {
     lineage: [].concat(node.lineage).reverse()
@@ -93,6 +105,9 @@ export function buildReducedTree( nodes ){
   for ( let i = 1, l = nodes.length; i < l; i++ ){
     joinTree( tree, toBranch( nodes[i] ) )
   }
+
+  let depth = getDepth( tree )
+  tree.depth = depth
 
   return tree
 }

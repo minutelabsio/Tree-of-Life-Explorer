@@ -24,18 +24,6 @@ import TreeCanvas from '@/components/tree/tree-canvas'
 import TOLNodeCard from '@/components/tol-node-card'
 import { buildReducedTree } from '@/lib/tree-utils'
 
-function maxDepth( tree, max = 0 ){
-  if ( !tree.split ){
-    return max + 1
-  }
-
-  if ( tree.node ){
-    max += 1.5
-  }
-
-  return tree.split.reduce( (max, tree) => Math.max(max, maxDepth(tree, max)), max )
-}
-
 export default {
   name: 'TOLTree'
   , props: [ 'nodes' ]
@@ -61,7 +49,7 @@ export default {
     , height(){
       if (!this.tree){ return 0 }
       let margin = 1000
-      return this.topPadding + maxDepth(this.tree) * this.branchHeight + margin
+      return this.topPadding + this.tree.depth * this.branchHeight + margin
     }
 
     , tree(){
