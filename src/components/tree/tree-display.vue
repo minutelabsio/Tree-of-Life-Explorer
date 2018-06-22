@@ -1,5 +1,6 @@
 <template lang="pug">
 .tree
+  ChildMenu(:node="subtreeNode", :x="childMenuX", :y="childMenuY", @select="$emit('add-node', arguments[0])")
   //- .lvl(v-for="level in columns")
   //-   .col(v-for="col in level")
   //-     template(v-if="!col")
@@ -28,7 +29,7 @@
           , @close="$emit( 'remove', branch.tree.node )"
           )
       template(v-if="!branch.hasSplit")
-        Tail(:node="branch.node", :x="branch.x", :y="branch.y + 400")
+        Tail(:node="branch.tree.node", :x="branch.x", :y="branch.y + 400", @click="openChildMenu")
 </template>
 
 <script>
@@ -36,6 +37,7 @@ import TOLNodeCard from '@/components/tol-node-card'
 import Node from './node'
 import Tail from './tail'
 import Connection from './connection'
+import ChildMenu from './child-menu'
 import _flatten from 'lodash/flatten'
 
 const cardHeight = 200
@@ -123,12 +125,23 @@ export default {
     , 'branchHeight': Number
   }
   , data: () => ({
+    subtreeNode: null
+    , childMenuX: 0
+    , childMenuY: 0
   })
   , components: {
     Connection
+    , ChildMenu
     , Node
     , Tail
     , TOLNodeCard
+  }
+  , created () {
+    document.addEventListener('click', this.onDocumentClick)
+  }
+  , destroyed () {
+    // important to clean up!!
+    document.removeEventListener('click', this.onDocumentClick)
   }
   , computed: {
     branches(){
@@ -147,10 +160,30 @@ export default {
       return cols
     }
   }
+  , methods: {
+    openChildMenu({ x, y, node }){
+      this.childMenuX = x
+      this.childMenuY = y
+      this.subtreeNode = node
+    }
+    , onDocumentClick(){
+      this.subtreeNode = null
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+.child-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  .dropdown-menu {
+    position: relative;
+    top: 20px;
+    left: -50%;
+  }
+}
 .lvl {
   display: flex;
   align-items: flex-start;

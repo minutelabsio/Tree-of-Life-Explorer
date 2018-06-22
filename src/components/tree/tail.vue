@@ -21,7 +21,7 @@ export default {
 
     this.tail.on( 'click', (e) => {
       e.stopPropagation()
-      this.$emit( 'click', { tail: this.tail, x: this.x, y: this.y } )
+      this.$emit( 'click', { tail: this.tail, node: this.node, x: this.x, y: this.y } )
     })
   }
   , render( h ){

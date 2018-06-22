@@ -53,7 +53,7 @@ export const getSubtree = _memoize(function( id, depth = 1 ){
     , height_limit: depth
   }
   return otol.post('/tree_of_life/subtree', data)
-    .then( res => res.data.children )
+    .then( res => res.data.arguson.children || [] )
 })
 
 export function getTxnSourceId( type, node ){

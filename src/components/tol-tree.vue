@@ -11,6 +11,7 @@
       , :branchHeight="branchHeight"
       , @remove="$emit('remove', arguments[0])"
       , @node-click="showNodeDetails"
+      , @add-node="$emit('add-node', arguments[0].node_id)"
       )
   .dropdown.is-active(v-if="nodeContext", :style="{ top: (nodeContext.y-100) + 'px', left: (nodeContext.x + 40) + 'px' }")
     .dropdown-menu
@@ -49,7 +50,7 @@ export default {
     , height(){
       if (!this.tree){ return 0 }
       let margin = 1000
-      return this.topPadding + this.tree.depth * this.branchHeight + margin
+      return this.topPadding + this.tree.depth * (2 * this.branchHeight) + margin
     }
 
     , tree(){
