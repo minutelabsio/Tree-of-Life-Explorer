@@ -17,11 +17,14 @@
           , :style="{ width: width + 'px' }"
           , @close="$emit( 'remove', branch.tree.node )"
           )
+      template(v-if="!branch.hasSplit")
+        Tail(:node="branch.node", :x="branch.x", :y="branch.y + 400")
 </template>
 
 <script>
 import TOLNodeCard from '@/components/tol-node-card'
 import Node from './node'
+import Tail from './tail'
 import Connection from './connection'
 import _flatten from 'lodash/flatten'
 
@@ -44,6 +47,7 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
     , key: (tree.node ? tree.node.node_id : tree.lineage[0].node_id + level)
     , extend: tree.node && tree.lineage.length ? 60 : 0
     , isRoot: level === 0
+    , hasSplit: !!tree.split
   })
 
   if (!tree.split){
@@ -84,6 +88,7 @@ export default {
   , components: {
     Connection
     , Node
+    , Tail
     , TOLNodeCard
   }
   , computed: {
@@ -94,7 +99,6 @@ export default {
         , branchHeight: this.branchHeight
         , padding: this.padding
       }, this.x, this.y)
-      console.log(tree, b)
       return b
     }
   }

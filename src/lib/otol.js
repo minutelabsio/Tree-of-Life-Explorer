@@ -45,6 +45,17 @@ export const getNodeByName = _memoize(function( name ){
     .then( getNode )
 })
 
+export const getSubtree = _memoize(function( id, depth = 1 ){
+  var idField = _startsWith( id, 'ott' ) ? 'node_id' : 'ott_id'
+  var data = {
+    [idField]: id
+    , format: 'arguson'
+    , height_limit: depth
+  }
+  return otol.post('/tree_of_life/subtree', data)
+    .then( res => res.data.children )
+})
+
 export function getTxnSourceId( type, node ){
   let str = _find(node.taxon.tax_sources, (x) => _startsWith(x, type))
   if ( !str ){

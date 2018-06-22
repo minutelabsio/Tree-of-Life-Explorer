@@ -48,7 +48,7 @@ export default {
     nodeContext: null
     , cardWidth: 260
     , padding: 10
-    , branchHeight: 200
+    , branchHeight: 100
     , topPadding: 60
   })
   , computed: {
@@ -60,8 +60,8 @@ export default {
 
     , height(){
       if (!this.tree){ return 0 }
-      let fudge = 400
-      return this.topPadding + maxDepth(this.tree) * this.branchHeight + fudge
+      let margin = 1000
+      return this.topPadding + maxDepth(this.tree) * this.branchHeight + margin
     }
 
     , tree(){
