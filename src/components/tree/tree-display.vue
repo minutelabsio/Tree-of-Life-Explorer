@@ -1,5 +1,15 @@
 <template lang="pug">
 .tree
+  //- .lvl(v-for="level in columns")
+  //-   .col(v-for="col in level")
+  //-     template(v-if="!col")
+  //-       .spacer
+  //-     .tol-col(v-if="col")
+  //-       .box {{ col.tree.lineage.length }}
+  //-       TOLNodeCard(
+  //-         v-if="col.tree.node"
+  //-         , :node="col.tree.node"
+  //-       )
   transition-group(name="tree", appear)
     .tol-node(
       v-for="branch in branches"
@@ -71,6 +81,35 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
   return branches
 }
 
+function appendToColumns( tree, columns, colOffset = 0, level = 0 ){
+  let colIndex = colOffset + tree.nTips - 1
+  let row = columns[ level ]
+  row[ colIndex ] = {
+    tree
+    , key: (tree.node ? tree.node.node_id : tree.lineage[0].node_id + level)
+    , isRoot: level === 0
+    , hasSplit: !!tree.split
+  }
+
+  if ( !tree.split ){
+    return columns
+  }
+
+  tree.split.forEach( (subtree, idx) => {
+    appendToColumns( subtree, columns, colOffset, level + 1 )
+    colOffset += subtree.nTips * 2
+  })
+
+  return columns
+}
+
+function getColumns( tree ){
+  // const nCols = tree.nTips * 2 - 1
+  const columns = Array( tree.depth ).fill(0).map(a => [])
+  appendToColumns( tree, columns )
+  return columns
+}
+
 export default {
   name: 'Tree'
   , props: {
@@ -101,11 +140,38 @@ export default {
       }, this.x, this.y)
       return b
     }
+
+    , columns(){
+      let tree = this.tree
+      let cols = getColumns( tree )
+      return cols
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.lvl {
+  display: flex;
+  align-items: flex-start;
+  .col {
+    display: block;
+    margin: 0 -60px;
+    width: 260px;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .spacer {
+    height: 100px;
+  }
+}
 .tol-node {
   position: absolute;
   top: 0;
