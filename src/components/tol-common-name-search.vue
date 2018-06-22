@@ -6,7 +6,7 @@
       , icon="magnify"
       , :keep-first="true"
       , :data="results"
-      , :v-model="searchEntry"
+      , v-model="searchEntry"
       , :loading="isFetching"
       , @input="search"
       , @select="selectResult"
@@ -43,7 +43,7 @@ export default {
           this.isFetching = false
         })
         .catch( e => {
-          console.error(e)
+          this.errorMsg(e)
         })
     }, 500)
 
