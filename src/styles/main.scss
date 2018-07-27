@@ -1,0 +1,31 @@
+// Common
+@import "./_variables";
+
+@import "~bulma/sass/utilities/initial-variables";
+@import "~buefy/src/scss/utils/_all";
+@import "~bulma/bulma";
+@import "~buefy/src/scss/buefy";
+
+.toolbar {
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+
+  .toolbar-item {
+    display: flex;
+    flex-grow: 1;
+    margin: 0;
+    padding: 0;
+  }
+
+  .text {
+    align-self: center;
+    padding: 0 1em;
+  }
+
+  .control {
+    display: flex;
+    padding: 0.75rem;
+  }
+}

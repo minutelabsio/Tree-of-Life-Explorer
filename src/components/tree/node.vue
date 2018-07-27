@@ -12,10 +12,10 @@ export default {
     this.node.remove()
   }
   , beforeMount(){
-    let nodeRadius = 25
+    let nodeWidth = 36
     let scene = this.svg
     this.node = scene.group().addClass('svg-node').move( this.x, this.y )
-    this.node.circle(2 * nodeRadius).center(0, 0)
+    this.node.rect(nodeWidth, nodeWidth).center(0, 0).radius(7)
 
     this.label = this.node.plain( `${this.tree.lineage.length}` ).attr('y', 2)
 
@@ -33,26 +33,29 @@ export default {
 </script>
 
 <style lang="sass">
+@import '@/styles/_variables.scss'
 .svg-node
   cursor: pointer
-
-  circle
-    fill: #fff
-    stroke-width: 2
-    stroke: #aaa
+  rect
+    fill: $grey
     transition: all 0.15s linear
+
+  // circle
+  //   fill: $white
+  //   stroke-width: 2
+  //   stroke: $grey-light
+  //   transition: all 0.15s linear
 
   text
     font-size: 20px
     text-anchor: middle
     alignment-baseline: middle
-    fill: #333
+    fill: $white
     transition: fill 0.15s linear
 
-  &:hover circle
-    fill: #1b7abf
-    stroke: #1b7abf
+  &:hover rect
+    fill: $blue
 
   &:hover text
-    fill: #ffffff
+    fill: $white
 </style>

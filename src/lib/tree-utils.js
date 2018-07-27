@@ -97,6 +97,16 @@ function joinTree( tree, branch ){
   return tipsAdded
 }
 
+function getNodeId( branch ){
+  return branch.node ? branch.node.node_id : branch.lineage[0].node_id
+}
+
+function treeSort( tree ){
+  if (!tree.split) { return }
+  tree.split.sort( (a, b) => getNodeId(a) > getNodeId(b) )
+  tree.split.forEach( treeSort )
+}
+
 export function buildReducedTree( nodes ){
   // longest first
   nodes = _sortBy(nodes, n => n.lineage.length).reverse()
@@ -106,8 +116,12 @@ export function buildReducedTree( nodes ){
     joinTree( tree, toBranch( nodes[i] ) )
   }
 
+  // assign a depth value to each branch
   let depth = getDepth( tree )
   tree.depth = depth
+
+  // Sorting improves the consistency
+  treeSort( tree )
 
   return tree
 }

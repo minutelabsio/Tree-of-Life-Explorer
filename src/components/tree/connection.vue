@@ -36,8 +36,9 @@ export default {
 </script>
 
 <style lang="sass">
+@import '@/styles/_variables.scss'
 .svg-connection
   fill: none
   stroke-width: 2
-  stroke: #aaa
+  stroke: $grey-light
 </style>

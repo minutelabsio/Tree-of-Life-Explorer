@@ -15,6 +15,7 @@
     "axios": "^0.18.0",
     "axios-cache-adapter": "^2.0.0",
     "buefy": "^0.6.5",
+    "bulma": "^0.7.1",
     "impetus": "^0.8.7",
     "lodash": "^4.17.10",
     "material-design-icons": "^3.0.1",
@@ -22,7 +23,8 @@
     "svg.js": "^2.6.5",
     "vue": "^2.5.2",
     "vue-motion": "^0.2.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue-truncate-filter": "^1.1.7"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

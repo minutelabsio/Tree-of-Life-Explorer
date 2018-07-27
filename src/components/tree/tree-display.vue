@@ -11,7 +11,7 @@
   //-         v-if="col.tree.node"
   //-         , :node="col.tree.node"
   //-       )
-  transition-group(name="tree", appear)
+  transition-group(name="tree")
     .tol-node(
       v-for="branch in branches"
       , :key="branch.key"
@@ -23,24 +23,25 @@
           Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="props.x2", :y="props.y2", @click="$emit('node-click', arguments[0])")
 
       template(v-if="branch.tree.node")
-        TOLNodeCard(
+        TOLNodeItem(
           :node="branch.tree.node"
           , :style="{ width: width + 'px' }"
-          , @close="$emit( 'remove', branch.tree.node )"
+          , @remove="$emit( 'remove', branch.tree.node )"
           )
       template(v-if="!branch.hasSplit")
-        Tail(:node="branch.tree.node", :x="branch.x", :y="branch.y + 400", @click="openChildMenu")
+        Tail(:node="branch.tree.node", :x="branch.x", :y="branch.y + 160", @click="openChildMenu")
 </template>
 
 <script>
 import TOLNodeCard from '@/components/tol-node-card'
+import TOLNodeItem from '@/components/tol-node-item'
 import Node from './node'
 import Tail from './tail'
 import Connection from './connection'
 import ChildMenu from './child-menu'
 import _flatten from 'lodash/flatten'
 
-const cardHeight = 200
+const cardHeight = 80
 
 function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
 
@@ -56,7 +57,7 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
     , y
     , px: opts.px
     , py: opts.py
-    , key: (tree.node ? tree.node.node_id : tree.lineage[0].node_id + level)
+    , key: (tree.node ? tree.node.node_id : tree.lineage[0].node_id + '-' + level)
     , extend: tree.node && tree.lineage.length ? 60 : 0
     , isRoot: level === 0
     , hasSplit: !!tree.split
@@ -135,6 +136,7 @@ export default {
     , Node
     , Tail
     , TOLNodeCard
+    , TOLNodeItem
   }
   , created () {
     document.addEventListener('click', this.onDocumentClick)
@@ -222,6 +224,6 @@ export default {
 }
 .tree-enter, .tree-leave-to {
   opacity: 0;
-  top: 100vh
+  top: -80px;
 }
 </style>

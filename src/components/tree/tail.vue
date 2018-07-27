@@ -33,26 +33,27 @@ export default {
 </script>
 
 <style lang="sass">
+@import '@/styles/_variables.scss'
 .svg-tail
   cursor: pointer
 
   circle
-    fill: #eee
+    fill: $white-ter
     stroke-width: 2
-    stroke: #aaa
+    stroke: $grey-light
     transition: all 0.15s linear
 
   text
     font-size: 20px
     text-anchor: middle
     alignment-baseline: middle
-    fill: #333
+    fill: $grey-darker
     transition: fill 0.15s linear
 
   &:hover circle
-    fill: #1b7abf
-    stroke: #1b7abf
+    fill: $cyan
+    stroke: $cyan
 
   &:hover text
-    fill: #ffffff
+    fill: $white
 </style>

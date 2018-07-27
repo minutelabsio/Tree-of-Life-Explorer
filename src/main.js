@@ -3,18 +3,19 @@
 import Vue from 'vue'
 import App from './app'
 import router from './router'
-import filter from 'lodash/filter'
+import Filters from './plugins/filters'
+import VueTruncate from 'vue-truncate-filter'
 import VueMotion from 'vue-motion'
 import Buefy from 'buefy'
-import 'buefy/lib/buefy.css'
+import './styles/main.scss'
 Vue.use(Buefy, {
   defaultContainerElement: '#app'
   // , defaultIconPack: 'fas'
 })
 
+Vue.use(Filters)
+Vue.use(VueTruncate)
 Vue.use(VueMotion)
-
-Vue.filter('filter', filter)
 
 Vue.config.productionTip = false
 
