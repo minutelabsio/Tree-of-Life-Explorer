@@ -1,4 +1,4 @@
-// Build a tree from nodes { gbifEntry, node }
+// Build a tree from leafs
 // ---------------------------------------
 import _clone from 'lodash/clone'
 import _mapValues from 'lodash/mapValues'
@@ -10,51 +10,48 @@ export function getDepth( tree, max = 0 ){
     return max + 1
   }
 
-  if ( tree.node ){
+  if ( tree.leaf ){
     max += 1
   }
 
   return tree.split.reduce( (max, tree) => Math.max(max, getDepth(tree, max)), max )
 }
 
-function toBranch( node ){
+function toBranch( leaf ){
   return {
-    lineage: [].concat(node.lineage).reverse()
+    // starts from the "top" down. (cellular organisms -> ... -> humans)
+    lineage: [].concat(leaf.lineage).reverse()
     , nTips: 1
-    , node: node
-    // split:
+    , leaf: leaf
+    , split: []
   }
 }
 
-function equals( nodeOrBranch1, nodeOrBranch2 ){
-  var id1 = nodeOrBranch1.node_id || nodeOrBranch1.node_id
-  var id2 = nodeOrBranch2.node_id || nodeOrBranch2.node_id
-  return id1 === id2
-}
+function splitAt( tree, branch, i ){
+  // create a cut with a fake leaf that we can fill in later
+  mergeAt( tree, toBranch( tree.lineage[i].node_id ), i )
 
-function mergeAt( branch1, branch2, i ){
-  let lineage = branch1.lineage.splice( 0, i )
-  // shallow clone
-  branch2 = _mapValues( branch2, _clone )
-  branch2.lineage.splice( 0, i )
+  branch.lineage.splice( 0, i )
 
-  let subtree = _clone(branch1)
-
-  if ( !branch2.lineage.length ){
-    // check if we're adding a node in the middle
-    if ( branch2.node && equals(branch1.lineage[0], branch2.node) ){
-      branch1.node = branch2.node
-      branch1.lineage = lineage
-      branch1.split = [subtree]
-      return 0
-    }
-  }
-
-  branch1.nTips++
-  branch1.lineage = lineage
-  branch1.split = [ subtree, branch2 ]
-  delete branch1.node
+  tree.nTips++
+  tree.split.push( branch )
   return 1
+}
+
+function mergeAt( tree, branch, i ){
+  let lineage = tree.lineage.splice( 0, i )
+  let leaf = branch.leaf
+
+  tree.lineage.unshift() // this is the same as "leaf"
+  branch.lineage = tree.lineage
+  branch.split = tree.split
+  branch.nTips = tree.nTips
+  branch.leaf = tree.leaf
+
+  tree.lineage = lineage
+  tree.split = [branch]
+  tree.leaf = leaf
+  return 0
 }
 
 function joinTree( tree, branch ){
@@ -62,19 +59,23 @@ function joinTree( tree, branch ){
   for ( let i = 0, l = tree.lineage.length; i < l; i++ ){
     // check if branch can join the tree's branch
     let branchParent = branch.lineage[ i ]
-    if ( !branchParent || tree.lineage[ i ].node_id !== branchParent.node_id ){
-      // this means we found a branch
+    if ( !branchParent ){
+      // the branch is in the middle of the current tree branch
       return mergeAt( tree, branch, i )
+    }
+    if ( tree.lineage[ i ].node_id !== branchParent.node_id ){
+      // this means we found a branch
+      return splitAt( tree, branch, i )
     }
   }
 
   if ( !tree.split ){
-    // this means it splits right at the node
+    // this means it splits right at the leaf
     branch = _mapValues( branch, _clone )
     branch.lineage.splice( 0, tree.lineage.length )
     tree.nTips++
-    tree.split = [{ lineage: [], nTips: 1, node: tree.node }, branch]
-    delete tree.node
+    tree.split = [{ lineage: [], nTips: 1, leaf: tree.leaf }, branch]
+    delete tree.leaf
     return 1
   }
 
@@ -98,7 +99,7 @@ function joinTree( tree, branch ){
 }
 
 function getNodeId( branch ){
-  return branch.node ? branch.node.node_id : branch.lineage[0].node_id
+  return branch.leaf ? branch.leaf.node_id : branch.lineage[0].node_id
 }
 
 function treeSort( tree ){
@@ -107,13 +108,13 @@ function treeSort( tree ){
   tree.split.forEach( treeSort )
 }
 
-export function buildReducedTree( nodes ){
+export function buildReducedTree( leafs ){
   // longest first
-  nodes = _sortBy(nodes, n => n.lineage.length).reverse()
-  var tree = toBranch( nodes[0] )
+  leafs = _sortBy(leafs, n => n.lineage.length).reverse()
+  var tree = toBranch( leafs[0] )
 
-  for ( let i = 1, l = nodes.length; i < l; i++ ){
-    joinTree( tree, toBranch( nodes[i] ) )
+  for ( let i = 1, l = leafs.length; i < l; i++ ){
+    joinTree( tree, toBranch( leafs[i] ) )
   }
 
   // assign a depth value to each branch
@@ -122,6 +123,6 @@ export function buildReducedTree( nodes ){
 
   // Sorting improves the consistency
   treeSort( tree )
-
+  console.log(tree)
   return tree
 }

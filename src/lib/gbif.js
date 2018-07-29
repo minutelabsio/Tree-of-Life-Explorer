@@ -1,6 +1,7 @@
 // Helpers for https://www.gbif.org/developer
 // ---------------------------------------
 
+import Promise from 'bluebird'
 import axios from 'axios'
 import { setupCache } from 'axios-cache-adapter'
 import _startCase from 'lodash/startCase'
@@ -36,7 +37,7 @@ function setVernacularNames( entry ){
 }
 
 export function getById( id ){
-  return gbif(`/species/${id}`)
+  return Promise.resolve( gbif(`/species/${id}`) )
     .then( res => setVernacularNames( res.data ) )
 }
 
@@ -46,7 +47,7 @@ export function searchByCommonName( q ){
     , qField: 'VERNACULAR'
     , q
   }
-  return gbif('/species/search', { params })
+  return Promise.resolve( gbif('/species/search', { params }) )
     .then( res => res.data.results.map( setVernacularNames ) )
 }
 
@@ -54,6 +55,6 @@ export function findByName( name ){
   var params = {
     name
   }
-  return gbif('/species', { params })
+  return Promise.resolve( gbif('/species', { params }) )
     .then( res => res.data.results.map( setVernacularNames ) )
 }

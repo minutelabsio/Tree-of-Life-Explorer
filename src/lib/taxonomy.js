@@ -82,6 +82,11 @@ export function getMapping( data = {}, mapping ){
 }
 
 export function getTaxonomyInfo( node, mapping ){
+
+  if ( !node.taxon ){
+    return Promise.resolve({})
+  }
+
   var types = {
     'gbif': ( id ) => gbif.getById( id ).then( data => getMapping( data, gbifMapping ) )
     , 'worms': ( id ) => worms.getById( id ).then( data => getMapping( data, wormsMapping ) )
@@ -95,4 +100,18 @@ export function getTaxonomyInfo( node, mapping ){
 
     return types[ type ]( id )
   } ).then( results => results.reduce( (txn, data) => ({...txn, ...data}), {} ) )
+}
+
+function Leaf( node, txn ){
+  return {
+    ...node
+    , txnInfo: txn
+  }
+}
+
+export function getLeaf( id ){
+  return otol.getNode( id ).then( node =>
+    getTaxonomyInfo( node )
+      .then( info => Leaf( node, info ) )
+  )
 }

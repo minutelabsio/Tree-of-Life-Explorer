@@ -21,8 +21,8 @@
 
     .card-content
       .has-text-centered
-        h1.has-text-info.is-size-3 {{ node.txnInfo.canonicalName || node.taxon.name }}
-        h2.has-text-grey.is-size-5 {{ node.txnInfo.vernacularNameList }}
+        h1.has-text-info.is-size-3 {{ leafInfo.txnInfo.canonicalName || leafInfo.taxon.name }}
+        h2.has-text-grey.is-size-5 {{ leafInfo.txnInfo.vernacularNameList }}
       .columns.is-centered(v-if="showImages")
         .column.is-narrow
           figure.image.is-48x48
@@ -38,24 +38,30 @@
 
 <script>
 const DebugModal = {
-  props: ['node']
-  , template: `<div class="box"><pre>{{ JSON.stringify(node, null, 2) }}</pre></div>`
+  props: ['leaf']
+  , template: `<div class="box"><pre>{{ JSON.stringify(leaf, null, 2) }}</pre></div>`
 }
 
 export default {
   name: 'TOLNodeCard'
-  , props: ['node']
+  , props: ['leaf']
   , data: () => ({
     showImages: false
+    , leafInfo: null
     , pin: false
   })
+  , watch: {
+    leaf( leaf ){
+      this.leafInfo = leaf
+    }
+  }
   , methods: {
     showDebugModal(){
       this.$modal.open({
         parent: this
         , component: DebugModal
         , props: {
-          node: this.node
+          leaf: this.leaf
         }
         , hasModalCard: false
       })

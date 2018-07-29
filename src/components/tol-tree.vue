@@ -1,5 +1,5 @@
 <template lang="pug">
-.tree(:style="{ height: height + 'px' }", @click="nodeContext = null")
+.tree(:style="{ height: height + 'px' }", @click="leafContext = null")
   TreeCanvas
     Tree(
       v-if="tree"
@@ -10,13 +10,14 @@
       , :padding="padding"
       , :branchHeight="branchHeight"
       , @remove="$emit('remove', arguments[0])"
-      , @node-click="showNodeDetails"
+      , @leaf-click="showLeafDetails"
       , @add-node="$emit('add-node', arguments[0].node_id)"
+      , @error="$emit('error', arguments[0])"
       )
-  .dropdown.is-active(v-if="nodeContext", :style="{ top: (nodeContext.y-100) + 'px', left: (nodeContext.x + 40) + 'px' }")
+  .dropdown.is-active(v-if="leafContext", :style="{ top: (leafContext.y-100) + 'px', left: (leafContext.x + 40) + 'px' }")
     .dropdown-menu
       .dropdown-content
-        a.dropdown-item(v-for="parent in nodeContext.subtree.lineage", :class="{ 'has-text-grey': !parent.taxon }", @click="$emit('add-node', parent.node_id)") {{ parent.taxon ? parent.taxon.name : parent.node_id }}
+        a.dropdown-item(v-for="parent in leafContext.subtree.lineage", :class="{ 'has-text-grey': !parent.taxon }", @click="$emit('add-node', parent.node_id)") {{ parent.taxon ? parent.taxon.name : parent.node_id }}
 </template>
 
 <script>
@@ -27,14 +28,14 @@ import { buildReducedTree } from '@/lib/tree-utils'
 
 export default {
   name: 'TOLTree'
-  , props: [ 'nodes' ]
+  , props: [ 'leafs' ]
   , components: {
     Tree
     , TreeCanvas
     , TOLNodeCard
   }
   , data: () => ({
-    nodeContext: null
+    leafContext: null
     , cardWidth: 260
     , padding: 10
     , branchHeight: 100
@@ -54,13 +55,13 @@ export default {
     }
 
     , tree(){
-      if (!this.nodes || !this.nodes.length){ return null }
-      return buildReducedTree( this.nodes )
+      if (!this.leafs || !this.leafs.length){ return null }
+      return buildReducedTree( this.leafs )
     }
   }
   , methods: {
-    showNodeDetails( node ){
-      this.nodeContext = node
+    showLeafDetails( leaf ){
+      this.leafContext = leaf
     }
   }
 }

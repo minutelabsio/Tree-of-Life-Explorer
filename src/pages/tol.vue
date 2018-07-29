@@ -4,7 +4,7 @@
     TOLCommonNameSearch.search-box(@select="onSelect")
   .wrapper
     .inner
-      TOLTree(:nodes="nodes", @remove="onRemoveLeaf", @add-node="addNode")
+      TOLTree(:leafs="leafs", @remove="onRemoveLeaf", @add-node="addNode", @error="showError")
 </template>
 
 <script>
@@ -12,24 +12,10 @@ import TOLTree from '@/components/tol-tree'
 import TOLCommonNameSearch from '@/components/tol-common-name-search'
 import { getNodeByName, getNode } from '@/lib/otol'
 // import { findByName } from '@/lib/gbif'
-import { getTaxonomyInfo } from '@/lib/taxonomy'
+import { getLeaf } from '@/lib/taxonomy'
 import _without from 'lodash/without'
 import _uniq from 'lodash/uniq'
 import Promise from 'bluebird'
-
-function Leaf( node, txn ){
-  return {
-    ...node
-    , txnInfo: txn
-  }
-}
-
-function getLeafData( id ){
-  return getNode( id ).then( node =>
-    getTaxonomyInfo( node )
-      .then( info => Leaf( node, info ) )
-  )
-}
 
 export default {
   name: 'page-tol'
@@ -44,7 +30,7 @@ export default {
     , TOLCommonNameSearch
   }
   , data: () => ({
-    nodes: []
+    leafs: []
   })
   , watch: {
     ids: {
@@ -90,8 +76,8 @@ export default {
     , setLeafs( ids ){
       if ( !ids ){ return }
 
-      Promise.map( ids, getLeafData )
-        .then( nodes => (this.nodes = nodes) )
+      Promise.map( ids, getLeaf )
+        .then( leafs => (this.leafs = leafs) )
         .catch( e => this.showError( e ) )
     }
   }

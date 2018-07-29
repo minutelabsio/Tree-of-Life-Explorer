@@ -1,3 +1,4 @@
+import Promise from 'bluebird'
 import _castArray from 'lodash/castArray'
 import _startsWith from 'lodash/startsWith'
 import _find from 'lodash/find'
@@ -13,21 +14,52 @@ const otol = axios.create({
 // id can be either node_id or ott_id. It will auto detect
 // ---------------------------------------
 export const getNode = _memoize(function( id ){
+  if ( _startsWith( id, 'mrca' ) ){
+    return getMRCA( id )
+  }
   var idField = _startsWith( id, 'ott' ) ? 'node_id' : 'ott_id'
   var data = {
     [idField]: id
     , include_lineage: true
   }
-  return otol.post('/tree_of_life/node_info', data)
+  return Promise.resolve( otol.post('/tree_of_life/node_info', data) )
     .then( res => res.data )
 })
+
+export function getMRCA( idOrArray ){
+  if ( typeof idOrArray === 'string' ){
+    idOrArray = idOrArray.match(/(ott[\d]+)/g)
+  }
+
+  var data = {
+    node_ids: idOrArray
+    , nearest_taxon: true
+  }
+  return Promise.resolve( otol.post('/tree_of_life/mrca', data) )
+    .then( res => res.data.mrca )
+    .then( data => {
+      if (!data.taxon){
+        return Promise.map( idOrArray, getNode )
+          .then( nodes => {
+            let nodelist = nodes.map( n => n.taxon.name ).join(' and ')
+            data.taxon = {
+              name: `(MRCA of ${nodelist})`
+            }
+
+            return data
+          })
+      }
+
+      return data
+    })
+}
 
 export function getTxResultsByNames( names = [] ){
   var data = {
     names: _castArray( names )
   }
 
-  return otol.post('/tnrs/match_names', data)
+  return Promise.resolve( otol.post('/tnrs/match_names', data) )
     .then( res => res.data.results )
 }
 
@@ -52,7 +84,7 @@ export const getSubtree = _memoize(function( id, depth = 1 ){
     , format: 'arguson'
     , height_limit: depth
   }
-  return otol.post('/tree_of_life/subtree', data)
+  return Promise.resolve( otol.post('/tree_of_life/subtree', data) )
     .then( res => res.data.arguson.children || [] )
 })
 

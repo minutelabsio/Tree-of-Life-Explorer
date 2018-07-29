@@ -1,5 +1,5 @@
 <template lang="pug">
-.item-menu(:class="{ active: active }", @mouseleave="onMouseLeave", @mouseenter="onMouseEnter")
+.leaf-menu(:class="{ active: active }", @mouseleave="onMouseLeave", @mouseenter="onMouseEnter")
   .toolbar.primary
     .toolbar-item.item-title
       .text {{ title | capitalize | truncate(24) }}
@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  name: 'NodeItemMenu'
+  name: 'LeafViewMenu'
   , props: {
     title: String
     , interactionHideDelay: {
@@ -55,7 +55,7 @@ export default {
 
 <style lang="sass" scoped>
 @import '@/styles/_variables.scss'
-.item-menu
+.leaf-menu
   position: relative
   width: 100%
 .primary, .secondary

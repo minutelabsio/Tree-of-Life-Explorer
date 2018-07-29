@@ -1,6 +1,7 @@
 // Helpers for https://www.marinespecies.org/rest
 // ---------------------------------------
 
+import Promise from 'bluebird'
 import axios from 'axios'
 import { setupCache } from 'axios-cache-adapter'
 
@@ -15,5 +16,5 @@ const worms = axios.create({
 })
 
 export function getById( id ){
-  return worms(`/AphiaRecordByAphiaID/${id}`).then( res => res.data )
+  return Promise.resolve( worms(`/AphiaRecordByAphiaID/${id}`) ).then( res => res.data )
 }

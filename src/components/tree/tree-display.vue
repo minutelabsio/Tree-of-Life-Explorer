@@ -1,6 +1,6 @@
 <template lang="pug">
 .tree
-  ChildMenu(:node="subtreeNode", :x="childMenuX", :y="childMenuY", @select="$emit('add-node', arguments[0])")
+  ChildMenu(:leaf="subtreeNode", :x="childMenuX", :y="childMenuY", @select="$emit('add-leaf', arguments[0])")
   //- .lvl(v-for="level in columns")
   //-   .col(v-for="col in level")
   //-     template(v-if="!col")
@@ -8,11 +8,11 @@
   //-     .tol-col(v-if="col")
   //-       .box {{ col.tree.lineage.length }}
   //-       TOLNodeCard(
-  //-         v-if="col.tree.node"
-  //-         , :node="col.tree.node"
+  //-         v-if="col.tree.leaf"
+  //-         , :leaf="col.tree.leaf"
   //-       )
   transition-group(name="tree")
-    .tol-node(
+    .tol-leaf(
       v-for="branch in branches"
       , :key="branch.key"
       , :style="{ transform: `translate3d(${branch.x-(0.5 * width)}px, ${branch.y+branch.extend}px, 0)`, width: width + 'px' }"
@@ -20,21 +20,22 @@
       Motion(:values="{ x2: branch.x, y2: branch.y, extend: branch.extend }", :spring="{ stiffness: 300, damping: 50, precision: 1 }")
         template(slot-scope="props")
           Connection(:from="[branch.px || props.x2, branch.py || props.y2]", :to="[props.x2, props.y2 + props.extend]")
-          Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="props.x2", :y="props.y2", @click="$emit('node-click', arguments[0])")
+          Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="props.x2", :y="props.y2", @click="$emit('leaf-click', arguments[0])")
 
-      template(v-if="branch.tree.node")
-        TOLNodeItem(
-          :node="branch.tree.node"
+      template(v-if="branch.tree.leaf")
+        TOLLeafView(
+          :leaf="branch.tree.leaf"
           , :style="{ width: width + 'px' }"
-          , @remove="$emit( 'remove', branch.tree.node )"
+          , @remove="$emit( 'remove', branch.tree.leaf )"
+          , @error="$emit( 'error', arguments[0] )"
           )
       template(v-if="!branch.hasSplit")
-        Tail(:node="branch.tree.node", :x="branch.x", :y="branch.y + 160", @click="openChildMenu")
+        Tail(:leaf="branch.tree.leaf", :x="branch.x", :y="branch.y + 160", @click="openChildMenu")
 </template>
 
 <script>
 import TOLNodeCard from '@/components/tol-node-card'
-import TOLNodeItem from '@/components/tol-node-item'
+import TOLLeafView from '@/components/tol-leaf-view'
 import Node from './node'
 import Tail from './tail'
 import Connection from './connection'
@@ -57,8 +58,8 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
     , y
     , px: opts.px
     , py: opts.py
-    , key: (tree.node ? tree.node.node_id : tree.lineage[0].node_id + '-' + level)
-    , extend: tree.node && tree.lineage.length ? 60 : 0
+    , key: (tree.leaf.node_id || tree.leaf) + '-' + level
+    , extend: tree.leaf && tree.lineage.length ? 60 : 0
     , isRoot: level === 0
     , hasSplit: !!tree.split
   })
@@ -72,7 +73,7 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
       tree.split.map( (subtree, idx) => {
         let col = subtree.nTips - 1
         let xpos = (col + colstart) * nodeAreaRadius + x
-        let ypos = y + branchHeight + (tree.node && tree.split ? cardHeight : 0)
+        let ypos = y + branchHeight + (tree.leaf && tree.split ? cardHeight : 0)
 
         colstart = 2 * col + colstart + 2
 
@@ -89,7 +90,7 @@ function appendToColumns( tree, columns, colOffset = 0, level = 0 ){
   let row = columns[ level ]
   row[ colIndex ] = {
     tree
-    , key: (tree.node ? tree.node.node_id : tree.lineage[0].node_id + level)
+    , key: (tree.leaf ? tree.leaf.node_id : tree.lineage[0].node_id + level)
     , isRoot: level === 0
     , hasSplit: !!tree.split
   }
@@ -136,7 +137,7 @@ export default {
     , Node
     , Tail
     , TOLNodeCard
-    , TOLNodeItem
+    , TOLLeafView
   }
   , created () {
     document.addEventListener('click', this.onDocumentClick)
@@ -163,10 +164,10 @@ export default {
     }
   }
   , methods: {
-    openChildMenu({ x, y, node }){
+    openChildMenu({ x, y, leaf }){
       this.childMenuX = x
       this.childMenuY = y
-      this.subtreeNode = node
+      this.subtreeNode = leaf
     }
     , onDocumentClick(){
       this.subtreeNode = null
@@ -207,7 +208,7 @@ export default {
     height: 100px;
   }
 }
-.tol-node {
+.tol-leaf {
   position: absolute;
   top: 0;
   left: 0;
