@@ -54,7 +54,7 @@ export default {
     transition: fill 0.15s linear
 
   &:hover rect
-    fill: $blue
+    fill: $purple
 
   &:hover text
     fill: $white

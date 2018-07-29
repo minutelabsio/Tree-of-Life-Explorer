@@ -1,5 +1,5 @@
 <template lang="pug">
-.item-menu(:class="{ active: active }")
+.item-menu(:class="{ active: active }", @mouseleave="onMouseLeave", @mouseenter="onMouseEnter")
   .toolbar.primary
     .toolbar-item.item-title
       .text {{ title | capitalize | truncate(24) }}
@@ -19,6 +19,10 @@ export default {
   name: 'NodeItemMenu'
   , props: {
     title: String
+    , interactionHideDelay: {
+      type: Number
+      , default: 3000
+    }
   }
   , data: () => ({
     active: false
@@ -32,6 +36,18 @@ export default {
     }
     , hide(){
       this.active = false
+    }
+    , startTimer(){
+      this.timer = setTimeout(() => this.hide(), this.interactionHideDelay)
+    }
+    , clearTimer(){
+      clearTimeout( this.timer )
+    }
+    , onMouseLeave( e ){
+      this.startTimer()
+    }
+    , onMouseEnter( e ){
+      this.clearTimer()
     }
   }
 }
