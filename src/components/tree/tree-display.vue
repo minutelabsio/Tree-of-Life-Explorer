@@ -1,6 +1,6 @@
 <template lang="pug">
 .tree
-  ChildMenu(:leaf="subtreeLeaf", :x="childMenuX", :y="childMenuY", @select="$emit('add-node', arguments[0])")
+  //- ChildMenu(:leaf="subtreeLeaf", :x="childMenuX", :y="childMenuY", @select="$emit('add-node', arguments[0])")
   //- .lvl(v-for="level in columns")
   //-   .col(v-for="col in level")
   //-     template(v-if="!col")
@@ -17,10 +17,10 @@
       , :key="branch.key"
       , :style="{ transform: `translate3d(${branch.x-(0.5 * width)}px, ${branch.y + branch.dy}px, 0)`, width: width + 'px' }"
       )
-      Motion(:values="{ x2: branch.x, y2: branch.y, dy: branch.dy }", :spring="{ stiffness: 300, damping: 60, precision: 1 }")
-        template(slot-scope="props")
-          Connection(:from="[branch.px || props.x2, (branch.py || props.y2) + branch.pdy]", :to="[props.x2, props.y2 + props.dy]", :padding="props.dy")
-          Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="props.x2", :y="props.y2", @click="$emit('leaf-click', arguments[0])")
+      //- Motion(:values="{ x2: branch.x, y2: branch.y, dy: branch.dy }", :spring="{ stiffness: 300, damping: 60, precision: 1 }")
+      //-   template(slot-scope="props")
+      Connection(:x1="branch.px || branch.x", :y1="(branch.py || branch.y) + branch.pdy", :x2="branch.x", :y2="branch.y + branch.dy", :padding="branch.dy")
+      Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="branch.x", :y="branch.y", @click="$emit('leaf-click', arguments[0])")
 
       template(v-if="branch.tree.leaf && branch.tree.leaf.txnInfo")
         TOLLeafView(
@@ -28,11 +28,12 @@
           , :style="{ width: width + 'px' }"
           , @remove="$emit( 'remove', branch.tree.leaf )"
           , @error="$emit( 'error', arguments[0] )"
+          , @add-node="$emit( 'add-node', arguments[0] )"
           )
       template(v-if="branch.tree.leaf && !branch.tree.leaf.txnInfo")
         .simple.has-text-centered {{ branch.tree.leaf.node_id }}
-      template(v-if="!branch.hasSplit")
-        Tail(:leaf="branch.tree.leaf", :x="branch.x", :y="branch.y + 160", @click="openChildMenu")
+      //- template(v-if="!branch.hasSplit")
+      //-   Tail(:leaf="branch.tree.leaf", :x="branch.x", :y="branch.y + 160", @click="openChildMenu")
 </template>
 
 <script>
@@ -217,7 +218,13 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  transition: all 0.7s ease-out;
+  transition: all 0.7s ease-in-out;
+
+  &:hover,
+  &:active,
+  &:focus {
+    z-index: 1;
+  }
 
   .card {
     position: absolute;

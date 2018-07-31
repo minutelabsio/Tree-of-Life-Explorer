@@ -4,8 +4,16 @@
     .card-header
       LeafViewMenu(:title='heading')
         b-tooltip(label="See children", type="is-dark")
-          a.icon-button.control(@click="$emit('children')")
-            b-icon(icon="file-tree")
+          b-dropdown(@active-change="getSubtree()")
+            a.icon-button.control(slot="trigger")
+              b-icon(icon="file-tree")
+            b-loading(:is-full-page="false", :active="loading")
+            b-dropdown-item.heading.has-text-info Children
+            hr.dropdown-divider
+            b-dropdown-item(v-if="children && children.length", v-for="child in children", :key="child.node_id", @click="$emit('add-node', child)")
+              | {{ child.taxon ? child.taxon.name : child.node_id }}
+            b-dropdown-item(v-if="!loading && children && !children.length")
+              | None
         b-tooltip(label="Remove from tree", type="is-dark")
           a.remove-button.control(@click="$emit('remove')")
             b-icon(icon="close-network")
@@ -14,6 +22,7 @@
 <script>
 import LeafViewMenu from './leaf-view-menu'
 import { getLeaf } from '@/lib/taxonomy'
+import { getSubtree } from '@/lib/otol'
 
 const DebugModal = {
   props: ['leaf']
@@ -32,6 +41,8 @@ export default {
     , expanded: false
     , leafData: null
     , txnInfo: null
+    , children: null
+    , loading: true
   })
   , watch: {
     leaf: {
@@ -74,6 +85,23 @@ export default {
         , hasModalCard: false
       })
     }
+    , getSubtree(){
+      if ( this.children ){ return }
+      this.children = []
+      this.loading = true
+
+      if ( !this.leaf ){
+        this.active = false
+        return
+      }
+
+      this.active = true
+
+      getSubtree( this.leaf.node_id ).then( children => {
+        this.children = this.children.concat(children)
+        this.loading = false
+      }).catch( e => console.error(e) )
+    }
   }
 }
 </script>
@@ -84,7 +112,8 @@ export default {
   max-width: 400px
 .icon-button
   color: $white
-  &:hover
+  &:hover,
+  .dropdown.is-active &
     color: lighten($blue, 10)
 .remove-button
   color: $white

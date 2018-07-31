@@ -1,4 +1,6 @@
 <script>
+import VueMixinTween from 'vue-mixin-tween'
+import TWEEN from '@tweenjs/tween.js'
 export default {
   name: 'Node'
   // , functional: true
@@ -7,6 +9,10 @@ export default {
   , data: () => ({
 
   })
+  , mixins: [
+    VueMixinTween('x', 700, TWEEN.Easing.Quadratic.InOut)
+    , VueMixinTween('y', 700, TWEEN.Easing.Quadratic.InOut)
+  ]
   , beforeDestroy(){
     this.node.off( 'click' )
     this.node.remove()
@@ -25,7 +31,7 @@ export default {
     })
   }
   , render( h ){
-    this.node.move( this.x, this.y ).front()
+    this.node.move( this.xTween, this.yTween ).front()
     this.label.plain( `${this.tree.lineage.length}` )
     return this.node
   }
