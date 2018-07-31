@@ -21,7 +21,7 @@ const DebugModal = {
 }
 
 export default {
-  name: 'TOLNodeItem'
+  name: 'TOLLeafView'
   , props: ['leaf']
   , components: {
     LeafViewMenu
@@ -36,13 +36,14 @@ export default {
   , watch: {
     leaf: {
       handler( leaf ){
-        if ( typeof leaf === 'object' ){
+        if ( !leaf ){ return }
+        if ( leaf.txnInfo ){
           this.leafData = leaf
           this.txnInfo = leaf.txnInfo
           return
         }
 
-        getLeaf( leaf ).then( leaf => {
+        getLeaf( leaf.node_id ).then( leaf => {
           this.leafData = leaf
           this.txnInfo = leaf.txnInfo
         }).tapCatch( err => this.$snackbar.open({

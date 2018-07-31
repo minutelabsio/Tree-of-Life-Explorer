@@ -2,6 +2,9 @@ import Promise from 'bluebird'
 import _castArray from 'lodash/castArray'
 import _startsWith from 'lodash/startsWith'
 import _find from 'lodash/find'
+import _sortBy from 'lodash/sortBy'
+import _takeWhile from 'lodash/takeWhile'
+import _every from 'lodash/every'
 import _memoize from 'lodash/memoize'
 import axios from 'axios'
 
@@ -9,6 +12,19 @@ const otol = axios.create({
   baseURL: 'https://api.opentreeoflife.org/v3'
   , timeout: 5000
 })
+
+function getCommonLineage( nodes ){
+  let lineages = nodes.map( n => [].concat(n.lineage) )
+  lineages.forEach( l => l.reverse() )
+  lineages = _sortBy( lineages, l => l.length )
+  let longest = lineages.pop()
+  let common = _takeWhile( longest, (p, idx) =>
+    _every(lineages, l => l[idx] && l[idx].node_id === p.node_id)
+  )
+  common.pop() // mrca
+  common.reverse()
+  return common
+}
 
 // Get node info
 // id can be either node_id or ott_id. It will auto detect
@@ -26,6 +42,8 @@ export const getNode = _memoize(function( id ){
     .then( res => res.data )
 })
 
+// Get most recent common ancestor of nodes by id or mrca id string
+// ---------------------------------------
 export function getMRCA( idOrArray ){
   if ( typeof idOrArray === 'string' ){
     idOrArray = idOrArray.match(/(ott[\d]+)/g)
@@ -33,7 +51,6 @@ export function getMRCA( idOrArray ){
 
   var data = {
     node_ids: idOrArray
-    , nearest_taxon: true
   }
   return Promise.resolve( otol.post('/tree_of_life/mrca', data) )
     .then( res => res.data.mrca )
@@ -41,10 +58,14 @@ export function getMRCA( idOrArray ){
       if (!data.taxon){
         return Promise.map( idOrArray, getNode )
           .then( nodes => {
+            let lineage = getCommonLineage( nodes )
             let nodelist = nodes.map( n => n.taxon.name ).join(' and ')
+
             data.taxon = {
               name: `(MRCA of ${nodelist})`
             }
+
+            data.lineage = lineage
 
             return data
           })

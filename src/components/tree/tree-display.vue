@@ -1,6 +1,6 @@
 <template lang="pug">
 .tree
-  ChildMenu(:leaf="subtreeNode", :x="childMenuX", :y="childMenuY", @select="$emit('add-leaf', arguments[0])")
+  ChildMenu(:leaf="subtreeLeaf", :x="childMenuX", :y="childMenuY", @select="$emit('add-node', arguments[0])")
   //- .lvl(v-for="level in columns")
   //-   .col(v-for="col in level")
   //-     template(v-if="!col")
@@ -15,20 +15,22 @@
     .tol-leaf(
       v-for="branch in branches"
       , :key="branch.key"
-      , :style="{ transform: `translate3d(${branch.x-(0.5 * width)}px, ${branch.y+branch.extend}px, 0)`, width: width + 'px' }"
+      , :style="{ transform: `translate3d(${branch.x-(0.5 * width)}px, ${branch.y + branch.dy}px, 0)`, width: width + 'px' }"
       )
-      Motion(:values="{ x2: branch.x, y2: branch.y, extend: branch.extend }", :spring="{ stiffness: 300, damping: 50, precision: 1 }")
+      Motion(:values="{ x2: branch.x, y2: branch.y, dy: branch.dy }", :spring="{ stiffness: 300, damping: 60, precision: 1 }")
         template(slot-scope="props")
-          Connection(:from="[branch.px || props.x2, branch.py || props.y2]", :to="[props.x2, props.y2 + props.extend]")
+          Connection(:from="[branch.px || props.x2, (branch.py || props.y2) + branch.pdy]", :to="[props.x2, props.y2 + props.dy]", :padding="props.dy")
           Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="props.x2", :y="props.y2", @click="$emit('leaf-click', arguments[0])")
 
-      template(v-if="branch.tree.leaf")
+      template(v-if="branch.tree.leaf && branch.tree.leaf.txnInfo")
         TOLLeafView(
           :leaf="branch.tree.leaf"
           , :style="{ width: width + 'px' }"
           , @remove="$emit( 'remove', branch.tree.leaf )"
           , @error="$emit( 'error', arguments[0] )"
           )
+      template(v-if="branch.tree.leaf && !branch.tree.leaf.txnInfo")
+        .simple.has-text-centered {{ branch.tree.leaf.node_id }}
       template(v-if="!branch.hasSplit")
         Tail(:leaf="branch.tree.leaf", :x="branch.x", :y="branch.y + 160", @click="openChildMenu")
 </template>
@@ -42,7 +44,7 @@ import Connection from './connection'
 import ChildMenu from './child-menu'
 import _flatten from 'lodash/flatten'
 
-const cardHeight = 80
+const cardHeight = 50
 
 function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
 
@@ -51,6 +53,7 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
   let colstart = -(count - 1)
   let branchHeight = opts.branchHeight
   let branches = []
+  let height = tree.lineage.length ? cardHeight : 0
 
   branches.push({
     tree
@@ -58,13 +61,14 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
     , y
     , px: opts.px
     , py: opts.py
-    , key: (tree.leaf.node_id || tree.leaf) + '-' + level
-    , extend: tree.leaf && tree.lineage.length ? 60 : 0
+    , pdy: opts.pdy || 0
+    , key: (tree.leaf.node_id || tree.leaf)
+    , dy: height
     , isRoot: level === 0
-    , hasSplit: !!tree.split
+    , hasSplit: !!tree.split.length
   })
 
-  if (!tree.split){
+  if ( !tree.split.length ){
     return branches
   }
 
@@ -73,11 +77,11 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
       tree.split.map( (subtree, idx) => {
         let col = subtree.nTips - 1
         let xpos = (col + colstart) * nodeAreaRadius + x
-        let ypos = y + branchHeight + (tree.leaf && tree.split ? cardHeight : 0)
+        let ypos = y + branchHeight + height + cardHeight
 
         colstart = 2 * col + colstart + 2
 
-        return getBranches( subtree, {...opts, px: x, py: y}, xpos, ypos, level + 1 )
+        return getBranches( subtree, {...opts, px: x, py: y, pdy: height}, xpos, ypos, level + 1 )
       })
     )
   )
@@ -127,7 +131,7 @@ export default {
     , 'branchHeight': Number
   }
   , data: () => ({
-    subtreeNode: null
+    subtreeLeaf: null
     , childMenuX: 0
     , childMenuY: 0
   })
@@ -167,16 +171,17 @@ export default {
     openChildMenu({ x, y, leaf }){
       this.childMenuX = x
       this.childMenuY = y
-      this.subtreeNode = leaf
+      this.subtreeLeaf = leaf
     }
     , onDocumentClick(){
-      this.subtreeNode = null
+      this.subtreeLeaf = null
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/_variables.scss';
 .child-menu {
   position: absolute;
   top: 0;
@@ -226,5 +231,8 @@ export default {
 .tree-enter, .tree-leave-to {
   opacity: 0;
   top: -80px;
+}
+.simple {
+  background: $white;
 }
 </style>

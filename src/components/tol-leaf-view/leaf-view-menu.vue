@@ -2,7 +2,8 @@
 .leaf-menu(:class="{ active: active }", @mouseleave="onMouseLeave", @mouseenter="onMouseEnter")
   .toolbar.primary
     .toolbar-item.item-title
-      .text {{ title | capitalize | truncate(24) }}
+      b-tooltip.text(:label="title", type="is-dark", :active="title.length > 24")
+        | {{ title | capitalize | truncate(24) }}
     .toolbar-right
       a.control(@click="show()")
         b-icon(icon="menu-up")

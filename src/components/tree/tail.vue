@@ -3,7 +3,7 @@ export default {
   name: 'Node'
   // , functional: true
   , inject: [ 'svg' ]
-  , props: [ 'node', 'x', 'y' ]
+  , props: [ 'leaf', 'x', 'y' ]
   , data: () => ({
 
   })
@@ -21,7 +21,7 @@ export default {
 
     this.tail.on( 'click', (e) => {
       e.stopPropagation()
-      this.$emit( 'click', { tail: this.tail, node: this.node, x: this.x, y: this.y } )
+      this.$emit( 'click', { tail: this.tail, leaf: this.leaf, x: this.x, y: this.y } )
     })
   }
   , render( h ){

@@ -17,7 +17,7 @@ import { getSubtree } from '@/lib/otol'
 export default {
   name: 'ChildMenu'
   , props: {
-    'node': Object
+    'leaf': Object
     , 'x': Number
     , 'y': Number
   }
@@ -27,18 +27,18 @@ export default {
     , active: false
   })
   , watch: {
-    node(){
+    leaf(){
       this.children = []
       this.loading = true
 
-      if ( !this.node ){
+      if ( !this.leaf ){
         this.active = false
         return
       }
 
       this.active = true
 
-      getSubtree( this.node.node_id ).then( children => {
+      getSubtree( this.leaf.node_id ).then( children => {
         this.children = this.children.concat(children)
         this.loading = false
       }).catch( e => console.error(e) )

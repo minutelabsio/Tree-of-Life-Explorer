@@ -38,7 +38,7 @@ export default {
     leafContext: null
     , cardWidth: 260
     , padding: 10
-    , branchHeight: 100
+    , branchHeight: 80
     , topPadding: 60
   })
   , computed: {

@@ -1,9 +1,8 @@
 <script>
-const spacing = 40
 export default {
   name: 'Connection'
   , inject: [ 'svg' ]
-  , props: [ 'from', 'to' ]
+  , props: [ 'from', 'to', 'padding' ]
   , data: () => ({
   })
   , beforeDestroy(){
@@ -19,6 +18,7 @@ export default {
   }
   , methods: {
     plot(){
+      let spacing = this.padding || 40
       let x1 = this.from[0]
       let y1 = this.from[1]
       let x2 = this.to[0]
