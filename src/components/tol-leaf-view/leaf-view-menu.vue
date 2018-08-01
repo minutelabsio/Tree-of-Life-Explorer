@@ -2,16 +2,19 @@
 .leaf-menu(:class="{ active: active }", @mouseleave="onMouseLeave", @mouseenter="onMouseEnter")
   .toolbar.primary
     .toolbar-item.item-title
-      b-tooltip.text(:label="title", type="is-dark", :active="title.length > 24")
-        | {{ title | capitalize | truncate(24) }}
+      .toolbar-text.names
+        b-tooltip.common-name(v-if="commonName", :label="commonName | titleCase", type="is-dark", :active="commonName.length > truncateLength")
+          | {{ commonName | titleCase | truncate(truncateLength) }}
+        b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > truncateLength")
+          | {{ scientificName | titleCase | truncate(truncateLength) }}
     .toolbar-right
-      a.control(@click="show()")
+      a.toolbar-control(@click="show()")
         b-icon(icon="menu-up")
   .toolbar.secondary
     .toolbar-item
       slot
     .toolbar-right
-      a.control(@click="hide()")
+      a.toolbar-control(@click="hide()")
         b-icon(icon="close")
 </template>
 
@@ -19,7 +22,12 @@
 export default {
   name: 'LeafViewMenu'
   , props: {
-    title: String
+    commonName: String
+    , scientificName: String
+    , truncateLength: {
+      type: Number
+      , default: 10
+    }
     , interactionHideDelay: {
       type: Number
       , default: 3000
@@ -56,10 +64,12 @@ export default {
 
 <style lang="sass" scoped>
 @import '@/styles/_variables.scss'
+$menuHeight: 74px
 .leaf-menu
   position: relative
   width: 100%
 .primary, .secondary
+  height: $menuHeight
   border: 1px solid $grey-light
   border-radius: 3px
   &:hover, .active &
@@ -67,29 +77,45 @@ export default {
   background: $white
   transition: transform .3s ease-in-out
 .primary
-  transform: rotateX(0deg) translateZ(20px)
+  transform: rotateX(0deg) translateZ($menuHeight/2)
   .active &
-    transform: rotateX(90deg) translateZ(20px)
+    transform: rotateX(90deg) translateZ($menuHeight/2)
 .secondary
   background: $grey-darker
   position: absolute
   top: 0
   left: 0
-  transform: rotateX(-90deg) translateZ(20px)
+  transform: rotateX(-90deg) translateZ($menuHeight/2)
   .active &
-    transform: rotateX(0deg) translateZ(20px)
+    transform: rotateX(0deg) translateZ($menuHeight/2)
 .close-button
   color: $grey-light
   transition: color .2s linear
   &:hover
     color: $red
-.control
+.toolbar-control
   color: $grey
   &:hover
     color: $primary
 
-.secondary .control
+.secondary .toolbar-control
   color: $grey-light
   &:hover
     color: $white
+
+.toolbar-text.names
+  padding: 0 0 0 1em
+  height: 100%
+  display: flex
+  flex-direction: column
+  flex-wrap: nowrap
+  justify-content: center
+  .common-name,
+  .scientific-name
+    display: block
+  .common-name
+    font-weight: 500
+  .scientific-name
+    font-style: italic
+    color: $grey
 </style>

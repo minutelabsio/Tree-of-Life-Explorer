@@ -12,20 +12,26 @@
   flex-wrap: nowrap;
   align-items: stretch;
 
-  .toolbar-item {
+  > .toolbar-item {
     display: flex;
     flex-grow: 1;
     margin: 0;
     padding: 0;
   }
 
-  .text {
-    align-self: center;
-    padding: 0 1em;
-  }
-
-  .control {
+  > .toolbar-item,
+  > .toolbar-right,
+  > .toolbar-left {
     display: flex;
-    padding: 0.75rem;
+    align-items: center;
+
+    .toolbar-text {
+      align-self: center;
+      padding: 0 1em;
+    }
+    .toolbar-control {
+      display: flex;
+      padding: 0.75rem;
+    }
   }
 }

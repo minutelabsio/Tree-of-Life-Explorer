@@ -25,13 +25,14 @@
       template(v-if="branch.tree.leaf && branch.tree.leaf.txnInfo")
         TOLLeafView(
           :leaf="branch.tree.leaf"
-          , :style="{ width: width + 'px' }"
+          , :truncate-length="truncateLength"
           , @remove="$emit( 'remove', branch.tree.leaf )"
           , @error="$emit( 'error', arguments[0] )"
           , @add-node="$emit( 'add-node', arguments[0] )"
           )
       template(v-if="branch.tree.leaf && !branch.tree.leaf.txnInfo")
-        .simple.has-text-centered {{ branch.tree.leaf.node_id }}
+        TOLMRCAView(:leaf="branch.tree.leaf")
+        //- .simple.has-text-centered {{ branch.tree.leaf.node_id }}
       //- template(v-if="!branch.hasSplit")
       //-   Tail(:leaf="branch.tree.leaf", :x="branch.x", :y="branch.y + 160", @click="openChildMenu")
 </template>
@@ -39,6 +40,7 @@
 <script>
 import TOLNodeCard from '@/components/tol-node-card'
 import TOLLeafView from '@/components/tol-leaf-view'
+import TOLMRCAView from '@/components/tol-mrca-view'
 import Node from './node'
 import Tail from './tail'
 import Connection from './connection'
@@ -143,6 +145,7 @@ export default {
     , Tail
     , TOLNodeCard
     , TOLLeafView
+    , TOLMRCAView
   }
   , created () {
     document.addEventListener('click', this.onDocumentClick)
@@ -166,6 +169,10 @@ export default {
       let tree = this.tree
       let cols = getColumns( tree )
       return cols
+    }
+
+    , truncateLength(){
+      return this.width / 14 | 0
     }
   }
   , methods: {

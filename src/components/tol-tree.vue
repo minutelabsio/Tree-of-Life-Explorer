@@ -28,7 +28,7 @@ import { buildReducedTree } from '@/lib/tree-utils'
 
 export default {
   name: 'TOLTree'
-  , props: [ 'leafs' ]
+  , props: [ 'leafs', 'cardWidth' ]
   , components: {
     Tree
     , TreeCanvas
@@ -36,7 +36,6 @@ export default {
   }
   , data: () => ({
     leafContext: null
-    , cardWidth: 260
     , padding: 10
     , branchHeight: 80
     , topPadding: 60

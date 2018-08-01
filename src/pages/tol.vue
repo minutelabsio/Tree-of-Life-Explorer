@@ -1,10 +1,14 @@
 <template lang="pug">
 .app
-  nav.top-nav.box.is-radiusless
-    TOLCommonNameSearch.search-box(@select="onSelect")
+  nav.top-nav.box.is-radiusless.toolbar
+    .toolbar-item
+      TOLCommonNameSearch.search-box(@select="onSelect")
+    .toolbar-right
+      b-switch(v-model="wideMode")
+        | Wide Mode
   .wrapper
     .inner
-      TOLTree(:leafs="leafs", @remove="onRemoveLeaf", @add-node="addNode", @error="showError")
+      TOLTree(:leafs="leafs", :card-width="cardWidth", @remove="onRemoveLeaf", @add-node="addNode", @error="showError")
 </template>
 
 <script>
@@ -31,7 +35,13 @@ export default {
   }
   , data: () => ({
     leafs: []
+    , wideMode: false
   })
+  , computed: {
+    cardWidth(){
+      return this.wideMode ? 260 : 160
+    }
+  }
   , watch: {
     ids: {
       handler(){
@@ -94,4 +104,8 @@ export default {
     position: relative
   .tree
     margin: auto
+.top-nav
+  display: flex
+  .right
+
 </style>

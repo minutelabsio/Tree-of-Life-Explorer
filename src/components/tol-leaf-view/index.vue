@@ -2,10 +2,10 @@
 .item
   .card.is-shadowless
     .card-header
-      LeafViewMenu(:title='heading')
+      LeafViewMenu(:common-name="commonName", :scientific-name="scientificName", :truncate-length="truncateLength")
         b-tooltip(label="See children", type="is-dark")
           b-dropdown(@active-change="getSubtree()")
-            a.icon-button.control(slot="trigger")
+            a.icon-button.toolbar-control(slot="trigger")
               b-icon(icon="file-tree")
             b-loading(:is-full-page="false", :active="loading")
             b-dropdown-item.heading.has-text-info Children
@@ -15,7 +15,7 @@
             b-dropdown-item(v-if="!loading && children && !children.length")
               | None
         b-tooltip(label="Remove from tree", type="is-dark")
-          a.remove-button.control(@click="$emit('remove')")
+          a.remove-button.toolbar-control(@click="$emit('remove')")
             b-icon(icon="close-network")
 </template>
 
@@ -31,7 +31,7 @@ const DebugModal = {
 
 export default {
   name: 'TOLLeafView'
-  , props: ['leaf']
+  , props: ['leaf', 'truncateLength']
   , components: {
     LeafViewMenu
   }
@@ -67,10 +67,13 @@ export default {
     }
   }
   , computed: {
-    heading(){
+    commonName(){
       if ( !this.txnInfo ){ return '' }
-      return this.txnInfo.vernacularNameList ||
-        this.txnInfo.canonicalName ||
+      return this.txnInfo.vernacularNameList
+    }
+    , scientificName(){
+      if ( !this.txnInfo ){ return '' }
+      return this.txnInfo.canonicalName ||
         this.leafData.taxon.name
     }
   }
@@ -108,8 +111,6 @@ export default {
 
 <style scoped lang="sass">
 @import '@/styles/_variables.scss'
-.item
-  max-width: 400px
 .icon-button
   color: $white
   &:hover,
