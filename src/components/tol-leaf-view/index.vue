@@ -2,7 +2,7 @@
 .item
   .card.is-shadowless
     .card-header
-      LeafViewMenu(:common-name="commonName", :scientific-name="scientificName", :truncate-length="truncateLength")
+      LeafViewMenu(:common-name="commonName", :scientific-name="scientificName", :truncate-length="truncateLength", :image="txnInfo.wikidataImages[0]")
         b-tooltip(label="See children", type="is-dark")
           b-dropdown(@active-change="getSubtree()")
             a.icon-button.toolbar-control(slot="trigger")

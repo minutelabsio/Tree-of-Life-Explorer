@@ -1,6 +1,7 @@
 <template lang="pug">
 .leaf-menu(:class="{ active: active }", @mouseleave="onMouseLeave", @mouseenter="onMouseEnter")
   .toolbar.primary
+    .background-image(:style="{backgroundImage: backgroundStyle}")
     .toolbar-item.item-title
       .toolbar-text.names
         b-tooltip.common-name(v-if="commonName", :label="commonName | titleCase", type="is-dark", :active="commonName.length > truncateLength")
@@ -24,6 +25,7 @@ export default {
   , props: {
     commonName: String
     , scientificName: String
+    , image: String
     , truncateLength: {
       type: Number
       , default: 10
@@ -36,6 +38,12 @@ export default {
   , data: () => ({
     active: false
   })
+  , computed: {
+    backgroundStyle(){
+      if ( !this.image ){ return '' }
+      return `url(${this.image})`
+    }
+  }
   , components: {
 
   }
@@ -68,6 +76,17 @@ $menuHeight: 74px
 .leaf-menu
   position: relative
   width: 100%
+.background-image
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  z-index: -1
+  background-position: center top
+  background-size: cover
+  background-repeat: no-repeat
+  filter: saturate(0.3) opacity(0.4)
 .primary, .secondary
   height: $menuHeight
   border: 1px solid $grey-light
@@ -113,9 +132,12 @@ $menuHeight: 74px
   .common-name,
   .scientific-name
     display: block
+    text-shadow: 0 0 4px rgb(255,255,255)
+    &:after
+      text-shadow: none
   .common-name
     font-weight: 500
   .scientific-name
     font-style: italic
-    color: $grey
+    color: $grey-darker
 </style>

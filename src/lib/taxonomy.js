@@ -2,6 +2,7 @@ import Promise from 'bluebird'
 import * as otol from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 import * as worms from '@/lib/worms'
+import * as wikidata from '@/lib/wikidata'
 
 const gbifMapping = {
   'key': false
@@ -64,6 +65,13 @@ const wormsMapping = {
   , 'modified': false
 }
 
+function mapWikidataImages( data ){
+  return data.reduce( (output, entry) => {
+    output.wikidataImages.push(entry.pic)
+    return output
+  }, { wikidataImages: [] })
+}
+
 export function getMapping( data = {}, mapping ){
   return Object.keys( mapping ).reduce( (obj, key) => {
     let m = mapping[ key ]
@@ -90,6 +98,7 @@ export function getTaxonomyInfo( node, mapping ){
   var types = {
     'gbif': ( id ) => gbif.getById( id ).then( data => getMapping( data, gbifMapping ) )
     , 'worms': ( id ) => worms.getById( id ).then( data => getMapping( data, wormsMapping ) )
+    , 'ncbi': ( id ) => wikidata.findByNcbiId( id ).then( data => mapWikidataImages(data) )
   }
 
   return Promise.map( Object.keys(types), (type) => {
