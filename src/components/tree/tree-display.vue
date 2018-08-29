@@ -56,7 +56,7 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
   let colstart = -(count - 1)
   let branchHeight = opts.branchHeight
   let branches = []
-  let height = tree.lineage.length ? cardHeight : 0
+  let height = cardHeight // tree.lineage.length ? cardHeight : 0
 
   branches.push({
     tree
@@ -172,7 +172,7 @@ export default {
     }
 
     , truncateLength(){
-      return this.width / 14 | 0
+      return this.width / 12 | 0
     }
   }
   , methods: {

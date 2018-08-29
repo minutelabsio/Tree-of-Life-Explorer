@@ -8,14 +8,14 @@
           | {{ commonName | titleCase | truncate(truncateLength) }}
         b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > truncateLength")
           | {{ scientificName | titleCase | truncate(truncateLength) }}
-    .toolbar-right.menu-button-container
-      a.toolbar-control(@click="show()")
+    a.toolbar-right.menu-button-container(@click="show()")
+      .toolbar-control
         b-icon(icon="arrow-up-bold-circle")
   .toolbar.secondary
     .toolbar-item
       slot
-    .toolbar-right.menu-button-container
-      a.toolbar-control(@click="hide()")
+    a.toolbar-right.menu-button-container(@click="hide()")
+      .toolbar-control
         b-icon(icon="close-circle")
 </template>
 
@@ -73,6 +73,7 @@ export default {
 <style lang="sass" scoped>
 @import '@/styles/_variables.scss'
 $menuHeight: 74px
+$menuBackgroundColor: $blue
 .leaf-menu
   position: relative
   width: 100%
@@ -80,7 +81,7 @@ $menuHeight: 74px
   position: absolute
   top: 0
   left: 0
-  right: 48px
+  right: 34px
   bottom: 0
   z-index: -1
   background-position: center top
@@ -110,14 +111,15 @@ $menuHeight: 74px
     transform: rotateX(0deg) translateZ($menuHeight/2)
 .menu-button-container
   transition: background 0.15s ease-in-out
-  background: darken($purple, 8)
-  box-shadow: inset 1px 0px 0px 0px darken($purple, 20)
+  background: darken($menuBackgroundColor, 8)
+  box-shadow: inset 1px 0px 0px 0px darken($menuBackgroundColor, 20)
   &:hover
-    background: darken($purple, 4)
-
+    background: darken($menuBackgroundColor, 4)
+  .toolbar-control
+    padding: 5px;
   .icon
-    color: darken($purple, 30)
-    text-shadow: 0.5px 0.5px 1px lighten($purple, 20)
+    color: darken($menuBackgroundColor, 30)
+    text-shadow: 0.5px 0.5px 1px lighten($menuBackgroundColor, 20)
 
 .toolbar-control
   color: $white-ter
