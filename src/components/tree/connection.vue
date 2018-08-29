@@ -48,5 +48,5 @@ export default {
 .svg-connection
   fill: none
   stroke-width: 2
-  stroke: $grey-light
+  stroke: desaturate(lighten($blue, 20), 50)
 </style>

@@ -43,7 +43,7 @@ export default {
 .svg-node
   cursor: pointer
   rect
-    fill: $grey
+    fill: desaturate(lighten($blue, 20), 50)
     transition: all 0.15s linear
 
   // circle
@@ -60,7 +60,7 @@ export default {
     transition: fill 0.15s linear
 
   &:hover rect
-    fill: $purple
+    fill: $blue
 
   &:hover text
     fill: $white

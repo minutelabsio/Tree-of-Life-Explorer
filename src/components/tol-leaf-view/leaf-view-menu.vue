@@ -10,13 +10,13 @@
           | {{ scientificName | titleCase | truncate(truncateLength) }}
     a.toolbar-right.menu-button-container(@click="show()")
       .toolbar-control
-        b-icon(icon="arrow-up-bold-circle")
+        b-icon(icon="menu-up")
   .toolbar.secondary
     .toolbar-item
       slot
     a.toolbar-right.menu-button-container(@click="hide()")
       .toolbar-control
-        b-icon(icon="close-circle")
+        b-icon(icon="menu-down")
 </template>
 
 <script>
