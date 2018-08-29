@@ -8,15 +8,15 @@
           | {{ commonName | titleCase | truncate(truncateLength) }}
         b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > truncateLength")
           | {{ scientificName | titleCase | truncate(truncateLength) }}
-    .toolbar-right
+    .toolbar-right.menu-button-container
       a.toolbar-control(@click="show()")
-        b-icon(icon="menu-up")
+        b-icon(icon="arrow-up-bold-circle")
   .toolbar.secondary
     .toolbar-item
       slot
-    .toolbar-right
+    .toolbar-right.menu-button-container
       a.toolbar-control(@click="hide()")
-        b-icon(icon="close")
+        b-icon(icon="close-circle")
 </template>
 
 <script>
@@ -80,13 +80,13 @@ $menuHeight: 74px
   position: absolute
   top: 0
   left: 0
-  right: 0
+  right: 48px
   bottom: 0
   z-index: -1
   background-position: center top
   background-size: cover
   background-repeat: no-repeat
-  filter: saturate(0.3) opacity(0.4)
+  filter: saturate(0.8) brightness(0.65)
 .primary, .secondary
   height: $menuHeight
   border: 1px solid $grey-light
@@ -96,6 +96,7 @@ $menuHeight: 74px
   background: $white
   transition: transform .3s ease-in-out
 .primary
+  background: $grey-darker
   transform: rotateX(0deg) translateZ($menuHeight/2)
   .active &
     transform: rotateX(90deg) translateZ($menuHeight/2)
@@ -107,21 +108,25 @@ $menuHeight: 74px
   transform: rotateX(-90deg) translateZ($menuHeight/2)
   .active &
     transform: rotateX(0deg) translateZ($menuHeight/2)
-.close-button
-  color: $grey-light
-  transition: color .2s linear
+.menu-button-container
+  transition: background 0.15s ease-in-out
+  background: darken($purple, 8)
+  box-shadow: inset 1px 0px 0px 0px darken($purple, 20)
   &:hover
-    color: $red
-.toolbar-control
-  color: $grey
-  &:hover
-    color: $primary
+    background: darken($purple, 4)
 
+  .icon
+    color: darken($purple, 30)
+    text-shadow: 0.5px 0.5px 1px lighten($purple, 20)
+
+.toolbar-control
+  color: $white-ter
+  // &:hover
+  //   color: $primary
 .secondary .toolbar-control
   color: $grey-light
   &:hover
     color: $white
-
 .toolbar-text.names
   padding: 0 0 0 1em
   height: 100%
@@ -132,12 +137,12 @@ $menuHeight: 74px
   .common-name,
   .scientific-name
     display: block
-    text-shadow: 0 0 4px rgb(255,255,255)
+    color: $white-ter
+    text-shadow: 0 0 6px $black-bis
     &:after
       text-shadow: none
   .common-name
     font-weight: 500
   .scientific-name
     font-style: italic
-    color: $grey-darker
 </style>
