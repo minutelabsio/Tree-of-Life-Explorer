@@ -16,7 +16,7 @@ const wikidata = axios.create({
   , headers: {
     'Accept': 'application/sparql-results+json'
   }
-  , timeout: 5000
+  , timeout: 10000
   , adapter: cache.adapter
 })
 
@@ -32,14 +32,72 @@ wikidata.interceptors.response.use(function (response) {
   return Promise.reject(error)
 })
 
-export function findByNcbiId( ncbiId ){
+export function findByNcbiId( ncbiId, { limit } = {} ){
 
   const sparqlQuery = `SELECT ?item ?itemLabel ?pic WHERE {
     ?item wdt:P685 "${ncbiId}".
     ?item wdt:P18 ?pic.
     SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
   }
-  LIMIT 10`
+  LIMIT ${limit || 10}`
+
+  return Promise.resolve( wikidata('sparql?query=' + encodeURIComponent( sparqlQuery )) )
+    .then( res => res.data )
+}
+
+export function findByScientificName( name, { limit } = {} ){
+
+  const sparqlQuery = `SELECT ?item ?itemLabel ?pic WHERE {
+    ?item wdt:P225 "${name}".
+    ?item wdt:P18 ?pic.
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+  }
+  LIMIT ${limit || 10}`
+
+  return Promise.resolve( wikidata('sparql?query=' + encodeURIComponent( sparqlQuery )) )
+    .then( res => res.data )
+}
+
+export function findByCommonName( q, { limit } = {} ){
+
+  if ( !q ){
+    return Promise.resolve([])
+  }
+
+  const sparqlQuery = `SELECT DISTINCT ?item ?commonName ?scientificName WHERE {
+    ?item wdt:P1843 ?commonName FILTER regex(?commonName, "${q}", "i").
+    ?item wdt:P105 wd:Q7432.
+    ?item wdt:P225 ?scientificName.
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+  }
+  LIMIT ${limit || 10}`
+
+  return Promise.resolve( wikidata('sparql?query=' + encodeURIComponent( sparqlQuery )) )
+    .then( res => res.data )
+}
+
+export function findBy( { ncbiId, name }, { limit } = {} ){
+
+  if ( !ncbiId && !name ){
+    return Promise.resolve([])
+  }
+
+  if ( !name ){
+    return findByNcbiId( ncbiId )
+  }
+
+  if ( !ncbiId ){
+    return findByScientificName( name )
+  }
+
+  const sparqlQuery = `SELECT ?item ?itemLabel ?pic WHERE {
+    { ?item wdt:P685 "${ncbiId}". }
+    UNION
+    { ?item wdt:P225 "${name}". }
+    ?item wdt:P18 ?pic.
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+  }
+  LIMIT ${limit || 10}`
 
   return Promise.resolve( wikidata('sparql?query=' + encodeURIComponent( sparqlQuery )) )
     .then( res => res.data )

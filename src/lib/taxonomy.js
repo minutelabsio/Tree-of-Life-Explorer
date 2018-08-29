@@ -1,4 +1,5 @@
 import Promise from 'bluebird'
+import _union from 'lodash/union'
 import * as otol from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 import * as worms from '@/lib/worms'
@@ -98,17 +99,30 @@ export function getTaxonomyInfo( node, mapping ){
   var types = {
     'gbif': ( id ) => gbif.getById( id ).then( data => getMapping( data, gbifMapping ) )
     , 'worms': ( id ) => worms.getById( id ).then( data => getMapping( data, wormsMapping ) )
-    , 'ncbi': ( id ) => wikidata.findByNcbiId( id ).then( data => mapWikidataImages(data) )
   }
 
-  return Promise.map( Object.keys(types), (type) => {
+  var queries = []
+
+  let txnInfoQueries = Promise.map( Object.keys(types), (type) => {
     let id = otol.getTxnSourceId( type, node )
     if ( !id ){
       return null
     }
 
     return types[ type ]( id )
-  } ).then( results => results.reduce( (txn, data) => ({...txn, ...data}), {} ) )
+  } )
+
+  queries.push( txnInfoQueries )
+
+  let ncbiId = otol.getTxnSourceId( 'ncbi', node )
+  let wikidataImageQuery = wikidata.findBy({ ncbiId: ncbiId, name: node.taxon.unique_name })
+    .then( data => [ mapWikidataImages(data) ] )
+
+  queries.push( wikidataImageQuery )
+
+  return Promise.all(queries)
+    .then( resultList => _union(...resultList) )
+    .then( results => results.reduce( (txn, data) => ({...txn, ...data}), {} ) )
 }
 
 function Leaf( node, txn ){

@@ -70,8 +70,8 @@ export default {
       this.removeLeaf( leaf.node_id )
     }
 
-    , onSelect( gbifEntry ){
-      getNodeByName( gbifEntry.canonicalName || gbifEntry.scientificName ).then( (node) => {
+    , onSelect( entry ){
+      getNodeByName( entry.scientificName ).then( (node) => {
         this.addLeaf( node.node_id )
       }).catch( e => this.showError( e ) )
     }
@@ -97,7 +97,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
 .search-box
-  width: 420px
+  width: 620px
 .wrapper
   overflow: hidden
   .inner

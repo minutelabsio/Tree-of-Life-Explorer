@@ -93,7 +93,7 @@ $menuBackgroundColor: $blue
   border: 1px solid $grey-light
   border-radius: 3px
   &:hover, .active &
-    border-color: $purple
+    border-color: $blue
   background: $white
   transition: transform .3s ease-in-out
 .primary

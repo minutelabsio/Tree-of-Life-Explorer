@@ -1,26 +1,33 @@
 <template lang="pug">
 .search
-  b-field(label="Search by common name", :message="!searchEntry || results.length || isFetching ? '&nbsp;' : 'Nothing found. Try being more specific'")
-    b-autocomplete(
-      placeholder="eg. Snow Leopard"
-      , icon="magnify"
-      , :keep-first="true"
-      , :data="results"
-      , v-model="searchEntry"
-      , :loading="isFetching"
-      , @input="search"
-      , @select="selectResult"
-    )
-      template(slot-scope="props")
-        .columns
-          .common-names.column.is-half.has-text-info {{ props.option.vernacularNameList }}
-          .scientific-name.column.is-half {{ props.option.canonicalName || props.option.scientificName }}
+  b-field(label="Search by common name", expanded, :message="!searchEntry || results.length || isFetching ? '&nbsp;' : 'Nothing found. Try being more specific'")
+    b-field
+      b-select(v-model="source")
+        option(value="gbif") GBIF Database
+        option(value="wikidata") Wikidata.org
+
+      b-autocomplete(
+        placeholder="eg. Snow Leopard"
+        , icon="magnify"
+        , :keep-first="true"
+        , :data="results"
+        , v-model="searchEntry"
+        , :loading="isFetching"
+        , @input="search"
+        , @select="selectResult"
+        , expanded
+      )
+        template(slot-scope="props")
+          .columns
+            .common-names.column.is-half.has-text-info {{ props.option.commonNames }}
+            .scientific-name.column.is-half {{ props.option.scientificName }}
 </template>
 
 <script>
 import debounce from 'lodash/debounce'
 import { getNodeByName } from '@/lib/otol'
 import { searchByCommonName } from '@/lib/gbif'
+import { findByCommonName } from '@/lib/wikidata'
 
 export default {
   name: 'TOLCommonNameSearch'
@@ -31,13 +38,24 @@ export default {
   , data: () => ({
     results: []
     , searchEntry: ''
+    , source: 'gbif'
     , isFetching: false
   })
   , methods: {
     search: debounce(function( q ) {
       this.results = []
       this.isFetching = true
-      searchByCommonName( q )
+      let query
+
+      if ( this.source !== 'wikidata' ){
+        // gbif search
+        query = this.searchGbif( q )
+      } else {
+        // wikidata search
+        query = this.searchWikidata( q )
+      }
+
+      query
         .then( results => {
           this.results = results
           this.isFetching = false
@@ -47,9 +65,29 @@ export default {
         })
     }, 500)
 
-    , selectResult( gbifEntry ){
-      getNodeByName( gbifEntry.canonicalName )
-        .then( () => this.$emit( 'select', gbifEntry ) )
+    , searchGbif( q ){
+      return searchByCommonName( q )
+        .then( results =>
+          results.map( el => ({
+            commonNames: el.vernacularNameList
+            , scientificName: el.canonicalName || el.scientificName
+          }))
+        )
+    }
+
+    , searchWikidata( q ){
+      return findByCommonName( q, { limit: 10 } )
+        .then( results =>
+          results.map( el => ({
+            commonNames: el.commonName
+            , scientificName: el.scientificName
+          }))
+        )
+    }
+
+    , selectResult( entry ){
+      getNodeByName( entry.scientificName )
+        .then( () => this.$emit( 'select', entry ) )
         .catch( error => this.errorMsg(error) )
     }
 
