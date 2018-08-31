@@ -1,9 +1,11 @@
 import Promise from 'bluebird'
 import _union from 'lodash/union'
+import _get from 'lodash/get'
 import * as otol from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 import * as worms from '@/lib/worms'
 import * as wikidata from '@/lib/wikidata'
+import * as wikimedia from '@/lib/wikimedia'
 
 const gbifMapping = {
   'key': false
@@ -66,12 +68,12 @@ const wormsMapping = {
   , 'modified': false
 }
 
-function mapWikidataImages( data ){
-  return data.reduce( (output, entry) => {
-    output.wikidataImages.push(entry.pic)
-    return output
-  }, { wikidataImages: [] })
-}
+// function mapWikidataImages( data ){
+//   return data.reduce( (output, entry) => {
+//     output.wikidataImages.push(entry.pic)
+//     return output
+//   }, { wikidataImages: [] })
+// }
 
 export function getMapping( data = {}, mapping ){
   return Object.keys( mapping ).reduce( (obj, key) => {
@@ -114,12 +116,6 @@ export function getTaxonomyInfo( node, mapping ){
 
   queries.push( txnInfoQueries )
 
-  let ncbiId = otol.getTxnSourceId( 'ncbi', node )
-  let wikidataImageQuery = wikidata.findBy({ ncbiId: ncbiId, name: node.taxon.unique_name })
-    .then( data => [ mapWikidataImages(data) ] )
-
-  queries.push( wikidataImageQuery )
-
   return Promise.all(queries)
     .then( resultList => _union(...resultList) )
     .then( results => results.reduce( (txn, data) => ({...txn, ...data}), {} ) )
@@ -130,6 +126,18 @@ function Leaf( node, txn ){
     ...node
     , txnInfo: txn
   }
+}
+
+export function getTxnImage( leaf, source = 'wikidata' ){
+
+  if ( source === 'wikimedia' ){
+    return wikimedia.findImagesByName( leaf.taxon.unique_name )
+      .then( data => _get(data, '0.image.url' ) )
+  }
+
+  let ncbiId = otol.getTxnSourceId( 'ncbi', leaf )
+  return wikidata.findImagesBy({ ncbiId: ncbiId, name: leaf.taxon.unique_name })
+    .then( data => _get(data, '0.pic' ) )
 }
 
 export function getLeaf( id ){

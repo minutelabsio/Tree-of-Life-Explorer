@@ -109,7 +109,7 @@ $menuBackgroundColor: $blue
   transform: rotateX(-90deg) translateZ($menuHeight/2)
   .active &
     transform: rotateX(0deg) translateZ($menuHeight/2)
-.menu-button-container
+.toolbar .menu-button-container
   transition: background 0.15s ease-in-out
   background: darken($menuBackgroundColor, 8)
   box-shadow: inset 1px 0px 0px 0px darken($menuBackgroundColor, 20)

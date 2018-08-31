@@ -5,7 +5,7 @@
       LeafViewMenu(:common-name="commonName",
         :scientific-name="scientificName",
         :truncate-length="truncateLength",
-        :image="txnInfo.wikidataImages && txnInfo.wikidataImages[0]"
+        :image="txnImage"
         )
         b-tooltip(label="See children", type="is-dark")
           b-dropdown(@active-change="getSubtree()")
@@ -25,7 +25,7 @@
 
 <script>
 import LeafViewMenu from './leaf-view-menu'
-import { getLeaf } from '@/lib/taxonomy'
+import { getLeaf, getTxnImage } from '@/lib/taxonomy'
 import { getSubtree } from '@/lib/otol'
 
 const DebugModal = {
@@ -40,7 +40,7 @@ export default {
     LeafViewMenu
   }
   , data: () => ({
-    showImages: false
+    txnImage: ''
     , pin: false
     , expanded: false
     , leafData: null
@@ -52,6 +52,15 @@ export default {
     leaf: {
       handler( leaf ){
         if ( !leaf ){ return }
+
+        getTxnImage( this.leaf ).then( ( imgUrl ) => {
+          if ( !imgUrl ){
+            return
+          }
+
+          this.txnImage = imgUrl
+        } ).catch( ( err ) => this.$emit('error', err) )
+
         if ( leaf.txnInfo ){
           this.leafData = leaf
           this.txnInfo = leaf.txnInfo

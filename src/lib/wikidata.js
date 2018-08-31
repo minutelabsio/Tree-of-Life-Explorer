@@ -1,4 +1,4 @@
-// Helpers for https://www.marinespecies.org/rest
+// Helpers for https://query.wikidata.org
 // ---------------------------------------
 
 import Promise from 'bluebird'
@@ -32,7 +32,7 @@ wikidata.interceptors.response.use(function (response) {
   return Promise.reject(error)
 })
 
-export function findByNcbiId( ncbiId, { limit } = {} ){
+export function findImagesByNcbiId( ncbiId, { limit } = {} ){
 
   const sparqlQuery = `SELECT ?item ?itemLabel ?pic WHERE {
     ?item wdt:P685 "${ncbiId}".
@@ -45,7 +45,7 @@ export function findByNcbiId( ncbiId, { limit } = {} ){
     .then( res => res.data )
 }
 
-export function findByScientificName( name, { limit } = {} ){
+export function findImagesByScientificName( name, { limit } = {} ){
 
   const sparqlQuery = `SELECT ?item ?itemLabel ?pic WHERE {
     ?item wdt:P225 "${name}".
@@ -66,7 +66,9 @@ export function findByCommonName( q, { limit } = {} ){
 
   const sparqlQuery = `SELECT DISTINCT ?item ?commonName ?scientificName WHERE {
     ?item wdt:P1843 ?commonName FILTER regex(?commonName, "${q}", "i").
-    ?item wdt:P105 wd:Q7432.
+    { ?item wdt:P105 wd:Q7432. }
+    UNION
+    { ?item wdt:P105 wd:Q68947. }
     ?item wdt:P225 ?scientificName.
     SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
   }
@@ -76,18 +78,18 @@ export function findByCommonName( q, { limit } = {} ){
     .then( res => res.data )
 }
 
-export function findBy( { ncbiId, name }, { limit } = {} ){
+export function findImagesBy( { ncbiId, name }, { limit } = {} ){
 
   if ( !ncbiId && !name ){
     return Promise.resolve([])
   }
 
   if ( !name ){
-    return findByNcbiId( ncbiId )
+    return findImagesByNcbiId( ncbiId )
   }
 
   if ( !ncbiId ){
-    return findByScientificName( name )
+    return findImagesByScientificName( name )
   }
 
   const sparqlQuery = `SELECT ?item ?itemLabel ?pic WHERE {
