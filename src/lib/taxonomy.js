@@ -128,16 +128,22 @@ function Leaf( node, txn ){
   }
 }
 
-export function getTxnImage( leaf, source = 'wikidata' ){
-
-  if ( source === 'wikimedia' ){
-    return wikimedia.findImagesByName( leaf.taxon.unique_name )
-      .then( data => _get(data, '0.image.url' ) )
-  }
-
+export function getTxnInfo( leaf ){
   let ncbiId = otol.getTxnSourceId( 'ncbi', leaf )
-  return wikidata.findImagesBy({ ncbiId: ncbiId, name: leaf.taxon.unique_name })
-    .then( data => _get(data, '0.pic' ) )
+
+  return wikidata.findInfoBy({ ncbiId: ncbiId, name: leaf.taxon.unique_name })
+    .then( data => {
+      let firstResult = (data && data[0]) || {}
+      if ( !firstResult.pic || !firstResult.pic.length ){
+        return wikimedia.findImagesByName( leaf.taxon.unique_name )
+          .then( data => {
+            firstResult.pic = data.map( item => _get(item, 'image.url' ) )
+            return firstResult
+          })
+      }
+
+      return firstResult
+    })
 }
 
 export function getLeaf( id ){

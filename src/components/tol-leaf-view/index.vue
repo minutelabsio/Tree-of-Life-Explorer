@@ -25,7 +25,7 @@
 
 <script>
 import LeafViewMenu from './leaf-view-menu'
-import { getLeaf, getTxnImage } from '@/lib/taxonomy'
+import { getLeaf, getTxnInfo } from '@/lib/taxonomy'
 import { getSubtree } from '@/lib/otol'
 
 const DebugModal = {
@@ -41,6 +41,7 @@ export default {
   }
   , data: () => ({
     txnImage: ''
+    , otherCommonNames: []
     , pin: false
     , expanded: false
     , leafData: null
@@ -53,12 +54,12 @@ export default {
       handler( leaf ){
         if ( !leaf ){ return }
 
-        getTxnImage( this.leaf ).then( ( imgUrl ) => {
-          if ( !imgUrl ){
-            return
+        getTxnInfo( this.leaf ).then( ( info ) => {
+          if ( info.pic ){
+            this.txnImage = info.pic[0]
           }
 
-          this.txnImage = imgUrl
+          this.otherCommonNames = info.commonName
         } ).catch( ( err ) => this.$emit('error', err) )
 
         if ( leaf.txnInfo ){
@@ -81,7 +82,12 @@ export default {
   }
   , computed: {
     commonName(){
-      if ( !this.txnInfo ){ return '' }
+      if ( !this.txnInfo || !this.txnInfo.vernacularNameList ){
+        if ( this.otherCommonNames ){
+          return this.otherCommonNames[0]
+        }
+        return ''
+      }
       return this.txnInfo.vernacularNameList
     }
     , scientificName(){

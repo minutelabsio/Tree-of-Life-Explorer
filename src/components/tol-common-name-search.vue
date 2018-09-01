@@ -84,7 +84,7 @@ export default {
     }
 
     , searchWikidata( q ){
-      return wikidata.findByCommonName( q, { limit: 10 } )
+      return wikidata.findInfoByCommonName( q, { limit: 10 } )
         .then( results =>
           results.map( el => ({
             commonNames: el.commonName
