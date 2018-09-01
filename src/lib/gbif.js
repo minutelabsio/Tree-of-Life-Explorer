@@ -49,11 +49,10 @@ export function findByCommonName( q ){
     , q
   }
   return Promise.join(
-      gbif('/species/search', { params })
-      , gbif('/species/search', { params: {...params, rank: 'SPECIES'} })
-      , ( subspecies, species ) => _union(subspecies.data.results, species.data.results)
-    )
-    .then( results => results.map( setVernacularNames ) )
+    gbif('/species/search', { params })
+    , gbif('/species/search', { params: {...params, rank: 'SPECIES'} })
+    , ( subspecies, species ) => _union(subspecies.data.results, species.data.results)
+  ).then( results => results.map( setVernacularNames ) )
 }
 
 export function findByName( name ){
