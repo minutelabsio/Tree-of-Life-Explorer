@@ -77,7 +77,7 @@ function joinTree( tree, branch ){
         return mergeAt( tree, branch, i )
       } else {
         // this means we found a new branch
-        return splitAt( tree, branch, i )
+        return splitAt( tree, branch, i - 1 )
       }
     }
     if ( treeParent.node_id !== branchParent.node_id ){
