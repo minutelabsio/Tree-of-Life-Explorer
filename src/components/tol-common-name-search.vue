@@ -1,4 +1,4 @@
-<template lang="pug">
+//- <template lang="pug">
 .search
   b-field(label="Search by common name", expanded, :message="!searchEntry || results.length || isFetching ? '&nbsp;' : 'Nothing found. Try being more specific'")
     b-field
@@ -24,10 +24,11 @@
 </template>
 
 <script>
-import debounce from 'lodash/debounce'
+import _debounce from 'lodash/debounce'
+import _uniqBy from 'lodash/uniqBy'
 import { getNodeByName } from '@/lib/otol'
-import { searchByCommonName } from '@/lib/gbif'
-import { findByCommonName } from '@/lib/wikidata'
+import * as gbif from '@/lib/gbif'
+import * as wikidata from '@/lib/wikidata'
 
 export default {
   name: 'TOLCommonNameSearch'
@@ -42,8 +43,11 @@ export default {
     , isFetching: false
   })
   , methods: {
-    search: debounce(function( q ) {
+    search: _debounce(function( q ) {
       this.results = []
+
+      if (!q){ return }
+
       this.isFetching = true
       let query
 
@@ -66,7 +70,11 @@ export default {
     }, 500)
 
     , searchGbif( q ){
-      return searchByCommonName( q )
+      function removeDuplicates( results ){
+        return _uniqBy( results, 'species' )
+      }
+      return gbif.findByCommonName( q )
+        .then( removeDuplicates )
         .then( results =>
           results.map( el => ({
             commonNames: el.vernacularNameList
@@ -76,7 +84,7 @@ export default {
     }
 
     , searchWikidata( q ){
-      return findByCommonName( q, { limit: 10 } )
+      return wikidata.findByCommonName( q, { limit: 10 } )
         .then( results =>
           results.map( el => ({
             commonNames: el.commonName

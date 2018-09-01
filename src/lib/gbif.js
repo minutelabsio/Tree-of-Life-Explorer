@@ -41,7 +41,7 @@ export function getById( id ){
     .then( res => setVernacularNames( res.data ) )
 }
 
-export function searchByCommonName( q ){
+export function findByCommonName( q ){
   var params = {
     rank: 'SPECIES'
     , qField: 'VERNACULAR'
