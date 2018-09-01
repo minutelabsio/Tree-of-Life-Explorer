@@ -6,6 +6,7 @@ import axios from 'axios'
 import { setupCache } from 'axios-cache-adapter'
 import _startCase from 'lodash/startCase'
 import _uniq from 'lodash/uniq'
+import _union from 'lodash/union'
 import _flow from 'lodash/flow'
 
 const cache = setupCache({
@@ -43,12 +44,16 @@ export function getById( id ){
 
 export function findByCommonName( q ){
   var params = {
-    rank: 'SPECIES'
+    rank: 'SUBSPECIES'
     , qField: 'VERNACULAR'
     , q
   }
-  return Promise.resolve( gbif('/species/search', { params }) )
-    .then( res => res.data.results.map( setVernacularNames ) )
+  return Promise.join(
+      gbif('/species/search', { params })
+      , gbif('/species/search', { params: {...params, rank: 'SPECIES'} })
+      , ( subspecies, species ) => _union(subspecies.data.results, species.data.results)
+    )
+    .then( results => results.map( setVernacularNames ) )
 }
 
 export function findByName( name ){
