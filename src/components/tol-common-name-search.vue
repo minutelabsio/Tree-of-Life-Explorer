@@ -87,8 +87,8 @@ export default {
       return wikidata.findInfoByCommonName( q, { limit: 10 } )
         .then( results =>
           results.map( el => ({
-            commonNames: el.commonName
-            , scientificName: el.scientificName
+            commonNames: el.commonName.join(', ')
+            , scientificName: el.scientificName.join(', ')
           }))
         )
     }

@@ -41,7 +41,9 @@ function assembleByItem( results ){
     return _transform( parts, (result, part) => {
       Object.keys(_omit(part, singleProps)).forEach( key => {
         result[key] = result[key] || []
-        result[key].push( part[key] )
+        if ( result[key].indexOf(part[key]) < 0 ){
+          result[key].push( part[key] )
+        }
       })
       return result
     }, item )
