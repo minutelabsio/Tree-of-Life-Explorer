@@ -14,7 +14,13 @@
             b-loading(:is-full-page="false", :active="loading")
             b-dropdown-item.heading.has-text-info Children
             hr.dropdown-divider
-            b-dropdown-item(v-if="children && children.length", v-for="child in children", :key="child.node_id", @click="$emit('add-node', child)")
+            b-dropdown-item(
+              v-if="children && children.length",
+              v-for="child in children",
+              :class="{ 'has-text-grey-light': childIsAdded(child) }"
+              :key="child.node_id",
+              @click="$emit('add-node', child)"
+              )
               | {{ child.taxon ? child.taxon.name : child.node_id }}
             b-dropdown-item(v-if="!loading && children && !children.length")
               | None
@@ -122,6 +128,9 @@ export default {
         }
         , hasModalCard: false
       })
+    }
+    , childIsAdded( child ){
+      return this.$route.query.ids.indexOf( child.node_id ) > -1
     }
     , getSubtree(){
       if ( this.children ){ return }
