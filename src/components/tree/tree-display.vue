@@ -15,8 +15,10 @@
     .tol-leaf(
       v-for="branch in branches"
       , :key="branch.key"
-      , :style="{ transform: `translate3d(${branch.x-(0.5 * width)}px, ${branch.y + branch.dy}px, 0)`, width: width + 'px' }"
+      , :style="{ left: `${branch.x-(0.5 * width)}px`, top: `${branch.y + branch.dy}px`, width: width + 'px' }"
       )
+      //- , :style="{ transform: `translate3d(${branch.x-(0.5 * width)}px, ${branch.y + branch.dy}px, 0)`, width: width + 'px' }"
+      //- )
       //- Motion(:values="{ x2: branch.x, y2: branch.y, dy: branch.dy }", :spring="{ stiffness: 300, damping: 60, precision: 1 }")
       //-   template(slot-scope="props")
       Connection(:x1="branch.px || branch.x", :y1="(branch.py || branch.y) + branch.pdy", :x2="branch.x", :y2="branch.y + branch.dy", :padding="branch.dy")
@@ -225,7 +227,6 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  transition: all 0.7s ease-in-out;
 
   &:hover,
   &:active,
@@ -239,10 +240,14 @@ export default {
     left: 0;
   }
 }
+.tree-move {
+  transition: all 0.7s ease-in-out;
+}
 .tree-enter-active, .tree-leave-active {
-
+  transition: all 0.7s ease-in-out;
 }
 .tree-enter, .tree-leave-to {
+  transition: all 0.7s ease-in-out;
   opacity: 0;
   top: -80px;
 }
