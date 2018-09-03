@@ -26,9 +26,17 @@
 <script>
 import _debounce from 'lodash/debounce'
 import _uniqBy from 'lodash/uniqBy'
-import { getNodeByName } from '@/lib/otol'
+import { getNodeByName, getTxResultsByNames } from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 import * as wikidata from '@/lib/wikidata'
+
+function filterByOTLMatches( results ){
+  return getTxResultsByNames( results.map( el => el.canonicalName || el.scientificName ) )
+    .then( otlMatches => otlMatches.map( el => el.name ) )
+    .then( otlNames => results.filter( el =>
+      otlNames.indexOf(el.canonicalName || el.scientificName) > -1
+    ))
+}
 
 export default {
   name: 'TOLCommonNameSearch'
@@ -71,10 +79,11 @@ export default {
 
     , searchGbif( q ){
       function removeDuplicates( results ){
-        return _uniqBy( results, 'species' )
+        return _uniqBy( results, 'canonicalName' )
       }
       return gbif.findByCommonName( q )
         .then( removeDuplicates )
+        .then( filterByOTLMatches )
         .then( results =>
           results.map( el => ({
             commonNames: el.vernacularNameList
@@ -85,6 +94,7 @@ export default {
 
     , searchWikidata( q ){
       return wikidata.findInfoByCommonName( q, { limit: 10 } )
+        .then( filterByOTLMatches )
         .then( results =>
           results.map( el => ({
             commonNames: el.commonName.join(', ')
