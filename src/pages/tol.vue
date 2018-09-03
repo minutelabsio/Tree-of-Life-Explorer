@@ -96,15 +96,22 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
+$topNavHeight: 138px
 .search-box
   width: 620px
 .wrapper
+  margin-top: $topNavHeight
   overflow: hidden
   .inner
     position: relative
   .tree
     margin: auto
 .top-nav
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  z-index: 1000
   display: flex
   .right
 
