@@ -3,7 +3,8 @@
   .card.is-shadowless
     .card-header
       LeafViewMenu(:common-name="commonName",
-        :scientific-name="scientificName | shortName(truncateLength)",
+        :scientific-name="scientificName",
+        :short-scientific-name="scientificName | shortName(truncateLength)",
         :truncate-length="commonName ? truncateLength : truncateLength * 2",
         :image="txnImage"
         )

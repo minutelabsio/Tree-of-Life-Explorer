@@ -6,8 +6,8 @@
       .toolbar-text.names
         b-tooltip.common-name(v-if="commonName", :label="commonName | titleCase", type="is-dark", :active="commonName.length > truncateLength")
           | {{ commonName | titleCase | truncate(truncateLength) }}
-        b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > truncateLength")
-          | {{ scientificName | titleCase | truncate(truncateLength) }}
+        b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > truncateLength || shortScientificName.length < scientificName.length")
+          | {{ shortScientificName | titleCase | truncate(truncateLength) }}
     a.toolbar-right.menu-button-container(@click="show()")
       .toolbar-control
         b-icon(icon="menu-up")
@@ -25,6 +25,7 @@ export default {
   , props: {
     commonName: String
     , scientificName: String
+    , shortScientificName: String
     , image: String
     , truncateLength: {
       type: Number
