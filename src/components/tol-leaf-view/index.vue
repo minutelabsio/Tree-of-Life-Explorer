@@ -8,7 +8,7 @@
         :image="txnImage"
         )
         b-tooltip(label="See children", type="is-dark")
-          b-dropdown(@active-change="getSubtree()")
+          b-dropdown.limit-dropdown(@active-change="getSubtree()")
             a.icon-button.toolbar-control(slot="trigger")
               b-icon(icon="file-tree")
             b-loading(:is-full-page="false", :active="loading")

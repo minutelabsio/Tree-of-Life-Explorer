@@ -1,6 +1,6 @@
 <template lang="pug">
 .tree(:style="{ height: height + 'px' }", @click="leafContext = null")
-  TreeCanvas
+  TreeCanvas(@move="onCanvasDrag")
     Tree(
       v-if="tree"
       , :tree="tree"
@@ -14,7 +14,7 @@
       , @add-node="$emit('add-node', arguments[0].node_id)"
       , @error="$emit('error', arguments[0])"
       )
-  .dropdown.is-active(v-if="leafContext", :style="{ top: (leafContext.y-100) + 'px', left: (leafContext.x + 40) + 'px' }")
+  .parent-list.limit-dropdown.dropdown.is-active(v-if="leafContext", :style="{ top: (leafContext.y-100) + 'px', left: (canvasX + leafContext.x + 40) + 'px' }")
     .dropdown-menu
       .dropdown-content
         a.dropdown-item(v-for="parent in leafContext.subtree.lineage", :class="{ 'has-text-grey': !parent.taxon }", @click="$emit('add-node', parent.node_id)") {{ parent.taxon ? parent.taxon.name : parent.node_id }}
@@ -39,6 +39,7 @@ export default {
     , padding: 10
     , branchHeight: 80
     , topPadding: 60
+    , canvasX: 0
   })
   , computed: {
     x(){
@@ -62,11 +63,15 @@ export default {
     showLeafDetails( leaf ){
       this.leafContext = leaf
     }
+    , onCanvasDrag( pos ){
+      this.canvasX = pos.x
+    }
   }
 }
 </script>
 
 <style lang="sass">
+@import '@/styles/_variables.scss'
 .tree
   position: relative
   width: 100%

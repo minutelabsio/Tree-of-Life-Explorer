@@ -16,6 +16,7 @@
       v-for="branch in branches"
       , :key="branch.key"
       , :style="{ left: `${branch.x-(0.5 * width)}px`, top: `${branch.y + branch.dy}px`, width: width + 'px' }"
+      , :tabindex="-1"
       )
       //- , :style="{ transform: `translate3d(${branch.x-(0.5 * width)}px, ${branch.y + branch.dy}px, 0)`, width: width + 'px' }"
       //- )
@@ -227,6 +228,7 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
+  outline: none;
 
   &:hover,
   &:active,

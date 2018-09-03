@@ -40,6 +40,7 @@ export default {
       this.ox = x
       this.oy = y
       this.svg.move(this.ox, this.oy)
+      this.$emit('move', { x, y })
     }
   }
 }
