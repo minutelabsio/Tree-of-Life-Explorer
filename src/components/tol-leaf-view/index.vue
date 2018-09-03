@@ -3,8 +3,8 @@
   .card.is-shadowless
     .card-header
       LeafViewMenu(:common-name="commonName",
-        :scientific-name="scientificName",
-        :truncate-length="truncateLength",
+        :scientific-name="scientificName | shortName(truncateLength)",
+        :truncate-length="commonName ? truncateLength : truncateLength * 2",
         :image="txnImage"
         )
         b-tooltip(label="See children", type="is-dark")
@@ -33,11 +33,27 @@ const DebugModal = {
   , template: `<div class="box"><pre>{{ JSON.stringify(leaf, null, 2) }}</pre></div>`
 }
 
+function shortName( str, target ){
+  let words = str.split(' ')
+  let out = str
+  let i = 0
+  while ( out.length > target && i < words.length - 1 ){
+    let word = words[ i ]
+    words[ i ] = `${word[ 0 ]}.`
+    out = words.join(' ')
+    i++
+  }
+  return out
+}
+
 export default {
   name: 'TOLLeafView'
   , props: ['leaf', 'truncateLength']
   , components: {
     LeafViewMenu
+  }
+  , filters: {
+    shortName
   }
   , data: () => ({
     txnImage: ''

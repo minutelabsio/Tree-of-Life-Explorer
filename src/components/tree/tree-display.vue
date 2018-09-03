@@ -174,7 +174,7 @@ export default {
     }
 
     , truncateLength(){
-      return this.width / 12 | 0
+      return this.width / 10 | 0
     }
   }
   , methods: {
