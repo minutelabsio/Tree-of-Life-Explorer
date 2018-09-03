@@ -9,6 +9,8 @@ import _uniq from 'lodash/uniq'
 import _union from 'lodash/union'
 import _flow from 'lodash/flow'
 
+const langs = ['', 'en', 'eng']
+
 const cache = setupCache({
   maxAge: 15 * 60 * 1000
 })
@@ -28,7 +30,7 @@ function setVernacularNames( entry ){
     }
   }
 
-  var vernacularNameList = entry.vernacularNames.filter(n => n.language === 'eng')
+  var vernacularNameList = entry.vernacularNames.filter(n => langs.indexOf(n.language) > -1)
   vernacularNameList = vernacularNameList.map( _flow([
     n => n.vernacularName
     , _startCase
