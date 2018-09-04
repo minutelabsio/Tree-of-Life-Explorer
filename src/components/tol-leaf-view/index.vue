@@ -6,7 +6,7 @@
         :scientific-name="scientificName",
         :short-scientific-name="scientificName | shortName(isMRCA ? 1000 : truncateLength)",
         :truncate-length="commonName ? truncateLength : truncateLength * 2",
-        :image="txnImage"
+        :images="txnImages"
         )
         b-tooltip(label="See children", type="is-dark")
           b-dropdown.limit-dropdown(@active-change="getSubtree()")
@@ -32,7 +32,7 @@
 
 <script>
 import LeafViewMenu from './leaf-view-menu'
-import { getLeaf, getTxnInfo } from '@/lib/taxonomy'
+import { getTxnInfo, isMRCA } from '@/lib/taxonomy'
 import { getSubtree } from '@/lib/otol'
 
 const DebugModal = {
@@ -63,11 +63,10 @@ export default {
     shortName
   }
   , data: () => ({
-    txnImage: ''
+    txnImages: []
     , otherCommonNames: []
     , pin: false
     , expanded: false
-    , leafData: null
     , txnInfo: null
     , children: null
     , loading: true
@@ -77,23 +76,12 @@ export default {
       handler( leaf ){
         if ( !leaf ){ return }
 
-        getTxnInfo( this.leaf ).then( ( info ) => {
-          if ( info.pic ){
-            this.txnImage = info.pic[0]
-          }
-
+        getTxnInfo( leaf ).then( info => {
+          this.txnInfo = info
           this.otherCommonNames = info.commonName
-        } ).catch( ( err ) => this.$emit('error', err) )
-
-        if ( leaf.txnInfo ){
-          this.leafData = leaf
-          this.txnInfo = leaf.txnInfo
-          return
-        }
-
-        getLeaf( leaf.node_id ).then( leaf => {
-          this.leafData = leaf
-          this.txnInfo = leaf.txnInfo
+          if ( info.pic ){
+            this.txnImages = info.pic
+          }
         }).tapCatch( err => this.$snackbar.open({
           message: `Error: ${err.message}`
           , type: 'is-danger'
@@ -105,6 +93,7 @@ export default {
   }
   , computed: {
     commonName(){
+      if ( this.isMRCA ){ return '' }
       if ( !this.txnInfo || !this.txnInfo.vernacularNameList ){
         if ( this.otherCommonNames ){
           return this.otherCommonNames[0]
@@ -116,10 +105,11 @@ export default {
     , scientificName(){
       if ( !this.txnInfo ){ return '' }
       return this.txnInfo.canonicalName ||
-        this.leafData.taxon.name
+        this.txnInfo.name ||
+        this.leaf.node_id
     }
     , isMRCA(){
-      return this.leaf && this.leaf.node_id.indexOf('mrca') === 0
+      return this.leaf && isMRCA(this.leaf)
     }
   }
   , methods: {
@@ -128,7 +118,7 @@ export default {
         parent: this
         , component: DebugModal
         , props: {
-          leaf: this.leafData
+          leaf: this.leaf
         }
         , hasModalCard: false
       })

@@ -122,9 +122,10 @@ export const getDescendantNames = _memoize(function( id ){
 })
 
 export function getTxnSourceId( type, node ){
+  if ( !node.taxon ){ return null }
   let str = _find(node.taxon.tax_sources, (x) => _startsWith(x, type))
   if ( !str ){
-    return str
+    return null
   }
   return str.replace(`${type}:`, '')
 }

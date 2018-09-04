@@ -1,7 +1,8 @@
 <template lang="pug">
 .leaf-menu(:class="{ active: active }", @mouseleave="onMouseLeave", @mouseenter="onMouseEnter")
   .toolbar.primary
-    .background-image(:style="{backgroundImage: backgroundStyle}")
+    .background-image
+      Collage(:images="images")
     .toolbar-item.item-title
       .toolbar-text.names
         b-tooltip.common-name(v-if="commonName", :label="commonName | titleCase", type="is-dark", :active="commonName.length > truncateLength")
@@ -20,13 +21,15 @@
 </template>
 
 <script>
+import Collage from '@/components/collage'
+
 export default {
   name: 'LeafViewMenu'
   , props: {
     commonName: String
     , scientificName: String
     , shortScientificName: String
-    , image: String
+    , images: Array
     , truncateLength: {
       type: Number
       , default: 10
@@ -41,12 +44,12 @@ export default {
   })
   , computed: {
     backgroundStyle(){
-      if ( !this.image ){ return '' }
-      return `url(${this.image})`
+      if ( !this.images || !this.images.length ){ return '' }
+      return `url(${this.images[0]})`
     }
   }
   , components: {
-
+    Collage
   }
   , methods: {
     show(){

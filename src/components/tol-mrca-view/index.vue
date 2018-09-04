@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { getLeaf } from '@/lib/taxonomy'
+import { getTxnInfo } from '@/lib/taxonomy'
 
 export default {
   name: 'TOLMRCAView'
@@ -25,15 +25,8 @@ export default {
     leaf: {
       handler( leaf ){
         if ( !leaf ){ return }
-        if ( leaf.txnInfo ){
-          this.leafData = leaf
-          this.txnInfo = leaf.txnInfo
-          this.loading = false
-          return
-        }
 
-        getLeaf( leaf.node_id ).then( leaf => {
-          this.leafData = leaf
+        getTxnInfo( leaf ).then( leaf => {
           this.txnInfo = leaf.txnInfo
         }).tapCatch( err =>
           this.$snackbar.open({
@@ -56,7 +49,7 @@ export default {
     , scientificName(){
       if ( !this.txnInfo ){ return '' }
       return this.txnInfo.canonicalName ||
-        this.leafData.taxon.name
+        this.leaf.taxon ? this.leaf.taxon.name : this.leaf.node_id
     }
   }
   , methods: {

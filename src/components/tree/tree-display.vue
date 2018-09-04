@@ -25,19 +25,13 @@
       Connection(:x1="branch.px || branch.x", :y1="(branch.py || branch.y) + branch.pdy", :x2="branch.x", :y2="branch.y + branch.dy", :padding="branch.dy")
       Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="branch.x", :y="branch.y", @click="$emit('leaf-click', arguments[0])")
 
-      template(v-if="branch.tree.leaf && branch.tree.leaf.txnInfo")
-        TOLLeafView(
-          :leaf="branch.tree.leaf"
-          , :truncate-length="truncateLength"
-          , @remove="$emit( 'remove', branch.tree.leaf )"
-          , @error="$emit( 'error', arguments[0] )"
-          , @add-node="$emit( 'add-node', arguments[0] )"
-          )
-      template(v-if="branch.tree.leaf && !branch.tree.leaf.txnInfo")
-        TOLMRCAView(:leaf="branch.tree.leaf")
-        //- .simple.has-text-centered {{ branch.tree.leaf.node_id }}
-      //- template(v-if="!branch.hasSplit")
-      //-   Tail(:leaf="branch.tree.leaf", :x="branch.x", :y="branch.y + 160", @click="openChildMenu")
+      TOLLeafView(
+        :leaf="branch.tree.leaf"
+        , :truncate-length="truncateLength"
+        , @remove="$emit( 'remove', branch.tree.leaf )"
+        , @error="$emit( 'error', arguments[0] )"
+        , @add-node="$emit( 'add-node', arguments[0] )"
+        )
 </template>
 
 <script>

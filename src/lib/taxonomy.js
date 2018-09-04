@@ -1,6 +1,9 @@
 import Promise from 'bluebird'
 import _union from 'lodash/union'
 import _get from 'lodash/get'
+import _mergeWith from 'lodash/mergeWith'
+import _isArray from 'lodash/isArray'
+import _memoize from 'lodash/memoize'
 import * as otol from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 import * as worms from '@/lib/worms'
@@ -92,11 +95,7 @@ export function getMapping( data = {}, mapping ){
   }, {})
 }
 
-export function getTaxonomyInfo( node, mapping ){
-
-  if ( !node.taxon ){
-    return Promise.resolve({})
-  }
+export function getTaxonomyInfo( node ){
 
   var types = {
     'gbif': ( id ) => gbif.getById( id ).then( data => getMapping( data, gbifMapping ) )
@@ -121,23 +120,15 @@ export function getTaxonomyInfo( node, mapping ){
     .then( results => results.reduce( (txn, data) => ({...txn, ...data}), {} ) )
 }
 
-function Leaf( node, txn ){
-  return {
-    ...node
-    , txnInfo: txn
-  }
-}
+export function getImagesAndCommonNames( name, ncbiId, allImages = false ){
 
-export function getTxnInfo( leaf ){
-  let ncbiId = otol.getTxnSourceId( 'ncbi', leaf )
-
-  return wikidata.findInfoBy({ ncbiId: ncbiId, name: leaf.taxon.unique_name })
+  return wikidata.findInfoBy({ ncbiId, name })
     .then( data => {
       let firstResult = (data && data[0]) || {}
-      if ( !firstResult.pic || !firstResult.pic.length ){
-        return wikimedia.findImagesByName( leaf.taxon.unique_name )
+      if ( allImages || !firstResult.pic || !firstResult.pic.length ){
+        return wikimedia.findImagesByName( name )
           .then( data => {
-            firstResult.pic = data.map( item => _get(item, 'image.url' ) )
+            firstResult.pic = _union(data.map( item => _get(item, 'image.url' ) ), firstResult.pic)
             return firstResult
           })
       }
@@ -146,9 +137,48 @@ export function getTxnInfo( leaf ){
     })
 }
 
+export function isMRCA( leaf ){
+  return leaf.node_id.indexOf('mrca') === 0
+}
+
+export const getTxnInfo = _memoize(Promise.coroutine(function* ( leaf ){
+  if ( !leaf.taxon ){
+    leaf = yield getLeaf( leaf.node_id )
+  }
+
+  let getAllImages = ['species', 'subspecies'].indexOf(leaf.taxon.rank) === -1
+
+  if ( isMRCA(leaf) ){
+    let names = leaf.taxon.name.split(' and ')
+    return Promise.map( names, name =>
+      getImagesAndCommonNames( name, null, getAllImages )
+    ).then( results => {
+      return _mergeWith({}, leaf.taxon, ...results, (objValue, srcValue) => {
+        if ( _isArray(objValue) ) {
+          return objValue.concat(srcValue)
+        }
+      })
+    })
+  }
+
+  let ncbiId = otol.getTxnSourceId( 'ncbi', leaf )
+
+  return Promise.all([
+    getTaxonomyInfo( leaf )
+    , getImagesAndCommonNames( leaf.taxon.unique_name, ncbiId, getAllImages )
+  ]).spread( (txnInfo, imgNameData) => {
+    return Object.assign({}, leaf.taxon, txnInfo, imgNameData)
+  })
+}))
+
+function Leaf( node ){
+  return {
+    ...node
+  }
+}
+
 export function getLeaf( id ){
   return otol.getNode( id ).then( node =>
-    getTaxonomyInfo( node )
-      .then( info => Leaf( node, info ) )
+    Leaf( node )
   )
 }
