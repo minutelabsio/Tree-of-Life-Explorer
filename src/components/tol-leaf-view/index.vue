@@ -80,7 +80,7 @@ export default {
           this.txnInfo = info
           this.otherCommonNames = info.commonName
           if ( info.pic ){
-            this.txnImages = info.pic
+            this.txnImages = info.pic.splice(0, 5)
           }
         }).tapCatch( err => this.$snackbar.open({
           message: `Error: ${err.message}`
