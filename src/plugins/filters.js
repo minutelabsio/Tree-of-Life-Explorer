@@ -11,5 +11,15 @@ export default {
     Vue.filter('capitalize', _capitalize)
     Vue.filter('titleCase', titleCase)
     Vue.filter('filter', _filter)
+
+    Vue.filter('nodeName', function( node ){
+      if (node.taxon){
+        return node.taxon.name
+      }
+      if (node.descendant_name_list){
+        return node.descendant_name_list.join(' and ')
+      }
+      return node.node_id
+    })
   }
 }

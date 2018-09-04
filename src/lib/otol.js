@@ -56,19 +56,20 @@ export function getMRCA( idOrArray ){
     .then( res => res.data.mrca )
     .then( data => {
       if (!data.taxon){
-        return Promise.map( idOrArray, getNode )
-          .then( nodes => {
-            let lineage = getCommonLineage( nodes )
-            let nodelist = nodes.map( n => n.taxon.name ).join(' and ')
+        return Promise.all([
+          Promise.map( idOrArray, getNode )
+          , getDescendantNames( data.node_id )
+        ]).spread( (nodes, childrenNames) => {
+          let lineage = getCommonLineage( nodes )
 
-            data.taxon = {
-              name: `(MRCA of ${nodelist})`
-            }
+          data.taxon = {
+            name: `${childrenNames.join(' and ')}`
+          }
 
-            data.lineage = lineage
+          data.lineage = lineage
 
-            return data
-          })
+          return data
+        })
       }
 
       return data
@@ -99,7 +100,7 @@ export const getNodeByName = _memoize(function( name ){
 })
 
 export const getSubtree = _memoize(function( id, depth = 1 ){
-  var idField = _startsWith( id, 'ott' ) ? 'node_id' : 'ott_id'
+  var idField = _startsWith( id, 'ott' ) || _startsWith( id, 'mrca' ) ? 'node_id' : 'ott_id'
   var data = {
     [idField]: id
     , format: 'arguson'
@@ -107,6 +108,17 @@ export const getSubtree = _memoize(function( id, depth = 1 ){
   }
   return Promise.resolve( otol.post('/tree_of_life/subtree', data) )
     .then( res => res.data.arguson.children || [] )
+})
+
+export const getDescendantNames = _memoize(function( id ){
+  var idField = _startsWith( id, 'ott' ) || _startsWith( id, 'mrca' ) ? 'node_id' : 'ott_id'
+  var data = {
+    [idField]: id
+    , format: 'arguson'
+    , height_limit: 1
+  }
+  return Promise.resolve( otol.post('/tree_of_life/subtree', data) )
+    .then( res => res.data.arguson.descendant_name_list || [] )
 })
 
 export function getTxnSourceId( type, node ){

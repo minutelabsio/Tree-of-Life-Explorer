@@ -1,10 +1,10 @@
 <template lang="pug">
-.item
+.item(@mousedown.stop="")
   .card.is-shadowless
     .card-header
       LeafViewMenu(:common-name="commonName",
         :scientific-name="scientificName",
-        :short-scientific-name="scientificName | shortName(truncateLength)",
+        :short-scientific-name="scientificName | shortName(isMRCA ? 1000 : truncateLength)",
         :truncate-length="commonName ? truncateLength : truncateLength * 2",
         :image="txnImage"
         )
@@ -22,7 +22,7 @@
               :key="child.node_id",
               @click="$emit('add-node', child)"
               )
-              | {{ child.taxon ? child.taxon.name : child.node_id }}
+              | {{ child | nodeName }}
             b-dropdown-item(v-if="!loading && children && !children.length")
               | None
         b-tooltip(label="Remove from tree", type="is-dark")
@@ -117,6 +117,9 @@ export default {
       if ( !this.txnInfo ){ return '' }
       return this.txnInfo.canonicalName ||
         this.leafData.taxon.name
+    }
+    , isMRCA(){
+      return this.leaf && this.leaf.node_id.indexOf('mrca') === 0
     }
   }
   , methods: {
