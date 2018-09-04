@@ -120,15 +120,17 @@ export function getTaxonomyInfo( node ){
     .then( results => results.reduce( (txn, data) => ({...txn, ...data}), {} ) )
 }
 
-export function getImagesAndCommonNames( name, ncbiId, allImages = false ){
+export function getImagesAndCommonNames( name, ncbiId, options = {} ){
 
   return wikidata.findInfoBy({ ncbiId, name })
     .then( data => {
       let firstResult = (data && data[0]) || {}
-      if ( allImages || !firstResult.pic || !firstResult.pic.length ){
-        return wikimedia.findImagesByName( name )
+
+      if ( options.getAllImages || !firstResult.pic || !firstResult.pic.length ){
+        return wikimedia.findImagesByName( name, { thumbSize: options.thumbSize } )
           .then( data => {
-            firstResult.pic = _union(data.map( item => _get(item, 'image.url' ) ), firstResult.pic)
+            let prop = options.thumbSize ? 'image.thumburl' : 'image.url'
+            firstResult.pic = _union(data.map( item => _get( item, prop ) ), firstResult.pic)
             return firstResult
           })
       }
@@ -141,7 +143,7 @@ export function isMRCA( leaf ){
   return leaf.node_id.indexOf('mrca') === 0
 }
 
-export const getTxnInfo = _memoize(Promise.coroutine(function* ( leaf ){
+export const getTxnInfo = _memoize(Promise.coroutine(function* ( leaf, options ){
   if ( !leaf.taxon ){
     leaf = yield getLeaf( leaf.node_id )
   }
@@ -151,7 +153,7 @@ export const getTxnInfo = _memoize(Promise.coroutine(function* ( leaf ){
   if ( isMRCA(leaf) ){
     let names = leaf.taxon.name.split(' and ')
     return Promise.map( names, name =>
-      getImagesAndCommonNames( name, null, getAllImages )
+      getImagesAndCommonNames( name, null, {getAllImages, thumbSize: options.thumbSize} )
     ).then( results => {
       return _mergeWith({}, leaf.taxon, ...results, (objValue, srcValue) => {
         if ( _isArray(objValue) ) {
@@ -165,7 +167,7 @@ export const getTxnInfo = _memoize(Promise.coroutine(function* ( leaf ){
 
   return Promise.all([
     getTaxonomyInfo( leaf )
-    , getImagesAndCommonNames( leaf.taxon.unique_name, ncbiId, getAllImages )
+    , getImagesAndCommonNames( leaf.taxon.unique_name, ncbiId, {getAllImages, thumbSize: options.thumbSize} )
   ]).spread( (txnInfo, imgNameData) => {
     return Object.assign({}, leaf.taxon, txnInfo, imgNameData)
   })

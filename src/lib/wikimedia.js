@@ -29,7 +29,7 @@ function mapImageResults( results ){
   })
 }
 
-export function findImagesByName( name, { limit } = {} ){
+export function findImagesByName( name, { limit, thumbSize } = {} ){
 
   var params = {
     'action': 'query'
@@ -39,6 +39,10 @@ export function findImagesByName( name, { limit } = {} ){
     , 'format': 'json'
     , 'origin': '*'
     , 'iiprop': 'url'
+  }
+
+  if ( thumbSize ){
+    params.iiurlwidth = thumbSize
   }
 
   return Promise.resolve( wikimedia('api.php', { params }) )

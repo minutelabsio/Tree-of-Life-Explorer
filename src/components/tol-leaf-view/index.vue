@@ -76,7 +76,7 @@ export default {
       handler( leaf ){
         if ( !leaf ){ return }
 
-        getTxnInfo( leaf ).then( info => {
+        getTxnInfo( leaf, { thumbSize: 200 } ).then( info => {
           this.txnInfo = info
           this.otherCommonNames = info.commonName
           if ( info.pic ){
