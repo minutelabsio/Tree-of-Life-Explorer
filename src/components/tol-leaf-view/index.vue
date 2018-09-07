@@ -6,12 +6,12 @@
         :scientific-name="scientificName",
         :short-scientific-name="scientificName | shortName(isMRCA ? 1000 : truncateLength)",
         :truncate-length="commonName ? truncateLength : truncateLength * 2",
-        :images="txnImages"
+        :images="txnImages",
+        @click="openInfoWindow"
         )
-        b-tooltip(label="See children", type="is-dark")
+        b-tooltip(label="See children", type="is-dark", slot="front-button")
           b-dropdown.limit-dropdown(@active-change="getSubtree()")
-            a.icon-button.toolbar-control(slot="trigger")
-              b-icon(icon="file-tree")
+            b-icon.front-icon(icon="file-tree", slot="trigger")
             b-loading(:is-full-page="false", :active="loading")
             b-dropdown-item.heading.has-text-info Children
             hr.dropdown-divider
@@ -28,17 +28,16 @@
         b-tooltip(label="Remove from tree", type="is-dark")
           a.remove-button.toolbar-control(@click="$emit('remove')")
             b-icon(icon="close-network")
+        b-tooltip(label="Cut tree here", type="is-dark")
+          a.cut-button.toolbar-control(@click="$emit('cut')")
+            b-icon(icon="content-cut")
 </template>
 
 <script>
 import LeafViewMenu from './leaf-view-menu'
 import { getTxnInfo, isMRCA } from '@/lib/taxonomy'
 import { getSubtree } from '@/lib/otol'
-
-const DebugModal = {
-  props: ['leaf']
-  , template: `<div class="box"><pre>{{ JSON.stringify(leaf, null, 2) }}</pre></div>`
-}
+import TaxonomyInfoWindow from '@/components/taxonomy-info-window'
 
 function shortName( str, target ){
   let words = str.split(' ')
@@ -79,9 +78,9 @@ export default {
         getTxnInfo( leaf, { thumbSize: 200 } ).then( info => {
           this.txnInfo = info
           this.otherCommonNames = info.commonName
-          if ( info.pic ){
+          if ( info.thumbnail ){
             let nImages = ['species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
-            this.txnImages = info.pic.splice(0, nImages)
+            this.txnImages = info.thumbnail.splice(0, nImages)
           }
         }).tapCatch( err => this.$snackbar.open({
           message: `Error: ${err.message}`
@@ -114,17 +113,7 @@ export default {
     }
   }
   , methods: {
-    showDebugModal(){
-      this.$modal.open({
-        parent: this
-        , component: DebugModal
-        , props: {
-          leaf: this.leaf
-        }
-        , hasModalCard: false
-      })
-    }
-    , childIsAdded( child ){
+    childIsAdded( child ){
       return this.$route.query.ids.indexOf( child.node_id ) > -1
     }
     , getSubtree(){
@@ -144,6 +133,16 @@ export default {
         this.loading = false
       }).catch( e => console.error(e) )
     }
+    , openInfoWindow(){
+      this.$modal.open({
+        parent: this
+        , component: TaxonomyInfoWindow
+        , props: {
+          txnInfo: this.txnInfo
+        }
+        , hasModalCard: false
+      })
+    }
   }
 }
 </script>
@@ -155,8 +154,12 @@ export default {
   &:hover,
   .dropdown.is-active &
     color: lighten($blue, 10)
-.remove-button
+.remove-button,
+.cut-button
   color: $white
   &:hover
     color: lighten($red, 10)
+.front-icon
+  color: darken($blue, 30)
+  text-shadow: 0.5px 0.5px 1px lighten($blue, 20)
 </style>

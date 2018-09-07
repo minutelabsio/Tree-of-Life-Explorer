@@ -1,6 +1,6 @@
 <template lang="pug">
 .leaf-menu(:class="{ active: active }", @mouseleave="onMouseLeave", @mouseenter="onMouseEnter")
-  .toolbar.primary
+  .toolbar.primary(@click="$emit('click')")
     .background-image
       Collage(:images="images")
     .toolbar-item.item-title
@@ -9,9 +9,12 @@
           | {{ commonName | titleCase | truncate(truncateLength) }}
         b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > truncateLength || shortScientificName.length < scientificName.length")
           | {{ shortScientificName | titleCase | truncate(truncateLength) }}
-    a.toolbar-right.menu-button-container(@click="show()")
-      .toolbar-control
-        b-icon(icon="menu-up")
+    a.toolbar-right
+      .vertical-buttons
+        .toolbar-control(@click="show()")
+          b-icon(icon="menu-up")
+        .toolbar-control
+          slot(name="front-button")
   .toolbar.secondary
     .toolbar-item
       slot
@@ -96,10 +99,11 @@ $menuBackgroundColor: $blue
   height: $menuHeight
   border: 1px solid $grey-light
   border-radius: 3px
-  &:hover, .active &
-    border-color: $blue
+  border-color: $blue
   background: $white
   transition: transform .3s ease-in-out
+  &:hover
+    cursor: pointer
 .primary
   background: $grey-darker
   transform: rotateX(0deg) translateZ($menuHeight/2)
@@ -113,14 +117,16 @@ $menuBackgroundColor: $blue
   transform: rotateX(-90deg) translateZ($menuHeight/2)
   .active &
     transform: rotateX(0deg) translateZ($menuHeight/2)
-.toolbar .menu-button-container
+.toolbar .vertical-buttons .toolbar-control
+  padding: 5px 5px
   transition: background 0.15s ease-in-out
   background: darken($menuBackgroundColor, 8)
   box-shadow: inset 1px 0px 0px 0px darken($menuBackgroundColor, 20)
+
   &:hover
     background: darken($menuBackgroundColor, 4)
-  .toolbar-control
-    padding: 5px;
+  &:active
+    background: darken($menuBackgroundColor, 2)
   .icon
     color: darken($menuBackgroundColor, 30)
     text-shadow: 0.5px 0.5px 1px lighten($menuBackgroundColor, 20)

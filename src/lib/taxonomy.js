@@ -129,8 +129,8 @@ export function getImagesAndCommonNames( name, ncbiId, options = {} ){
       if ( options.getAllImages || !firstResult.pic || !firstResult.pic.length ){
         return wikimedia.findImagesByName( name, { thumbSize: options.thumbSize } )
           .then( data => {
-            let prop = options.thumbSize ? 'image.thumburl' : 'image.url'
-            firstResult.pic = _union(data.map( item => _get( item, prop ) ), firstResult.pic)
+            firstResult.pic = _union(data.map( item => _get( item, 'image.url' ) ), firstResult.pic)
+            firstResult.thumbnail = _union(data.map( item => _get( item, 'image.thumburl' ) ), firstResult.pic)
             return firstResult
           })
       }
