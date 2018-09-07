@@ -80,8 +80,8 @@ export default {
           this.txnInfo = info
           this.otherCommonNames = info.commonName
           if ( info.pic ){
-            let nImages = ['species', 'subspecies'].indexOf(leaf.taxon.rank) === -1 ? 5 : 1
-            this.txnImages = info.pic.splice(0, 5)
+            let nImages = ['species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
+            this.txnImages = info.pic.splice(0, nImages)
           }
         }).tapCatch( err => this.$snackbar.open({
           message: `Error: ${err.message}`
