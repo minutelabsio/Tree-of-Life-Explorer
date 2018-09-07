@@ -14,7 +14,7 @@ export function getDepth( tree, max = 0 ){
     max += 1
   }
 
-  return tree.split.reduce( (max, tree) => Math.max(max, getDepth(tree, max)), max )
+  return tree.split.reduce( (m, tree) => Math.max(m, getDepth(tree, max)), max )
 }
 
 function toBranch( leaf ){

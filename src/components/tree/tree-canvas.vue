@@ -1,7 +1,7 @@
 <template lang="pug">
 .tree-canvas(ref="wrapper")
   .svg(ref="svg")
-  .slot(:style="{ transform: `translate3d(${ox}px, ${oy}px, 0)` }")
+  .slot(:style="{ transform: `translate3d(${ox}px, 0, 0)` }")
     slot
 </template>
 
@@ -10,6 +10,7 @@ import SVG from 'svg.js'
 import Impetus from 'impetus'
 export default {
   name: 'TreeCanvas'
+  , props: ['height']
   , data: () => ({
     ox: 0
     , oy: 0
@@ -23,23 +24,43 @@ export default {
     }
   }
   , mounted(){
-    this.$refs.svg.appendChild(this.svgEl.children[0])
 
+    function getScrollHeight(){
+      return document.documentElement.scrollHeight - document.documentElement.offsetHeight
+    }
+
+    this.$refs.svg.appendChild(this.svgEl.children[0])
     let impetus = new Impetus({
       source: this.$refs.wrapper
+      , boundY: [-getScrollHeight(), 0]
       , update: ( x, y ) => {
-        this.setOffset( x, 0 )
+        this.setOffset( x, y )
       }
     })
 
-    this.$once( 'hook:beforeDestroy', () => impetus.destroy() )
+    function onResize() {
+      impetus.setBoundY([ -getScrollHeight(), 0 ])
+    }
+
+    function onScroll(){
+      impetus.setValues( this.ox, -document.documentElement.scrollTop )
+    }
+
+    window.addEventListener('scroll', onScroll)
+    this.$watch('height', onResize)
+
+    this.$once( 'hook:beforeDestroy', () => {
+      window.removeEventListener('scroll', onScroll)
+      impetus.destroy()
+    })
   }
   , methods: {
 
     setOffset( x, y ){
       this.ox = x
       this.oy = y
-      this.svg.move(this.ox, this.oy)
+      this.svg.move(this.ox, 0)
+      document.documentElement.scrollTop = -this.oy
       this.$emit('move', { x, y })
     }
   }

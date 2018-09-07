@@ -1,6 +1,6 @@
 <template lang="pug">
 .tree(:style="{ height: height + 'px' }", @click="leafContext = null")
-  TreeCanvas(@move="onCanvasDrag")
+  TreeCanvas(@move="onCanvasDrag", :height="height")
     Tree(
       v-if="tree"
       , :tree="tree"
@@ -50,8 +50,8 @@ export default {
 
     , height(){
       if (!this.tree){ return 0 }
-      let margin = 1000
-      return this.topPadding + this.tree.depth * (2 * this.branchHeight) + margin
+      let margin = 0
+      return this.topPadding + this.tree.depth * (100 + this.branchHeight) + margin
     }
 
     , tree(){
@@ -65,6 +65,7 @@ export default {
     }
     , onCanvasDrag( pos ){
       this.canvasX = pos.x
+      this.$emit('move', pos)
     }
   }
 }
