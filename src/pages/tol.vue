@@ -97,9 +97,15 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
 $topNavHeight: 138px
+.app
+  display: flex
+  flex-direction: column
+  align-items: stretch
+  min-height: 100vh
 .search-box
   width: 620px
 .wrapper
+  flex: 1
   margin-top: $topNavHeight
   overflow: hidden
   .inner

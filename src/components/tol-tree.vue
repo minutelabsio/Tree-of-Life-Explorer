@@ -1,5 +1,5 @@
 <template lang="pug">
-.tree(:style="{ height: height + 'px' }", @click="leafContext = null")
+.tree(:style="{ height: height + 'px' }", @click="openLeafContext = false")
   TreeCanvas(@move="onCanvasDrag", :height="height")
     Tree(
       v-if="tree"
@@ -14,7 +14,7 @@
       , @add-node="$emit('add-node', arguments[0].node_id)"
       , @error="$emit('error', arguments[0])"
       )
-  .parent-list.limit-dropdown.dropdown.is-active(v-if="leafContext", :style="{ top: (leafContext.y-100) + 'px', left: (canvasX + leafContext.x + 40) + 'px' }")
+  .parent-list.limit-dropdown.dropdown.is-active(v-if="openLeafContext", :style="{ top: (leafContextY-100) + 'px', left: (canvasX + leafContextX + 30) + 'px' }")
     .dropdown-menu
       .dropdown-content
         a.dropdown-item(v-for="parent in leafContext.subtree.lineage", :class="{ 'has-text-grey': !parent.taxon }", @click="$emit('add-node', parent.node_id)") {{ parent | nodeName }}
@@ -36,6 +36,9 @@ export default {
   }
   , data: () => ({
     leafContext: null
+    , openLeafContext: false
+    , leafContextX: 0
+    , leafContextY: 0
     , padding: 10
     , branchHeight: 80
     , topPadding: 60
@@ -50,7 +53,7 @@ export default {
 
     , height(){
       if (!this.tree){ return 0 }
-      let margin = 0
+      let margin = 300
       return this.topPadding + this.tree.depth * (100 + this.branchHeight) + margin
     }
 
@@ -61,7 +64,11 @@ export default {
   }
   , methods: {
     showLeafDetails( leaf ){
+      let height = leaf.subtree.lineage.length * 30
+      this.openLeafContext = true
       this.leafContext = leaf
+      this.leafContextX = leaf.x
+      this.leafContextY = Math.max(100, leaf.y) + ((height < 100) ? 100 - height * 0.5 : 0)
     }
     , onCanvasDrag( pos ){
       this.canvasX = pos.x

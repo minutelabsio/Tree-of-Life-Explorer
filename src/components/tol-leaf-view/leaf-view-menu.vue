@@ -9,11 +9,11 @@
           | {{ commonName | titleCase | truncate(truncateLength) }}
         b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > truncateLength || shortScientificName.length < scientificName.length")
           | {{ shortScientificName | titleCase | truncate(truncateLength) }}
-    a.toolbar-right
+    .toolbar-right
       .vertical-buttons
-        .toolbar-control(@click="show()")
+        .toolbar-control(@click.stop="show()")
           b-icon(icon="menu-up")
-        .toolbar-control
+        .toolbar-control(@click.stop="")
           slot(name="front-button")
   .toolbar.secondary
     .toolbar-item
