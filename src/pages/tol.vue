@@ -4,8 +4,19 @@
     .toolbar-item
       TOLCommonNameSearch.search-box(@select="onSelect")
     .toolbar-right
-      b-switch(v-model="wideMode")
-        | Wide Mode
+      b-field(grouped)
+        b-field
+          .control
+            b-tooltip(label="undo", type="is-dark", position="is-bottom")
+              .button(@click="undo")
+                b-icon(icon="undo")
+          .control
+            b-tooltip(label="redo", type="is-dark", position="is-bottom")
+              .button(@click="redo")
+                b-icon(icon="redo")
+        b-field
+          b-switch(v-model="wideMode")
+            | Wide Mode
   .wrapper
     .inner
       TOLTree(:leafs="leafs", :card-width="cardWidth", @remove="onRemoveLeaf", @cut="cutBranch", @add-node="addNode", @error="showError")
@@ -56,6 +67,14 @@ export default {
 
     showError( e ){
       console.error( e )
+    }
+
+    , undo(){
+      this.$router.back()
+    }
+
+    , redo(){
+      this.$router.forward()
     }
 
     , addLeaf( id ){
