@@ -10,6 +10,7 @@
       , :padding="padding"
       , :branchHeight="branchHeight"
       , @remove="$emit('remove', arguments[0])"
+      , @cut="$emit('cut', arguments[0])"
       , @leaf-click="showLeafDetails"
       , @add-node="$emit('add-node', arguments[0].node_id)"
       , @error="$emit('error', arguments[0])"

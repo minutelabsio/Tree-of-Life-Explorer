@@ -29,6 +29,7 @@
         :leaf="branch.tree.leaf"
         , :truncate-length="truncateLength"
         , @remove="$emit( 'remove', branch.tree.leaf )"
+        , @cut="$emit( 'cut', branch.tree )"
         , @error="$emit( 'error', arguments[0] )"
         , @add-node="$emit( 'add-node', arguments[0] )"
         )

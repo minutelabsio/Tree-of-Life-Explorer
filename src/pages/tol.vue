@@ -8,7 +8,7 @@
         | Wide Mode
   .wrapper
     .inner
-      TOLTree(:leafs="leafs", :card-width="cardWidth", @remove="onRemoveLeaf", @add-node="addNode", @error="showError")
+      TOLTree(:leafs="leafs", :card-width="cardWidth", @remove="onRemoveLeaf", @cut="cutBranch", @add-node="addNode", @error="showError")
 </template>
 
 <script>
@@ -17,7 +17,9 @@ import TOLCommonNameSearch from '@/components/tol-common-name-search'
 import { getNodeByName, getNode } from '@/lib/otol'
 // import { findByName } from '@/lib/gbif'
 import { getLeaf } from '@/lib/taxonomy'
-import _without from 'lodash/without'
+import { getChildren } from '@/lib/tree-utils'
+import _difference from 'lodash/difference'
+import _castArray from 'lodash/castArray'
 import _uniq from 'lodash/uniq'
 import Promise from 'bluebird'
 
@@ -63,7 +65,7 @@ export default {
     }
 
     , removeLeaf( id ){
-      this.$router.push({ query: { ids: _without( this.ids, id ) } })
+      this.$router.push({ query: { ids: _difference( this.ids, _castArray(id) ) } })
     }
 
     , onRemoveLeaf( leaf ){
@@ -74,6 +76,11 @@ export default {
       getNodeByName( entry.scientificName ).then( (node) => {
         this.addLeaf( node.node_id )
       }).catch( e => this.showError( e ) )
+    }
+
+    , cutBranch( branch ){
+      let children = getChildren( branch )
+      this.removeLeaf( children.map( ch => ch.node_id ) )
     }
 
     , addNode( nodeId ){

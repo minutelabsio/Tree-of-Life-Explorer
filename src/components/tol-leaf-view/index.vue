@@ -1,10 +1,10 @@
 <template lang="pug">
 .item(@mousedown.stop="")
-  .card.is-shadowless
+  .card.is-shadowless(v-if="isAddedToTree")
     .card-header
       LeafViewMenu(:common-name="commonName",
         :scientific-name="scientificName",
-        :short-scientific-name="scientificName | shortName(isMRCA ? 1000 : truncateLength)",
+        :short-scientific-name="shortScientificName",
         :truncate-length="commonName ? truncateLength : truncateLength * 2",
         :images="txnImages",
         @click="openInfoWindow"
@@ -29,8 +29,12 @@
           a.remove-button.toolbar-control(@click="$emit('remove')")
             b-icon(icon="close-network")
         b-tooltip(label="Cut tree here", type="is-dark")
-          a.cut-button.toolbar-control(@click="$emit('cut')")
+          a.cut-button.toolbar-control(@click="$emit('cut', leaf)")
             b-icon(icon="content-cut")
+  .minimal(v-if="!isAddedToTree")
+    .common-name {{ (commonName || shortScientificName) | titleCase }}
+    .pin-btn(@click="$emit('add-node', leaf)")
+      b-icon(icon="file-plus", size="is-small")
 </template>
 
 <script>
@@ -81,6 +85,9 @@ export default {
           if ( info.thumbnail ){
             let nImages = ['species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
             this.txnImages = info.thumbnail.splice(0, nImages)
+          } else if ( info.pic ){
+            let nImages = ['species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
+            this.txnImages = info.pic.splice(0, nImages)
           }
         }).tapCatch( err => this.$snackbar.open({
           message: `Error: ${err.message}`
@@ -102,14 +109,20 @@ export default {
       }
       return this.txnInfo.vernacularNameList
     }
+    , shortScientificName(){
+      return shortName(this.scientificName, this.isMRCA ? 1000 : this.truncateLength)
+    }
     , scientificName(){
       if ( !this.txnInfo ){ return '' }
       return this.txnInfo.canonicalName ||
         this.txnInfo.name ||
-        this.leaf.node_id
+        this.leaf.node_id || ''
     }
     , isMRCA(){
       return this.leaf && isMRCA(this.leaf)
+    }
+    , isAddedToTree(){
+      return this.childIsAdded( this.leaf )
     }
   }
   , methods: {
@@ -162,4 +175,33 @@ export default {
 .front-icon
   color: darken($blue, 30)
   text-shadow: 0.5px 0.5px 1px lighten($blue, 20)
+
+$greyBlue: desaturate(lighten($blue, 20), 50)
+.minimal
+  position: relative
+  text-align: center
+  border: 1px solid $greyBlue
+  border-radius: 3px
+  background: $greyBlue
+  color: $white
+  .pin-btn
+    position: absolute
+    top: -14px
+    right: -12px
+    width: 24px
+    height: 24px
+    text-align: center
+    background: $greyBlue
+    color: $white
+    border: 1px solid $white
+    border-radius: 50%
+    line-height: 24px
+    padding-left: 1px
+    cursor: pointer
+    &:hover
+      border-color: $greyBlue
+      background-color: $white
+      color: $grey-darker
+    &:active
+      top: -13px
 </style>

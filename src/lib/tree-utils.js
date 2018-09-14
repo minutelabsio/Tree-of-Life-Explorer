@@ -158,3 +158,8 @@ export function buildReducedTree( leafs ){
 
   return tree
 }
+
+export function getChildren( branch ){
+  let children = branch.split.length ? branch.split.reduce( (ch, branch) => [...ch, ...getChildren(branch)], [] ) : []
+  return [ branch.leaf ].concat( children )
+}

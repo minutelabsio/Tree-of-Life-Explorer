@@ -1,4 +1,4 @@
-//- <template lang="pug">
+<template lang="pug">
 .search
   b-field(label="Search by common name", expanded, :message="!searchEntry || results.length || isFetching ? '&nbsp;' : 'Nothing found. Try being more specific'")
     b-field
