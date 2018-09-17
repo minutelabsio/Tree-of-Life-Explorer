@@ -7,11 +7,16 @@
       b-field(grouped)
         b-field
           .control
-            b-tooltip(label="undo", type="is-dark", position="is-bottom")
+            b-tooltip(label="Clear All", type="is-dark", position="is-bottom")
+              .button(@click="clear")
+                b-icon(icon="delete-sweep")
+        b-field
+          .control
+            b-tooltip(label="Undo", type="is-dark", position="is-bottom")
               .button(@click="undo")
                 b-icon(icon="undo")
           .control
-            b-tooltip(label="redo", type="is-dark", position="is-bottom")
+            b-tooltip(label="Redo", type="is-dark", position="is-bottom")
               .button(@click="redo")
                 b-icon(icon="redo")
         b-field
@@ -19,7 +24,12 @@
             | Wide Mode
   .wrapper
     .inner
-      TOLTree(:leafs="leafs", :card-width="cardWidth", @remove="onRemoveLeaf", @cut="cutBranch", @add-node="addNode", @error="showError")
+      .empty-state(v-show="treeIsEmpty")
+        .columns
+          .column.is-half.is-offset-one-quarter
+            .section
+              | The tree is emtpy. Try adding species by typing the name into the search!
+      TOLTree(v-show="!treeIsEmpty", :leafs="leafs", :card-width="cardWidth", @remove="onRemoveLeaf", @cut="cutBranch", @add-node="addNode", @error="showError")
 </template>
 
 <script>
@@ -53,6 +63,9 @@ export default {
   , computed: {
     cardWidth(){
       return this.wideMode ? 260 : 160
+    }
+    , treeIsEmpty(){
+      return !this.leafs.length
     }
   }
   , watch: {
@@ -115,6 +128,10 @@ export default {
       Promise.map( ids, getLeaf )
         .then( leafs => (this.leafs = leafs) )
         .catch( e => this.showError( e ) )
+    }
+
+    , clear(){
+      this.$router.push({ query: { ids: [] } })
     }
   }
 }
