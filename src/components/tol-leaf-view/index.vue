@@ -151,7 +151,8 @@ export default {
         parent: this
         , component: TaxonomyInfoWindow
         , props: {
-          txnInfo: this.txnInfo
+          leaf: this.leaf
+          , txnInfo: this.txnInfo
         }
         , hasModalCard: false
       })

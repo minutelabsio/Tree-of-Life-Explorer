@@ -79,6 +79,19 @@ export default {
   , methods: {
 
     showError( e ){
+      var message = ''
+      if ( e.message === 'Network Error' ){
+        message = 'Trouble connecting with database! Sorry! Things might not work. Try refreshing...'
+      } else {
+        message = e.message
+      }
+
+      this.$toast.open({
+        message
+        , type: 'is-danger'
+        , duration: 10 * 1000
+      })
+
       console.error( e )
     }
 
