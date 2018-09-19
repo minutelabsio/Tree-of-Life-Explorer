@@ -26,7 +26,7 @@
               .button(@click="clear")
                 b-icon(icon="delete-sweep")
       .meta-info
-        a(@click="showMetaInfo") what is this?
+        a(@click="showMetaInfo") About this app
   .wrapper
     .inner
       .empty-state(v-show="treeIsEmpty")

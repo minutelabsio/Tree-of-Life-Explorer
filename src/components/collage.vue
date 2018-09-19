@@ -41,5 +41,4 @@ export default {
   column-count: 2;
   column-gap: 0;
   column-fill: balance;
-
 </style>
