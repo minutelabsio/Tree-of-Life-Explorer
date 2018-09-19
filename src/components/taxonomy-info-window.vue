@@ -15,7 +15,7 @@
                 | Rank
               a(:href="rankLink", target="_blank").tag.is-primary
                 | {{ txnInfo.rank }}
-            .tags.has-addons
+            .tags.has-addons(v-if="txnInfo.numDescendants")
               span.tag.is-dark
                 | Decendants
               span.tag.is-info

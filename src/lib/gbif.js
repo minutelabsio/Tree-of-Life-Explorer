@@ -57,6 +57,19 @@ export function findByCommonName( q ){
   ).then( results => results.map( setVernacularNames ) )
 }
 
+export function findByScientificName( q ){
+  var params = {
+    rank: 'SUBSPECIES'
+    , qField: 'SCIENTIFIC'
+    , q
+  }
+  return Promise.join(
+    gbif('/species/search', { params })
+    , gbif('/species/search', { params: {...params, rank: 'SPECIES'} })
+    , ( subspecies, species ) => _union(subspecies.data.results, species.data.results)
+  ).then( results => results.map( setVernacularNames ) )
+}
+
 export function findByName( name ){
   var params = {
     name

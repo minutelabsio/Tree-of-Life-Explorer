@@ -1,30 +1,59 @@
 <template lang="pug">
-.search
-  b-field(label="Search by common name", expanded, :message="!searchEntry || results.length || isFetching ? '&nbsp;' : 'Nothing found. Try being more specific'")
+.search(@keyup.esc="closeOverlay")
+  .overlay(v-show="overlayOpen", tabindex="-1")
+    .inner
+      .delete.is-large(@click="closeOverlay")
+      b-field
+        b-input(size="is-large", v-model="searchEntry", ref="overlayInput", icon="magnify", placeholder="eg. Snow Leopard")
+      .results
+        b-loading(:active="isFetching || isFetchingSci", :is-full-page="false")
+        .columns
+          .column
+            aside.menu
+              p.menu-label By Common Name...
+              ul.menu-list
+                li.item(v-for="result in results")
+                  a(@click="selectResult( result )")
+                    span.common-names.has-text-info {{ result.commonNames }}
+                    span.scientific-name ({{ result.scientificName }})
+          .column
+            aside.menu
+              p.menu-label By Scientific Name...
+              ul.menu-list
+                li.item(v-for="result in scientificResults")
+                  a(@click="selectResult( result )")
+                    span.common-names.has-text-info {{ result.scientificName }}
+                    span.scientific-name {{ result.commonNames }}
+        .empty-results-msg(v-if="searchEntry && !isFetching && !isFetchingSci && !results.length && !scientificResults.length")
+          | No results. Is it spelled correctly?
+  b-field(expanded)
     b-field
-      b-select(v-model="source")
-        option(value="gbif") GBIF Database
-        option(value="wikidata") Wikidata.org
+      .control
+        .button(@click="openOverlay")
+          b-icon(icon="plus", size="is-small")
+          span Add...
 
-      b-autocomplete(
-        placeholder="eg. Snow Leopard"
-        , icon="magnify"
-        , :keep-first="true"
-        , :data="results"
-        , v-model="searchEntry"
-        , :loading="isFetching"
-        , @input="search"
-        , @select="selectResult"
-        , expanded
-      )
-        template(slot-scope="props")
-          .columns
-            .common-names.column.is-half.has-text-info {{ props.option.commonNames }}
-            .scientific-name.column.is-half {{ props.option.scientificName }}
+      b-input(type="text", @input="search", @keyup.native="openOverlay", v-model="searchEntry", placeholder="start typing...", icon="magnify")
+      //- b-autocomplete(
+      //-   placeholder="eg. Snow Leopard"
+      //-   , icon="magnify"
+      //-   , :keep-first="true"
+      //-   , :data="results"
+      //-   , v-model="searchEntry"
+      //-   , :loading="isFetching"
+      //-   , @input="search"
+      //-   , @select="selectResult"
+      //-   , expanded
+      //- )
+      //-   template(slot-scope="props")
+      //-     .columns
+      //-       .common-names.column.is-half.has-text-info {{ props.option.commonNames }}
+      //-       .scientific-name.column.is-half {{ props.option.scientificName }}
 </template>
 
 <script>
 import _debounce from 'lodash/debounce'
+import _reject from 'lodash/reject'
 import _uniqBy from 'lodash/uniqBy'
 import { getNodeByName, getTxResultsByNames } from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
@@ -38,6 +67,14 @@ function filterByOTLMatches( results ){
     ))
 }
 
+function removeDuplicates( results ){
+  return _uniqBy( results, 'canonicalName' )
+}
+
+function removeLackingVernacularName( results ){
+  return _reject( results, r => !r.vernacularNameList )
+}
+
 export default {
   name: 'TOLCommonNameSearch'
   , props: ['leaves']
@@ -46,17 +83,41 @@ export default {
   }
   , data: () => ({
     results: []
+    , scientificResults: []
     , searchEntry: ''
     , source: 'gbif'
     , isFetching: false
+    , isFetchingSci: false
+
+    , overlayOpen: false
   })
   , methods: {
-    search: _debounce(function( q ) {
+    openOverlay(){
+      this.overlayOpen = true
+      document.documentElement.style.overflow = 'hidden'
+      this.$refs.overlayInput.focus()
+    }
+
+    , closeOverlay(){
+      this.overlayOpen = false
+      document.documentElement.style.overflow = ''
+    }
+
+    , search( q ){
+      q = q.trim()
       this.results = []
+      this.scientificResults = []
 
       if (!q){ return }
 
+      this.openOverlay()
+
       this.isFetching = true
+      this.isFetchingSci = true
+      this.execSearch( q )
+    }
+
+    , execSearch: _debounce(function( q ) {
       let query
 
       if ( this.source !== 'wikidata' ){
@@ -75,13 +136,22 @@ export default {
         .catch( e => {
           this.errorMsg(e)
         })
+
+      this.searchGbif( q, false )
+        .then( results => {
+          this.scientificResults = results
+          this.isFetchingSci = false
+        })
+        .catch( e => {
+          this.errorMsg(e)
+        })
     }, 500)
 
-    , searchGbif( q ){
-      function removeDuplicates( results ){
-        return _uniqBy( results, 'canonicalName' )
-      }
-      return gbif.findByCommonName( q )
+    , searchGbif( q, commonName = true ){
+      let query = commonName
+        ? gbif.findByCommonName( q ).then( removeLackingVernacularName )
+        : gbif.findByScientificName( q )
+      return query
         .then( removeDuplicates )
         .then( filterByOTLMatches )
         .then( results =>
@@ -104,6 +174,7 @@ export default {
     }
 
     , selectResult( entry ){
+      this.closeOverlay()
       getNodeByName( entry.scientificName )
         .then( () => this.$emit( 'select', entry ) )
         .catch( error => this.errorMsg(error) )
@@ -123,4 +194,30 @@ export default {
 <style scoped lang="sass">
 .common-names, .scientific-names
   white-space: normal
+.overlay
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  background: rgba(255,255,255,1)
+  z-index: 20
+  overflow: auto
+  .delete
+    position: absolute
+    top: 35px
+    right: 25px
+  .inner
+    margin: 25px 80px 25px 50px
+.results
+  position: relative
+  margin-top: 1.5em
+  min-height: 300px
+  .item
+    span:first-child
+      display: inline-block
+      margin-right: 1ex
+.empty-results-msg
+  text-align: center
+  margin-top: 4em
 </style>

@@ -2,14 +2,12 @@
 .app
   nav.top-nav.box.is-radiusless.toolbar
     .toolbar-item
+      h1.title.main-title.is-pulled-left
+        | Tree of Life
+    .toolbar-item
       TOLCommonNameSearch.search-box(@select="onSelect")
     .toolbar-right
       b-field(grouped)
-        b-field
-          .control
-            b-tooltip(label="Clear All", type="is-dark", position="is-bottom")
-              .button(@click="clear")
-                b-icon(icon="delete-sweep")
         b-field
           .control
             b-tooltip(label="Undo", type="is-dark", position="is-bottom")
@@ -22,6 +20,13 @@
         b-field
           b-switch(v-model="wideMode")
             | Wide Mode
+        b-field
+          .control
+            b-tooltip(label="Clear All", type="is-dark", position="is-bottom")
+              .button(@click="clear")
+                b-icon(icon="delete-sweep")
+      .meta-info
+        a(@click="showMetaInfo") what is this?
   .wrapper
     .inner
       .empty-state(v-show="treeIsEmpty")
@@ -146,20 +151,40 @@ export default {
     , clear(){
       this.$router.push({ query: { ids: [] } })
     }
+
+    , showMetaInfo(){
+      this.$root.showMetaInfo = true
+    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
+@import '@/styles/_variables.scss'
 $topNavHeight: 138px
+.main-title
+  position: relative
+  font-family: 'Mystery Quest', cursive
+  margin: 0
+  margin-right: 1rem
+  font-weight: normal
+  color: $blue
+  text-shadow: 1px 1px 1px lighten($blue, 30)
+
+  padding-left: 2rem
+  &:before
+    content: 'The'
+    position: absolute
+    top: 3px
+    left: 0
+    font-size: 1rem
 .app
   display: flex
   flex-direction: column
   align-items: stretch
   min-height: 100vh
 .search-box
-  width: 620px
 .wrapper
   flex: 1
   margin-top: $topNavHeight
@@ -173,6 +198,15 @@ $topNavHeight: 138px
   top: 0
   left: 0
   right: 0
-  z-index: 40
+  z-index: 30
   display: flex
+  padding: 1rem 1.25rem
+  .field
+    margin-bottom: 0
+  .switch
+    height: 100%
+  .meta-info
+    border-left: 1px solid $grey-lighter
+    margin-left: 1rem
+    padding-left: 1rem
 </style>

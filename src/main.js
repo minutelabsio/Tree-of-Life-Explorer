@@ -19,10 +19,35 @@ Vue.use(VueMotion)
 
 Vue.config.productionTip = false
 
+const MetaInfoComponent = {
+  props: ['show']
+  , template: (function(){
+    let el = document.getElementById('meta-info')
+    let html = el.innerHTML
+    el.parentNode.removeChild(el)
+    return html
+  })()
+  , computed: {
+    showInfo: {
+      get(){
+        return this.show
+      }
+      , set( val ){
+        this.$emit('update:show', val)
+      }
+    }
+  }
+}
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app'
   , router
-  , components: { App }
-  , template: '<App/>'
+  , data: () => ({
+    showMetaInfo: false
+  })
+  , components: { App, MetaInfoComponent }
+  , template: '<App><MetaInfoComponent :show.sync="showMetaInfo"/></App>'
+  , computed: {
+  }
 })
