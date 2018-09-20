@@ -18,8 +18,8 @@
             .tags.has-addons(v-if="txnInfo.numDescendants")
               span.tag.is-dark
                 | Decendants
-              span.tag.is-info
-                | {{ txnInfo.numDescendants }}
+              span.tag.is-info(:title="txnInfo.numDescendants")
+                | {{ txnInfo.numDescendants | shortNumber }}
 
           b-message(v-if="isMRCA", type="is-info")
             | This is an MRCA node
