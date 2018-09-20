@@ -1,10 +1,12 @@
 <template lang="pug">
-.app
+.app(:class="{ 'nav-open': navOpen }")
   nav.top-nav.box.is-radiusless.toolbar
+    .button.menu-button(@click="menuToggle")
+      b-icon(:icon="navOpen ? 'chevron-up' : 'menu'")
     .toolbar-item
       h1.title.main-title.is-pulled-left
         | Tree of Life
-    .toolbar-item
+    .toolbar-item.search-container
       TOLCommonNameSearch.search-box(@select="onSelect")
     .toolbar-right
       b-field(grouped)
@@ -64,6 +66,7 @@ export default {
   , data: () => ({
     leafs: []
     , wideMode: false
+    , navOpen: true
   })
   , computed: {
     cardWidth(){
@@ -155,6 +158,10 @@ export default {
     , showMetaInfo(){
       this.$root.showMetaInfo = true
     }
+
+    , menuToggle(){
+      this.navOpen = !this.navOpen
+    }
   }
 }
 </script>
@@ -201,6 +208,7 @@ $topNavHeight: 138px
   z-index: 30
   display: flex
   padding: 1rem 1.25rem
+
   .field
     margin-bottom: 0
   .switch
@@ -209,4 +217,48 @@ $topNavHeight: 138px
     border-left: 1px solid $grey-lighter
     margin-left: 1rem
     padding-left: 1rem
+
+  .menu-button
+    display: none
+
+@media screen and (max-width: 820px)
+  .top-nav
+    flex-wrap: wrap
+    transform: translate3d(0, -120px, 0)
+    transition: transform 0.3s ease-in-out
+    .nav-open &
+      transform: translate3d(0, 0, 0)
+    .menu-button
+      display: block
+      position: absolute
+      bottom: -36px
+      left: 0
+    .toolbar-item
+      margin-bottom: 1rem
+    .search-container
+      display: flex
+      justify-content: flex-end
+    .toolbar-item,
+    .toolbar-right
+      display: flex
+      flex-direction: row
+    .toolbar-right
+      width: 100%
+      flex-direction: row-reverse
+      & > *
+        flex: 1
+      .meta-info
+        border: none
+        margin-left: 0
+        padding-left: 0
+      .field
+        justify-content: flex-end
+@media screen and (max-width: 420px)
+  .top-nav
+    transform: translate3d(0, -172px, 0)
+    .toolbar-right
+      .meta-info
+        position: absolute
+        top: 20px
+        right: 1.5rem
 </style>
