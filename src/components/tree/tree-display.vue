@@ -22,7 +22,7 @@
       //- )
       //- Motion(:values="{ x2: branch.x, y2: branch.y, dy: branch.dy }", :spring="{ stiffness: 300, damping: 60, precision: 1 }")
       //-   template(slot-scope="props")
-      Connection(v-if="branch.tree.lineage.length", :x1="branch.px || branch.x", :y1="(branch.py || branch.y) + branch.pdy", :x2="branch.x", :y2="branch.y + branch.dy", :padding="branch.dy")
+      Connection(v-if="!branch.isRoot", :x1="branch.px || branch.x", :y1="(branch.py || branch.y) + branch.pdy", :x2="branch.x", :y2="branch.y + branch.dy", :padding="branch.dy")
       Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="branch.x", :y="branch.y", @click="$emit('leaf-click', arguments[0])")
 
       TOLLeafView(

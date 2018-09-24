@@ -110,7 +110,7 @@ export default {
         }
         , {
           text: `Open Tree of Life`
-          , url: `https://tree.opentreeoflife.org/opentree/argus/opentree9.1@${this.leaf.node_id}`
+          , url: `https://tree.opentreeoflife.org/opentree/argus/opentree10.3@${this.leaf.node_id}`
           , image: 'https://avatars2.githubusercontent.com/u/1752618?s=400&v=4'
         }
         , {
