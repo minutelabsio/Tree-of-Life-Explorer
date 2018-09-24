@@ -4,6 +4,9 @@
     .content
       .media
         .media-content
+          .otl-id
+            span='OTL Id: {{ leaf.node_id }} '
+            a.has-text-small(@click="copyToClipboard(leaf.node_id)") (copy)
           h1.title.has-text-dark {{ scientificName }}
           h4.subtitle(v-if="commonName")
             span.has-text-grey='Commonly known as a '
@@ -51,6 +54,18 @@
 import _remove from 'lodash/remove'
 import { isMRCA } from '@/lib/taxonomy'
 import { getTxnSourceId } from '@/lib/otol'
+
+function copyToClipboard( str ) {
+  const el = document.createElement('textarea')
+  el.value = str
+  el.setAttribute('readonly', '')
+  el.style.position = 'absolute'
+  el.style.left = '-9999px'
+  document.body.appendChild(el)
+  el.select()
+  document.execCommand('copy')
+  document.body.removeChild(el)
+}
 
 export default {
   name: 'TaxonomyInfoWindow'
@@ -122,6 +137,15 @@ export default {
       let len = this.txnInfo.pic.length
       this.currentPic = (this.currentPic - 1 + len) % len
     }
+    , copyToClipboard( str ){
+      this.$toast.open({
+        message: 'copied ID to clipboard'
+        , type: 'is-info'
+        , position: 'is-top-left'
+      })
+
+      copyToClipboard( str )
+    }
   }
 }
 </script>
@@ -138,12 +162,20 @@ export default {
     z-index: 1
 .tag-list
   display: flex
+  flex-wrap: wrap
   .tags
+    flex-wrap: nowrap
     margin: 0 1em 0 0
+.otl-id
+  font-weight: normal
+  font-size: 0.8rem
+  line-height: 1.5
+  font-family: $family-monospace
 .links
   .column
     max-width: 25%
   .card
+    height: 100%
     transition: all 0.15s ease-in-out
     &:hover,
     &:focus

@@ -22,12 +22,18 @@ function shortNumber( n ){
   return (n / cfg.range[0]).toFixed( cfg.decimals ) + cfg.suffix
 }
 
+function truncate( str = '', len = 30, sfx = '...' ){
+  if ( str.length < len ){ return str }
+  return str.substr( 0, len - sfx.length ) + sfx
+}
+
 export default {
   install( Vue, options ){
     Vue.filter('capitalize', _capitalize)
     Vue.filter('titleCase', titleCase)
     Vue.filter('filter', _filter)
     Vue.filter('shortNumber', shortNumber)
+    Vue.filter('truncate', truncate)
 
     Vue.filter('nodeName', function( node ){
       if (node.taxon){
