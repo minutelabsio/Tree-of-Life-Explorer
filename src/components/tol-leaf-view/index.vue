@@ -84,10 +84,10 @@ export default {
           this.otherCommonNames = info.commonName
           if ( info.thumbnail ){
             let nImages = ['species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
-            this.txnImages = info.thumbnail.splice(0, nImages)
+            this.txnImages = info.thumbnail.slice(0, nImages)
           } else if ( info.pic ){
             let nImages = ['species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
-            this.txnImages = info.pic.splice(0, nImages)
+            this.txnImages = info.pic.slice(0, nImages)
           }
         }).tapCatch( err => this.$snackbar.open({
           message: `Error: ${err.message}`
