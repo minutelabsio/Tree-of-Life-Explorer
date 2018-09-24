@@ -6,8 +6,30 @@ import axios from 'axios'
 import { setupCache } from 'axios-cache-adapter'
 import _startCase from 'lodash/startCase'
 import _uniq from 'lodash/uniq'
-import _union from 'lodash/union'
+// import _union from 'lodash/union'
 import _flow from 'lodash/flow'
+
+const parseParams = (params) => {
+  const keys = Object.keys(params)
+  let options = ''
+
+  keys.forEach((key) => {
+    const isParamTypeObject = typeof params[key] === 'object'
+    const isParamTypeArray = isParamTypeObject && (params[key].length >= 0)
+
+    if (!isParamTypeObject) {
+      options += `${key}=${params[key]}&`
+    }
+
+    if (isParamTypeObject && isParamTypeArray) {
+      params[key].forEach((element) => {
+        options += `${key}=${element}&`
+      })
+    }
+  })
+
+  return options ? options.slice(0, -1) : options
+}
 
 const langs = ['', 'en', 'eng']
 
@@ -19,6 +41,7 @@ const gbif = axios.create({
   baseURL: 'http://api.gbif.org/v1'
   , timeout: 5000
   , adapter: cache.adapter
+  , paramsSerializer: params => parseParams(params)
 })
 
 function setVernacularNames( entry ){
@@ -46,28 +69,26 @@ export function getById( id ){
 
 export function findByCommonName( q ){
   var params = {
-    rank: 'SUBSPECIES'
-    , qField: 'VERNACULAR'
+    qField: 'VERNACULAR'
+    , status: 'ACCEPTED'
+    // , rank: ['SUBSPECIES', 'SPECIES']
     , q
   }
-  return Promise.join(
-    gbif('/species/search', { params })
-    , gbif('/species/search', { params: {...params, rank: 'SPECIES'} })
-    , ( subspecies, species ) => _union(subspecies.data.results, species.data.results)
-  ).then( results => results.map( setVernacularNames ) )
+  return gbif('/species/search', { params })
+    .then( d => d.data.results )
+    .then( results => results.map( setVernacularNames ) )
 }
 
 export function findByScientificName( q ){
   var params = {
-    rank: 'SUBSPECIES'
-    , qField: 'SCIENTIFIC'
+    qField: 'SCIENTIFIC'
+    , status: 'ACCEPTED'
+    // , rank: 'SUBSPECIES'
     , q
   }
-  return Promise.join(
-    gbif('/species/search', { params })
-    , gbif('/species/search', { params: {...params, rank: 'SPECIES'} })
-    , ( subspecies, species ) => _union(subspecies.data.results, species.data.results)
-  ).then( results => results.map( setVernacularNames ) )
+  return gbif('/species/search', { params })
+    .then( d => d.data.results )
+    .then( results => results.map( setVernacularNames ) )
 }
 
 export function findByName( name ){

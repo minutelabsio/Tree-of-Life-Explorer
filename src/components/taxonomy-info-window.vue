@@ -26,7 +26,7 @@
 
           b-message(v-if="isMRCA", type="is-info")
             | This is an MRCA node
-        .media-right
+        .media-right(v-if="txnInfo.pic.length")
           .controls
             b-field(position="is-centered")
               .control
@@ -110,7 +110,7 @@ export default {
         }
         , {
           text: `Open Tree of Life`
-          , url: `https://tree.opentreeoflife.org/opentree/argus/opentree10.3@${this.leaf.node_id}`
+          , url: `https://tree.opentreeoflife.org/opentree/argus/opentree@${this.leaf.node_id}`
           , image: 'https://avatars2.githubusercontent.com/u/1752618?s=400&v=4'
         }
         , {

@@ -14,6 +14,7 @@
               ul.menu-list
                 li.item(v-for="result in results")
                   a(@click="selectResult( result )")
+                    span.tag {{ result.rank || '?' }}
                     span.common-names.has-text-info {{ result.commonNames }}
                     span.scientific-name ({{ result.scientificName }})
           .column
@@ -22,6 +23,7 @@
               ul.menu-list
                 li.item(v-for="result in scientificResults")
                   a(@click="selectResult( result )")
+                    span.tag {{ result.rank || '?' }}
                     span.common-names.has-text-info {{ result.scientificName }}
                     span.scientific-name {{ result.commonNames }}
         .empty-results-msg(v-if="searchEntry && !isFetching && !isFetchingSci && !results.length && !scientificResults.length")
@@ -55,12 +57,16 @@
 import _debounce from 'lodash/debounce'
 import _reject from 'lodash/reject'
 import _uniqBy from 'lodash/uniqBy'
+import _some from 'lodash/some'
 import { getNodeByName, getTxResultsByNames } from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 import * as wikidata from '@/lib/wikidata'
 
+const BADFLAGS = ['MERGED', 'INCONSISTENT']
+
 function filterByOTLMatches( results ){
   return getTxResultsByNames( results.map( el => el.canonicalName || el.scientificName ) )
+    .then( otlMatches => _reject( otlMatches, el => _some( el.matches[0].taxon.flags, f => BADFLAGS.indexOf(f) > -1 ) ) )
     .then( otlMatches => otlMatches.map( el => el.name ) )
     .then( otlNames => results.filter( el =>
       otlNames.indexOf(el.canonicalName || el.scientificName) > -1
@@ -158,6 +164,7 @@ export default {
           results.map( el => ({
             commonNames: el.vernacularNameList
             , scientificName: el.canonicalName || el.scientificName
+            , rank: el.rank
           }))
         )
     }
@@ -169,6 +176,7 @@ export default {
           results.map( el => ({
             commonNames: el.commonName.join(', ')
             , scientificName: el.scientificName.join(', ')
+            , rank: el.rank
           }))
         )
     }
@@ -214,9 +222,11 @@ export default {
   margin-top: 1.5em
   min-height: 300px
   .item
-    span:first-child
-      display: inline-block
+    span
       margin-right: 1ex
+      &:last-child
+        margin-right: 0
+
 .empty-results-msg
   text-align: center
   margin-top: 4em
