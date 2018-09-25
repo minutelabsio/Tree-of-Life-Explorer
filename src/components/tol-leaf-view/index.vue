@@ -127,6 +127,7 @@ export default {
   }
   , methods: {
     childIsAdded( child ){
+      if ( !this.$route.query.ids ){ return false }
       return this.$route.query.ids.indexOf( child.node_id ) > -1
     }
     , getSubtree(){

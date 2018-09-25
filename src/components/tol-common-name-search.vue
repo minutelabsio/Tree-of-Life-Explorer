@@ -62,6 +62,7 @@ import { getNodeByName, getTxResultsByNames } from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 import * as wikidata from '@/lib/wikidata'
 
+// flags that correspond to txn info that doesn't have an ott node
 const BADFLAGS = ['MERGED', 'INCONSISTENT']
 
 function filterByOTLMatches( results ){

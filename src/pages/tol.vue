@@ -31,17 +31,20 @@
         a(@click="showMetaInfo") About this app
   .wrapper
     .inner
+      b-loading(:is-full-page="false", :active="loading")
       .empty-state(v-show="treeIsEmpty")
-        .columns
-          .column.is-half.is-offset-one-quarter
-            .section
-              | The tree is emtpy. Try adding species by typing the name into the search!
+        TOLSuggestedTrees(@suggest="setLeafs")
+        //- .columns
+        //-   .column.is-half.is-offset-one-quarter
+        //-     .section
+        //-       | The tree is emtpy. Try adding species by typing the name into the search!
       TOLTree(v-show="!treeIsEmpty", :leafs="leafs", :card-width="cardWidth", @remove="onRemoveLeaf", @cut="cutBranch", @add-node="addNode", @error="showError")
 </template>
 
 <script>
 import TOLTree from '@/components/tol-tree'
 import TOLCommonNameSearch from '@/components/tol-common-name-search'
+import TOLSuggestedTrees from '@/components/tol-suggested-trees'
 import { getNodeByName, getNode } from '@/lib/otol'
 // import { findByName } from '@/lib/gbif'
 import { getLeaf } from '@/lib/taxonomy'
@@ -62,11 +65,13 @@ export default {
   , components: {
     TOLTree
     , TOLCommonNameSearch
+    , TOLSuggestedTrees
   }
   , data: () => ({
     leafs: []
     , wideMode: false
     , navOpen: true
+    , loading: false
   })
   , computed: {
     cardWidth(){
@@ -78,8 +83,12 @@ export default {
   }
   , watch: {
     ids: {
-      handler(){
-        this.setLeafs( this.ids )
+      handler( ids, oldIds ){
+        if ( !oldIds || !oldIds.length ){
+          // on first load or tree change... set loading
+          this.loading = true
+        }
+        this.onIdsChanged( this.ids )
       }
       , immediate: true
     }
@@ -109,6 +118,10 @@ export default {
 
     , redo(){
       this.$router.forward()
+    }
+
+    , setLeafs( ids ){
+      this.$router.push({ query: { ids: _uniq( ids ) } })
     }
 
     , addLeaf( id ){
@@ -143,12 +156,12 @@ export default {
         })
     }
 
-    , setLeafs( ids ){
+    , onIdsChanged( ids ){
       if ( !ids ){ return }
-
       Promise.map( ids, getLeaf )
         .then( leafs => (this.leafs = leafs) )
         .catch( e => this.showError( e ) )
+        .finally( () => { this.loading = false } )
     }
 
     , clear(){
@@ -172,10 +185,10 @@ export default {
 $topNavHeight: 138px
 .main-title
   position: relative
-  font-family: 'Mystery Quest', cursive
+  font-family: 'Life Savers', 'Mystery Quest', cursive
   margin: 0
   margin-right: 1rem
-  font-weight: normal
+  font-weight: 700
   color: $blue
   text-shadow: 1px 1px 1px lighten($blue, 30)
 

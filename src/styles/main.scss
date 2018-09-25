@@ -54,3 +54,12 @@
   overflow-y: auto;
   max-height: 400px;
 }
+
+.card.clickable {
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  &:hover,
+  &:focus {
+    box-shadow: 0 2px 3px transparentize($blue, 0.6), 0 0 0 1px transparentize($blue, 0.6);
+  }
+}

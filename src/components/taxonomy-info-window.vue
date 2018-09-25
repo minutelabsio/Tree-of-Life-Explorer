@@ -42,7 +42,7 @@
       .columns
         .column(v-for="link in links")
           a(:href="link.url", target="_blank")
-            .card
+            .card.clickable
               .card-image
                 figure.image
                   img(:src="link.image")
@@ -176,8 +176,4 @@ export default {
     max-width: 25%
   .card
     height: 100%
-    transition: all 0.15s ease-in-out
-    &:hover,
-    &:focus
-      box-shadow: 0 2px 3px transparentize($blue, 0.6), 0 0 0 1px transparentize($blue, 0.6)
 </style>
