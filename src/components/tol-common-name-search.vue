@@ -30,12 +30,11 @@
           | No results. Is it spelled correctly?
   b-field(expanded)
     b-field
+      b-input(type="text", @input="search", @keyup.native="openOverlay", v-model="searchEntry", placeholder="start typing...", icon="magnify")
       .control
         .button(@click="openOverlay")
-          b-icon(icon="plus", size="is-small")
-          span Add...
+          span Search
 
-      b-input(type="text", @input="search", @keyup.native="openOverlay", v-model="searchEntry", placeholder="start typing...", icon="magnify")
       //- b-autocomplete(
       //-   placeholder="eg. Snow Leopard"
       //-   , icon="magnify"
