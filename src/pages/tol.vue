@@ -33,11 +33,13 @@
     .inner
       b-loading(:is-full-page="false", :active="loading")
       .empty-state(v-show="treeIsEmpty")
+        .columns
+          .column.is-half.is-offset-one-quarter
+            .section
+              b-notification(type="is-info", has-icon, :closable="false")
+                | Start your own tree by using the search bar to add species, or you can try a curated tree from the below suggestions.
         TOLSuggestedTrees(@suggest="setLeafs")
-        //- .columns
-        //-   .column.is-half.is-offset-one-quarter
-        //-     .section
-        //-       | The tree is emtpy. Try adding species by typing the name into the search!
+
       TOLTree(v-show="!treeIsEmpty", :leafs="leafs", :card-width="cardWidth", @remove="onRemoveLeaf", @cut="cutBranch", @add-node="addNode", @error="showError")
 </template>
 
