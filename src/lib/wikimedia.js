@@ -16,6 +16,7 @@ const cache = setupCache({
 const wikimedia = axios.create({
   baseURL: 'https://commons.wikimedia.org/w'
   , timeout: 10000
+  , crossdomain: true
   , adapter: cache.adapter
 })
 

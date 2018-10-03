@@ -10,6 +10,7 @@ import _transform from 'lodash/transform'
 import _omit from 'lodash/omit'
 import _values from 'lodash/values'
 import _mapValues from 'lodash/mapValues'
+import Throttler from './throttler'
 
 const cache = setupCache({
   maxAge: 15 * 60 * 1000
@@ -19,10 +20,19 @@ const wikidata = axios.create({
   baseURL: 'https://query.wikidata.org'
   , headers: {
     'Accept': 'application/sparql-results+json'
+    // , 'Access-Control-Allow-Origin': '*'
   }
+  , params: {
+    // origin: window.location.origin
+  }
+  , crossdomain: true
   , timeout: 10000
   , adapter: cache.adapter
 })
+
+const throttler = new Throttler( 200, 5 )
+
+wikidata.interceptors.request.use( config => throttler.schedule( config ) )
 
 function getItemId( url = '' ){
   let m = url.match(/\/([A-z1-9]+$)/)

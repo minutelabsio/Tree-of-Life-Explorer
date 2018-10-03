@@ -11,6 +11,7 @@ import axios from 'axios'
 const otol = axios.create({
   baseURL: 'https://api.opentreeoflife.org/v3'
   , timeout: 5000
+  , crossdomain: true
 })
 
 function getCommonLineage( nodes ){

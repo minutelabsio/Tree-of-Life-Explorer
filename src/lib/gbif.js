@@ -41,6 +41,7 @@ const gbif = axios.create({
   baseURL: 'http://api.gbif.org/v1'
   , timeout: 5000
   , adapter: cache.adapter
+  , crossdomain: true
   , paramsSerializer: params => parseParams(params)
 })
 

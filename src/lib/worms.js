@@ -12,6 +12,7 @@ const cache = setupCache({
 const worms = axios.create({
   baseURL: 'http://www.marinespecies.org/rest'
   , timeout: 5000
+  , crossdomain: true
   , adapter: cache.adapter
 })
 
