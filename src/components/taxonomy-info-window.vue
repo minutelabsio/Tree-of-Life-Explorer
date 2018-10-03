@@ -16,7 +16,7 @@
             .tags.has-addons
               span.tag.is-dark
                 | Rank
-              a(:href="rankLink", target="_blank").tag.is-primary
+              a(:href="rankLink", target="_blank").tag.rank-tag
                 | {{ txnInfo.rank }}
             .tags.has-addons(v-if="txnInfo.numDescendants")
               span.tag.is-dark
@@ -166,6 +166,9 @@ export default {
   .tags
     flex-wrap: nowrap
     margin: 0 1em 0 0
+  .rank-tag
+    background: $purple
+    color: lighten($purple, 80)
 .otl-id
   font-weight: normal
   font-size: 0.8rem

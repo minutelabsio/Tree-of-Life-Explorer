@@ -1,6 +1,6 @@
 <script>
-import VueMixinTween from 'vue-mixin-tween'
-import TWEEN from '@tweenjs/tween.js'
+// import VueMixinTween from 'vue-mixin-tween'
+// import TWEEN from '@tweenjs/tween.js'
 export default {
   name: 'Node'
   // , functional: true
@@ -10,8 +10,8 @@ export default {
 
   })
   , mixins: [
-    VueMixinTween('x', 700, TWEEN.Easing.Quadratic.InOut)
-    , VueMixinTween('y', 700, TWEEN.Easing.Quadratic.InOut)
+    // VueMixinTween('x', 700, TWEEN.Easing.Quadratic.InOut)
+    // , VueMixinTween('y', 700, TWEEN.Easing.Quadratic.InOut)
   ]
   , beforeDestroy(){
     this.node.off( 'click' )
@@ -20,7 +20,7 @@ export default {
   , beforeMount(){
     let nodeWidth = 36
     let scene = this.svg
-    this.node = scene.group().addClass('svg-node').move( this.x, this.y )
+    this.node = scene.group().addClass('svg-node').move( 0, 0 )
     this.node.rect(nodeWidth, nodeWidth).center(0, 0).radius(7)
 
     this.label = this.node.plain( `${this.tree.lineage.length}` ).attr('y', 2)
@@ -31,7 +31,8 @@ export default {
     })
   }
   , render( h ){
-    this.node.move( this.xTween, this.yTween ).front()
+    // this.node.move( this.xTween, this.yTween ).front()
+    this.node.style( 'transform', `translate3d(${this.x}px, ${this.y}px, 0)`).front()
     this.label.plain( `${this.tree.lineage.length}` )
     return this.node
   }
@@ -42,6 +43,7 @@ export default {
 @import '@/styles/_variables.scss'
 .svg-node
   cursor: pointer
+  transition: transform 0.7s ease-in-out
   rect
     fill: desaturate(lighten($blue, 20), 50)
     transition: all 0.15s linear

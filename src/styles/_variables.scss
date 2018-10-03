@@ -15,16 +15,16 @@ $white-bis:    hsl(0, 0%, 98%) !default
 $white:        hsl(0, 0%, 100%) !default
 
 $orange:       hsl(30, 85%, 58%) !default
-$yellow:       hsl(47, 94%, 65%) !default
-$green:        hsl(140, 68%, 43%) !default
+$yellow:       hsl(47, 78%, 41%) !default
+$green:        hsl(90, 100%, 25%) !default
 $turquoise:    hsl(171, 94%, 45%) !default
-$cyan:         hsl(196, 85%, 52%) !default
-$blue:         hsl(205, 75%, 42%) !default
+$cyan:         hsl(196, 100%, 50%) !default
+$blue:         hsl(210, 79%, 38%) !default
 $purple:       hsl(315, 69%, 30%) !default
-$red:          hsl(12, 97%, 42%) !default
+$red:          hsl(11, 68%, 35%) !default
 
-$primary: $purple;
-$link:    $purple;
+$primary: $blue;
+$link:    $blue;
 $info:    $cyan;
 $success: $green;
 $warning: $yellow;

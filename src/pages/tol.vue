@@ -25,7 +25,7 @@
         b-field
           .control
             b-tooltip(label="Clear All", type="is-dark", position="is-bottom")
-              .button(@click="clear")
+              .button.is-danger(@click="clear")
                 b-icon(icon="delete-sweep")
       .meta-info
         a(@click="showMetaInfo") About this app
