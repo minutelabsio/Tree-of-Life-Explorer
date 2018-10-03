@@ -11,6 +11,10 @@ import _sortBy from 'lodash/sortBy'
 
 const cache = setupCache({
   maxAge: 15 * 60 * 1000
+  , key: req => { return JSON.stringify(req.params) }
+  , exclude: {
+    query: false
+  }
 })
 
 const wikimedia = axios.create({

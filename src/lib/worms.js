@@ -7,6 +7,9 @@ import { setupCache } from 'axios-cache-adapter'
 
 const cache = setupCache({
   maxAge: 15 * 60 * 1000
+  , exclude: {
+    query: false
+  }
 })
 
 const worms = axios.create({

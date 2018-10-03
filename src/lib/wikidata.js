@@ -14,6 +14,9 @@ import Throttler from './throttler'
 
 const cache = setupCache({
   maxAge: 15 * 60 * 1000
+  , exclude: {
+    query: false
+  }
 })
 
 const wikidata = axios.create({
@@ -61,6 +64,10 @@ function assembleByItem( results ){
 }
 
 wikidata.interceptors.response.use(function (response) {
+  // make it work with cache adaptor
+  if ( response.request.fromCache ){
+    return response
+  }
   // Do something with response data
   const { head: { vars }, results } = response.data
   response.data = results.bindings.map( item =>

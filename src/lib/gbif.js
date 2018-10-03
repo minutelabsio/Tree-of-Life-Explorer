@@ -35,6 +35,10 @@ const langs = ['', 'en', 'eng']
 
 const cache = setupCache({
   maxAge: 15 * 60 * 1000
+  , key: req => { return JSON.stringify(req.params) }
+  , exclude: {
+    query: false
+  }
 })
 
 const gbif = axios.create({

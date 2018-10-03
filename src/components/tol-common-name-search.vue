@@ -34,7 +34,6 @@
       .control
         .button(@click="openOverlay")
           span Search
-
       //- b-autocomplete(
       //-   placeholder="eg. Snow Leopard"
       //-   , icon="magnify"
@@ -57,6 +56,7 @@ import _debounce from 'lodash/debounce'
 import _reject from 'lodash/reject'
 import _uniqBy from 'lodash/uniqBy'
 import _some from 'lodash/some'
+import _memoize from 'lodash/memoize'
 import { getNodeByName, getTxResultsByNames } from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 import * as wikidata from '@/lib/wikidata'
@@ -153,7 +153,7 @@ export default {
         })
     }, 500)
 
-    , searchGbif( q, commonName = true ){
+    , searchGbif: _memoize(function( q, commonName = true ){
       let query = commonName
         ? gbif.findByCommonName( q ).then( removeLackingVernacularName )
         : gbif.findByScientificName( q )
@@ -167,7 +167,7 @@ export default {
             , rank: el.rank
           }))
         )
-    }
+    })
 
     , searchWikidata( q ){
       return wikidata.findInfoByCommonName( q, { limit: 10 } )
