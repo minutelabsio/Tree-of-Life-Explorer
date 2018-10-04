@@ -5,7 +5,7 @@ import _find from 'lodash/find'
 import _sortBy from 'lodash/sortBy'
 import _takeWhile from 'lodash/takeWhile'
 import _every from 'lodash/every'
-import _memoize from 'lodash/memoize'
+import cacher from './cacher'
 import axios from 'axios'
 
 const otol = axios.create({
@@ -30,7 +30,7 @@ function getCommonLineage( nodes ){
 // Get node info
 // id can be either node_id or ott_id. It will auto detect
 // ---------------------------------------
-export const getNode = _memoize(function( id ){
+export const getNode = cacher(function( id ){
   if ( _startsWith( id, 'mrca' ) ){
     return getMRCA( id )
   }
@@ -87,7 +87,7 @@ export function getTxResultsByNames( names = [] ){
 }
 
 // Helper for finding a OTOL node by its tx name
-export const getNodeByName = _memoize(function( name ){
+export const getNodeByName = cacher(function( name ){
   return getTxResultsByNames( name )
     .then( results => _find(results, {'name': name}) )
     .then( result => {
@@ -100,7 +100,7 @@ export const getNodeByName = _memoize(function( name ){
     .then( getNode )
 })
 
-export const getSubtree = _memoize(function( id, depth = 1 ){
+export const getSubtree = cacher(function( id, depth = 1 ){
   var idField = _startsWith( id, 'ott' ) || _startsWith( id, 'mrca' ) ? 'node_id' : 'ott_id'
   var data = {
     [idField]: id
@@ -111,7 +111,7 @@ export const getSubtree = _memoize(function( id, depth = 1 ){
     .then( res => res.data.arguson.children || [] )
 })
 
-export const getDescendantNames = _memoize(function( id ){
+export const getDescendantNames = cacher(function( id ){
   var idField = _startsWith( id, 'ott' ) || _startsWith( id, 'mrca' ) ? 'node_id' : 'ott_id'
   var data = {
     [idField]: id

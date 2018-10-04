@@ -3,7 +3,7 @@ import _union from 'lodash/union'
 import _get from 'lodash/get'
 import _mergeWith from 'lodash/mergeWith'
 import _isArray from 'lodash/isArray'
-import _memoize from 'lodash/memoize'
+import cacher from '@/lib/cacher'
 import * as otol from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 import * as worms from '@/lib/worms'
@@ -143,7 +143,7 @@ export function isMRCA( leaf ){
   return leaf.node_id.indexOf('mrca') === 0
 }
 
-export const getTxnInfo = _memoize(Promise.coroutine(function* ( leaf, options ){
+export const getTxnInfo = cacher(Promise.coroutine(function* ( leaf, options ){
   if ( !leaf.taxon ){
     leaf = yield getLeaf( leaf.node_id )
   }

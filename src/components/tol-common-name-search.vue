@@ -56,7 +56,7 @@ import _debounce from 'lodash/debounce'
 import _reject from 'lodash/reject'
 import _uniqBy from 'lodash/uniqBy'
 import _some from 'lodash/some'
-import _memoize from 'lodash/memoize'
+import cacher from '@/lib/cacher'
 import { getNodeByName, getTxResultsByNames } from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 import * as wikidata from '@/lib/wikidata'
@@ -153,7 +153,7 @@ export default {
         })
     }, 500)
 
-    , searchGbif: _memoize(function( q, commonName = true ){
+    , searchGbif: cacher(function( q, commonName = true ){
       let query = commonName
         ? gbif.findByCommonName( q ).then( removeLackingVernacularName )
         : gbif.findByScientificName( q )

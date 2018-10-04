@@ -33,7 +33,7 @@ const wikidata = axios.create({
   , adapter: cache.adapter
 })
 
-const throttler = new Throttler( 200, 5 )
+const throttler = new Throttler( 500, 5 )
 
 wikidata.interceptors.request.use( config => throttler.schedule( config ) )
 
@@ -76,6 +76,7 @@ wikidata.interceptors.response.use(function (response) {
   response.data = assembleByItem(response.data)
   return response
 }, function (error) {
+  console.dir(error)
   // just return
   return Promise.reject(error)
 })
