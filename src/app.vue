@@ -32,7 +32,7 @@ body {
   width: 250px;
   height: 250px * (45/166);
   font: 0/0 a;
-  background: url(~@/assets/logo.png) 0 0 no-repeat;
+  background: url(./assets/logo.png) 0 0 no-repeat;
   background-size: 100%;
 
   /* padding-left: 2rem; */
