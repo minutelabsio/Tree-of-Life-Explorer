@@ -139,7 +139,7 @@ $menuBackgroundColor: $blue
   color: $grey-light
   &:hover
     color: $white
-.toolbar-text.names
+.toolbar > .toolbar-item .toolbar-text.names
   padding: 0 0 0 1em
   height: 100%
   display: flex
