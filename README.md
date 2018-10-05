@@ -1,6 +1,6 @@
-# tree-of-life
+# Tree of Life Explorer
 
-> A Vue.js project
+> Built by the MinuteLabs.io team
 
 ## Build Setup
 
