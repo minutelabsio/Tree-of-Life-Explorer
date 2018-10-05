@@ -5,7 +5,7 @@
       b-icon(:icon="navOpen ? 'chevron-up' : 'menu'")
     .toolbar-item
       h1.title.main-title.is-pulled-left
-        | Tree of Life
+        | Tree of Life Explorer
     .toolbar-item.search-container
       TOLCommonNameSearch.search-box(@select="onSelect")
     .toolbar-right
@@ -186,21 +186,23 @@ export default {
 @import '@/styles/_variables.scss'
 $topNavHeight: 138px
 .main-title
-  position: relative
-  font-family: 'Life Savers', 'Mystery Quest', cursive
-  margin: 0
-  margin-right: 1rem
-  font-weight: 700
-  color: $blue
-  text-shadow: 1px 1px 1px lighten($blue, 30)
-
-  padding-left: 2rem
-  &:before
-    content: 'The'
-    position: absolute
-    top: 3px
-    left: 0
-    font-size: 1rem
+  height: 45px;
+  width: 166px;
+//   position: relative
+//   font: 0px/0
+//   margin: 0
+//   margin-right: 1rem
+//   font-weight: 700
+//   color: $blue
+//   text-shadow: 1px 1px 1px lighten($blue, 30)
+//
+//   padding-left: 2rem
+//   // &:before
+//   //   content: 'The'
+//   //   position: absolute
+//   //   top: 3px
+//   //   left: 0
+//   //   font-size: 1rem
 .app
   display: flex
   flex-direction: column

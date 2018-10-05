@@ -1,3 +1,6 @@
+// Helpers for OTL api
+// https://github.com/OpenTreeOfLife/germinator/wiki/TNRS-API-v3
+// ---------------------------------------
 import Promise from 'bluebird'
 import _castArray from 'lodash/castArray'
 import _startsWith from 'lodash/startsWith'

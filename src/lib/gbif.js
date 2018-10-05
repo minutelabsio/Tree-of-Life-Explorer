@@ -1,4 +1,5 @@
 // Helpers for https://www.gbif.org/developer
+// https://www.gbif.org/developer/registry
 // ---------------------------------------
 
 import Promise from 'bluebird'

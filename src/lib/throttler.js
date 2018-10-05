@@ -9,7 +9,7 @@ export default class Throttler {
 
   schedule( arg ){
     this.count++
-    let batch = Math.floor(this.count / (this.batchSize + 1))
+    let batch = Math.floor(this.count / this.batchSize)
     let delay = batch * this.delay
     return Promise.delay( delay ).tap( () => (this.count--) ).return( arg )
   }
