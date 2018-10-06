@@ -29,11 +29,16 @@ body {
   color: $blue;
   text-shadow: 1px 1px 1px lighten($blue, 30);
 
-  width: 250px;
-  height: 250px * (45/166);
   font: 0/0 a;
   background: url(./assets/logo.png) 0 0 no-repeat;
   background-size: 100%;
+  width: 150px;
+  height: 150px * (45/166);
+
+  @media screen and (min-width: 820px){
+    width: 250px;
+    height: 250px * (45/166);
+  }
 
   /* padding-left: 2rem; */
   /* &:before {
