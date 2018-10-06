@@ -20,8 +20,11 @@
               .button(@click="redo")
                 b-icon(icon="redo")
         b-field
-          b-switch(v-model="wideMode")
-            | Wide Mode
+          b-checkbox-button(v-model="wideMode", :native-value="true")
+            span expand
+
+          b-checkbox-button(v-model="horizontalMode", :native-value="true")
+            span horizontal
         b-field
           .control
             b-tooltip(label="Clear All", type="is-dark", position="is-bottom")
@@ -40,7 +43,7 @@
                 | Start your own tree by using the search bar to add species, or you can try a curated tree from the below suggestions.
         TOLSuggestedTrees(@suggest="setLeafs")
 
-      TOLTree(v-show="!treeIsEmpty", :leafs="leafs", :card-width="cardWidth", @remove="onRemoveLeaf", @cut="cutBranch", @add-node="addNode", @error="showError")
+      TOLTree(v-show="!treeIsEmpty", :leafs="leafs", :card-width="cardWidth", :horizontal="horizontalMode", @remove="onRemoveLeaf", @cut="cutBranch", @add-node="addNode", @error="showError")
 </template>
 
 <script>
@@ -72,6 +75,7 @@ export default {
   , data: () => ({
     leafs: []
     , wideMode: false
+    , horizontalMode: false
     , navOpen: true
     , loading: false
   })
@@ -186,8 +190,8 @@ export default {
 @import '@/styles/_variables.scss'
 $topNavHeight: 138px
 .main-title
-  height: 45px;
-  width: 166px;
+  height: 45px
+  width: 166px
 //   position: relative
 //   font: 0px/0
 //   margin: 0

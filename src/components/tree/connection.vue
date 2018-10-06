@@ -4,7 +4,7 @@
 export default {
   name: 'Connection'
   , inject: [ 'svg' ]
-  , props: [ 'x1', 'y1', 'x2', 'y2', 'padding' ]
+  , props: [ 'x1', 'y1', 'x2', 'y2', 'padding', 'horizontal' ]
   , data: () => ({
   })
   , mixins: [
@@ -31,13 +31,25 @@ export default {
       let y1 = this.y1
       let x2 = this.x2
       let y2 = this.y2
+      let line
 
-      this.node.plot([
-        [ x1, y1 ]
-        , [ x1, y1 + spacing ]
-        , [ x2, y1 + spacing ]
-        , [ x2, y2 ]
-      ]).back()
+      if ( this.horizontal ){
+        line = [
+          [ x1, y1 ]
+          , [ x1 + spacing, y1 ]
+          , [ x1 + spacing, y2 ]
+          , [ x2, y2 ]
+        ]
+      } else {
+        line = [
+          [ x1, y1 ]
+          , [ x1, y1 + spacing ]
+          , [ x2, y1 + spacing ]
+          , [ x2, y2 ]
+        ]
+      }
+
+      this.node.plot( line ).back()
     }
   }
 }

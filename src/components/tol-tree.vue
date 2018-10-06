@@ -5,10 +5,12 @@
       v-if="tree"
       , :tree="tree"
       , :x="x"
-      , :y="topPadding"
+      , :y="y"
       , :width="cardWidth"
+      , :cardHeight="cardHeight"
+      , :horizontal="horizontal"
       , :padding="padding"
-      , :branchHeight="branchHeight"
+      , :branchSpacing="branchSpacing"
       , @remove="$emit('remove', arguments[0])"
       , @cut="$emit('cut', arguments[0])"
       , @leaf-click="showLeafDetails"
@@ -29,7 +31,7 @@ import { buildReducedTree } from '@/lib/tree-utils'
 
 export default {
   name: 'TOLTree'
-  , props: [ 'leafs', 'cardWidth' ]
+  , props: [ 'leafs', 'cardWidth', 'horizontal' ]
   , components: {
     Tree
     , TreeCanvas
@@ -41,21 +43,35 @@ export default {
     , leafContextX: 0
     , leafContextY: 0
     , padding: 10
-    , branchHeight: 80
     , topPadding: 60
     , canvasX: 0
+    , cardHeight: 74
   })
   , computed: {
     x(){
-      if (!this.tree || !this.$el){ return 0 }
+      if ( !this.tree || !this.$el ){ return 0 }
+      if ( this.horizontal ){ return this.topPadding }
       // let width = this.tree.nTips * (this.cardWidth + 2 * this.padding)
       return 0.5 * this.$el.clientWidth
     }
 
+    , y(){
+      if ( !this.tree || !this.$el ){ return 0 }
+      if ( !this.horizontal ){ return this.topPadding }
+      return 0.5 * this.height
+    }
+
+    , branchSpacing(){
+      return this.horizontal ? 160 : 80
+    }
+
     , height(){
       if (!this.tree){ return 0 }
+      if ( this.horizontal ){
+        return this.tree.nTips * ( this.cardHeight + 2 * this.padding )
+      }
       let margin = 300
-      return this.topPadding + this.tree.depth * (100 + this.branchHeight) + margin
+      return this.topPadding + this.tree.depth * (100 + this.branchSpacing) + margin
     }
 
     , tree(){

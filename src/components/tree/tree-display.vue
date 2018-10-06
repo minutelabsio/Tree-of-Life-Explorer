@@ -14,15 +14,16 @@
   transition-group(name="tree")
     .tol-leaf(
       v-for="branch in branches"
+      , :class="{ 'horizontal': horizontal }"
       , :key="branch.key"
-      , :style="{ left: `${branch.x-(0.5 * width)}px`, top: `${branch.y + branch.dy}px`, width: width + 'px' }"
+      , :style="{ left: `${branch.x-(horizontal ? 0 : 0.5 * width) + branch.dx}px`, top: `${branch.y-(horizontal ? 0.5 * cardHeight : 0) + branch.dy}px`, width: width + 'px', height: cardHeight + 'px' }"
       , :tabindex="-1"
       )
       //- , :style="{ transform: `translate3d(${branch.x-(0.5 * width)}px, ${branch.y + branch.dy}px, 0)`, width: width + 'px' }"
       //- )
       //- Motion(:values="{ x2: branch.x, y2: branch.y, dy: branch.dy }", :spring="{ stiffness: 300, damping: 60, precision: 1 }")
       //-   template(slot-scope="props")
-      Connection(v-if="!(branch.isRoot && !branch.tree.lineage.length)", :x1="branch.px || branch.x", :y1="(branch.py || branch.y) + branch.pdy", :x2="branch.x", :y2="branch.y + branch.dy", :padding="branch.dy")
+      Connection(v-if="!(branch.isRoot && !branch.tree.lineage.length)", :horizontal="horizontal", :x1="(branch.px || branch.x) + branch.pdx", :y1="(branch.py || branch.y) + branch.pdy", :x2="branch.x + branch.dx", :y2="branch.y + branch.dy", :padding="branch.dx || branch.dy")
       Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="branch.x", :y="branch.y", @click="$emit('leaf-click', arguments[0])")
 
       TOLLeafView(
@@ -45,16 +46,15 @@ import Connection from './connection'
 import ChildMenu from './child-menu'
 import _flatten from 'lodash/flatten'
 
-const cardHeight = 50
-
 function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
 
-  let nodeAreaRadius = 0.5 * opts.width + opts.padding
+  let hz = opts.horizontal
+  let height = opts.cardHeight
+  let nodeContainerSize = 0.5 * (hz ? height : opts.width) + opts.padding
   let count = tree.nTips
   let colstart = -(count - 1)
-  let branchHeight = opts.branchHeight
+  let branchSpacing = opts.branchSpacing
   let branches = []
-  let height = cardHeight // tree.lineage.length ? cardHeight : 0
 
   branches.push({
     tree
@@ -62,9 +62,11 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
     , y
     , px: opts.px
     , py: opts.py
+    , pdx: opts.pdx || 0
     , pdy: opts.pdy || 0
     , key: (tree.leaf.node_id || tree.leaf)
-    , dy: height
+    , dx: hz ? nodeContainerSize : 0
+    , dy: hz ? 0 : 0.75 * height
     , isRoot: level === 0
     , hasSplit: !!tree.split.length
   })
@@ -77,12 +79,24 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
     _flatten(
       tree.split.map( (subtree, idx) => {
         let col = subtree.nTips - 1
-        let xpos = (col + colstart) * nodeAreaRadius + x
-        let ypos = y + branchHeight + height + cardHeight
+        var xpos, ypos
+        var pdx = 0
+        var pdy = 0
+
+        if ( hz ){
+          let fudge = 30
+          pdx = opts.width + fudge
+          xpos = x + branchSpacing + opts.width
+          ypos = y + (col + colstart) * nodeContainerSize
+        } else {
+          pdy = 0.75 * height
+          xpos = x + (col + colstart) * nodeContainerSize
+          ypos = y + branchSpacing + 1.5 * height
+        }
 
         colstart = 2 * col + colstart + 2
 
-        return getBranches( subtree, {...opts, px: x, py: y, pdy: height}, xpos, ypos, level + 1 )
+        return getBranches( subtree, {...opts, px: x, py: y, pdy, pdx}, xpos, ypos, level + 1 )
       })
     )
   )
@@ -128,8 +142,10 @@ export default {
     , 'px': Number
     , 'py': Number
     , 'width': Number
+    , 'cardHeight': Number
     , 'padding': Number
-    , 'branchHeight': Number
+    , 'branchSpacing': Number
+    , 'horizontal': Boolean
   }
   , data: () => ({
     subtreeLeaf: null
@@ -155,11 +171,15 @@ export default {
   , computed: {
     branches(){
       let tree = this.tree
+      let x = this.x
+      let y = this.y
       let b = getBranches(tree, {
         width: this.width
-        , branchHeight: this.branchHeight
+        , cardHeight: this.cardHeight
+        , branchSpacing: this.branchSpacing
         , padding: this.padding
-      }, this.x, this.y)
+        , horizontal: this.horizontal
+      }, x, y)
       return b
     }
 
@@ -224,6 +244,12 @@ export default {
   top: 0;
   left: 0;
   outline: none;
+
+  &.horizontal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 
   &:hover,
   &:active,
