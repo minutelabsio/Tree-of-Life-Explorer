@@ -30,7 +30,7 @@ body {
   text-shadow: 1px 1px 1px lighten($blue, 30);
 
   font: 0/0 a;
-  background: url(./assets/logo.png) 0 0 no-repeat;
+  background: url(~@/assets/logo.png) 0 0 no-repeat;
   background-size: 100%;
   width: 150px;
   height: 150px * (45/166);
