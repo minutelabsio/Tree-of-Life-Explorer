@@ -42,15 +42,19 @@ export default {
       impetus.setBoundY([ -getScrollHeight(), 0 ])
     }
 
-    function onScroll(){
-      impetus.setValues( this.ox, -document.documentElement.scrollTop )
+    const onWheel = ( e ) => {
+      let x = this.ox - e.deltaX
+      let y = -document.documentElement.scrollTop
+      impetus.setValues( x, y )
+      this.setOffset( x, y )
     }
 
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('wheel', onWheel, { passive: true })
+
     this.$watch('height', onResize)
 
     this.$once( 'hook:beforeDestroy', () => {
-      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('wheel', onWheel)
       impetus.destroy()
     })
   }
