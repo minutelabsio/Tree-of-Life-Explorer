@@ -37,7 +37,7 @@ export const getNode = cacher(function( id ){
   if ( _startsWith( id, 'mrca' ) ){
     return getMRCA( id )
   }
-  var idField = _startsWith( id, 'ott' ) ? 'node_id' : 'ott_id'
+  var idField = typeof id === 'string' ? 'node_id' : 'ott_id'
   var data = {
     [idField]: id
     , include_lineage: true
@@ -101,6 +101,15 @@ export const getNodeByName = cacher(function( name ){
       return result.matches[0].taxon.ott_id
     })
     .then( getNode )
+})
+
+export const getOttIdBySource = cacher(function( source ){
+  let data = {
+    source_id: source
+  }
+
+  return Promise.resolve( otol.post('/taxonomy/taxon_info', data) )
+    .then( res => res.data.ott_id )
 })
 
 export const getSubtree = cacher(function( id, depth = 1 ){
