@@ -217,9 +217,13 @@ $topNavHeight: 138px
   flex: 1
   margin-top: $topNavHeight
   overflow: hidden
+  display: flex
+  align-items: stretch
   .inner
     position: relative
+    flex: 1
   .tree
+    min-height: 100%
     margin: auto
 .top-nav
   position: fixed

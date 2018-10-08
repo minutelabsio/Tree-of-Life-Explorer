@@ -32,7 +32,7 @@ export default {
 
     this.$refs.svg.appendChild(this.svgEl.children[0])
     let impetus = new Impetus({
-      source: this.$refs.wrapper
+      source: this.$el
       , boundY: [-getScrollHeight(), 0]
       , update: ( x, y ) => {
         this.setOffset( x, y, true )
