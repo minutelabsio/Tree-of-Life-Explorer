@@ -20,11 +20,18 @@
               .button(@click="redo")
                 b-icon(icon="redo")
         b-field
-          b-checkbox-button(v-model="wideMode", :native-value="true")
-            span expand
-
-          b-checkbox-button(v-model="horizontalMode", :native-value="true")
-            span horizontal
+          .control
+            b-tooltip(:label="wideMode ? 'Smaller cards' : 'Bigger cards'", type="is-dark", position="is-bottom")
+              .button(@click="wideMode = !wideMode")
+                b-icon(:icon="wideMode? 'compress' : 'expand'", pack="fas")
+          .control
+            b-tooltip(:label="horizontalMode ? 'Vertical Display' : 'Horizontal Display'", type="is-dark", position="is-bottom")
+              .button(@click="horizontalMode = !horizontalMode")
+                b-icon(icon="format-rotate-90")
+          .control
+            b-tooltip(:label="hideImages ? 'Show Images' : 'Hide Images'", type="is-dark", position="is-bottom")
+              .button(@click="hideImages = !hideImages")
+                b-icon(:icon="hideImages ? 'image-plus' : 'image-off'")
         b-field
           .control
             b-tooltip(label="Clear All", type="is-dark", position="is-bottom")
@@ -43,7 +50,17 @@
                 | Start your own tree by using the search bar to add species, or you can try a curated tree from the below suggestions.
         TOLSuggestedTrees(@suggest="setLeafs")
 
-      TOLTree(v-show="!treeIsEmpty", :leafs="leafs", :card-width="cardWidth", :horizontal="horizontalMode", @remove="onRemoveLeaf", @cut="cutBranch", @add-node="addNode", @error="showError")
+      TOLTree(
+        v-show="!treeIsEmpty"
+        , :leafs="leafs"
+        , :card-width="cardWidth"
+        , :hide-images="hideImages"
+        , :horizontal="horizontalMode"
+        , @remove="onRemoveLeaf"
+        , @cut="cutBranch"
+        , @add-node="addNode"
+        , @error="showError"
+      )
 </template>
 
 <script>
@@ -76,6 +93,7 @@ export default {
     leafs: []
     , wideMode: false
     , horizontalMode: false
+    , hideImages: false
     , navOpen: true
     , loading: false
   })

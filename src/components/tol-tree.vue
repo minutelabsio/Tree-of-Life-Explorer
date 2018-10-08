@@ -9,6 +9,7 @@
       , :width="cardWidth"
       , :cardHeight="cardHeight"
       , :horizontal="horizontal"
+      , :hide-images="hideImages"
       , :padding="padding"
       , :branchSpacing="branchSpacing"
       , @remove="$emit('remove', arguments[0])"
@@ -31,7 +32,7 @@ import { buildReducedTree } from '@/lib/tree-utils'
 
 export default {
   name: 'TOLTree'
-  , props: [ 'leafs', 'cardWidth', 'horizontal' ]
+  , props: [ 'leafs', 'cardWidth', 'horizontal', 'hideImages' ]
   , components: {
     Tree
     , TreeCanvas

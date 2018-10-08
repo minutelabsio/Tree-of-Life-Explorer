@@ -29,6 +29,7 @@
       TOLLeafView(
         :leaf="branch.tree.leaf"
         , :truncate-length="truncateLength"
+        , :hide-images="hideImages"
         , @remove="$emit( 'remove', branch.tree.leaf )"
         , @cut="$emit( 'cut', branch.tree )"
         , @error="$emit( 'error', arguments[0] )"
@@ -146,6 +147,7 @@ export default {
     , 'padding': Number
     , 'branchSpacing': Number
     , 'horizontal': Boolean
+    , 'hide-images': Boolean
   }
   , data: () => ({
     subtreeLeaf: null

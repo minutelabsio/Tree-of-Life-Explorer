@@ -22,7 +22,6 @@ body {
 
 #app .main-title {
   position: relative;
-  font-family: 'Life Savers', 'Mystery Quest', cursive;
   margin: 0;
   margin-right: 1rem;
   font-weight: 700;

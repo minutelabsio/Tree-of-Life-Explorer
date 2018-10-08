@@ -6,7 +6,7 @@
         :scientific-name="scientificName",
         :short-scientific-name="shortScientificName",
         :truncate-length="commonName ? truncateLength : truncateLength * 2",
-        :images="txnImages",
+        :images="hideImages ? [] : txnImages",
         @click="openInfoWindow"
         )
         b-tooltip(label="See children", type="is-dark", slot="front-button")
@@ -58,7 +58,7 @@ function shortName( str, target ){
 
 export default {
   name: 'TOLLeafView'
-  , props: ['leaf', 'truncateLength']
+  , props: ['leaf', 'truncateLength', 'hideImages']
   , components: {
     LeafViewMenu
   }
