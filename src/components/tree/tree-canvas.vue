@@ -9,7 +9,6 @@
 import SVG from 'svg.js'
 import Impetus from 'impetus'
 import _debounce from 'lodash/debounce'
-
 export default {
   name: 'TreeCanvas'
   , props: ['height']
@@ -46,12 +45,13 @@ export default {
 
     const onWheel = ( e ) => {
       let x = this.ox - e.deltaX
-      let y = -window.pageYOffset
+      let y = -window.pageYOffset - e.deltaY
       impetus.setValues( x, y )
-      this.setOffset( x, y )
+      this.setOffset( x, y, true )
+      return false
     }
 
-    window.addEventListener('wheel', onWheel, { passive: true })
+    window.addEventListener('wheel', onWheel)
 
     this.$watch('height', onResize)
     window.addEventListener('resize', onResize)
