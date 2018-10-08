@@ -23,7 +23,7 @@
           .control
             b-tooltip(:label="wideMode ? 'Smaller cards' : 'Bigger cards'", type="is-dark", position="is-bottom")
               .button(@click="wideMode = !wideMode")
-                b-icon(:icon="wideMode? 'compress' : 'expand'", pack="fas")
+                b-icon(:icon="wideMode? 'arrow-collapse-horizontal' : 'arrow-expand-horizontal'")
           .control
             b-tooltip(:label="horizontalMode ? 'Vertical Display' : 'Horizontal Display'", type="is-dark", position="is-bottom")
               .button(@click="horizontalMode = !horizontalMode")
@@ -61,6 +61,10 @@
         , @add-node="addNode"
         , @error="showError"
       )
+  .fullscreen-prompt
+    b-tooltip(:label="isInFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'", type="is-dark", position="is-left")
+      .button.is-medium(@click="fullscreenToggle")
+        b-icon(:icon="isInFullscreen ? 'compress' : 'expand'", pack="fas")
 </template>
 
 <script>
@@ -75,6 +79,30 @@ import _difference from 'lodash/difference'
 import _castArray from 'lodash/castArray'
 import _uniq from 'lodash/uniq'
 import Promise from 'bluebird'
+
+function requestFullscreen( el ){
+  if (el.requestFullscreen) {
+    el.requestFullscreen()
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen()
+  } else if (el.mozRequestFullScreen) {
+    el.mozRequestFullScreen()
+  } else if (el.msRequestFullscreen) {
+    el.msRequestFullscreen()
+  }
+}
+
+function exitFullscreen(){
+  if (document.exitFullscreen) {
+    document.exitFullscreen()
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen()
+  } else if (document.mozCancelFullScreen) {
+    document.mozCancelFullScreen()
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen()
+  }
+}
 
 export default {
   name: 'page-tol'
@@ -103,6 +131,22 @@ export default {
     }
     , treeIsEmpty(){
       return !this.leafs.length
+    }
+  }
+  , mounted(){
+    const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1)
+
+    if ( isMobile ){
+      this.$snackbar.open({
+        message: 'On mobile devices, fullscreen mode is nicer.'
+        , type: 'is-warning'
+        , position: 'is-bottom'
+        , actionText: 'Enter Fullscreen'
+        , duration: 5000
+        , onAction: () => {
+          this.fullscreenToggle()
+        }
+      })
     }
   }
   , watch: {
@@ -199,6 +243,23 @@ export default {
     , menuToggle(){
       this.navOpen = !this.navOpen
     }
+
+    , isInFullscreen(){
+      return !!(document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement)
+    }
+
+    , fullscreenToggle(){
+      let fs = this.isInFullscreen()
+
+      if ( fs ){
+        exitFullscreen()
+      } else {
+        requestFullscreen( document.documentElement )
+      }
+    }
   }
 }
 </script>
@@ -230,6 +291,12 @@ $topNavHeight: 138px
   flex-direction: column
   align-items: stretch
   min-height: 100vh
+.fullscreen-prompt
+  position: fixed
+  bottom: 0
+  right: 0
+  .button
+    border-radius: 3px 0 0 0
 .search-box
 .wrapper
   flex: 1

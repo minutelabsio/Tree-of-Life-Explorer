@@ -18,6 +18,7 @@ html {
 }
 body {
   min-height: 100%;
+  background: white;
 }
 
 #app .main-title {
