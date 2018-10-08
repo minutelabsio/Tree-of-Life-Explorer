@@ -8,6 +8,8 @@
 <script>
 import SVG from 'svg.js'
 import Impetus from 'impetus'
+import _debounce from 'lodash/debounce'
+
 export default {
   name: 'TreeCanvas'
   , props: ['height']
@@ -34,17 +36,17 @@ export default {
       source: this.$refs.wrapper
       , boundY: [-getScrollHeight(), 0]
       , update: ( x, y ) => {
-        this.setOffset( x, y )
+        this.setOffset( x, y, true )
       }
     })
 
-    function onResize() {
+    const onResize = _debounce(() => {
       impetus.setBoundY([ -getScrollHeight(), 0 ])
-    }
+    }, 200)
 
     const onWheel = ( e ) => {
       let x = this.ox - e.deltaX
-      let y = -document.documentElement.scrollTop
+      let y = -window.pageYOffset
       impetus.setValues( x, y )
       this.setOffset( x, y )
     }
@@ -52,19 +54,23 @@ export default {
     window.addEventListener('wheel', onWheel, { passive: true })
 
     this.$watch('height', onResize)
+    window.addEventListener('resize', onResize)
 
     this.$once( 'hook:beforeDestroy', () => {
       window.removeEventListener('wheel', onWheel)
+      window.removeEventListener('resize', onResize)
       impetus.destroy()
     })
   }
   , methods: {
 
-    setOffset( x, y ){
+    setOffset( x, y, scroll = false ){
       this.ox = x
       this.oy = y
       this.svg.move(this.ox, 0)
-      document.documentElement.scrollTop = -this.oy
+      if ( scroll ){
+        window.scrollTo(undefined, -this.oy)
+      }
       this.$emit('move', { x, y })
     }
   }
