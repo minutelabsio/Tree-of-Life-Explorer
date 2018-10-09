@@ -299,6 +299,8 @@ $topNavHeight: 100px
     display: none
 
 @media screen and (max-width: 820px)
+  .tol-wrapper
+    top: 0
   .top-nav
     flex-wrap: wrap
     transform: translate3d(0, -120px, 0)
@@ -331,6 +333,8 @@ $topNavHeight: 100px
       .field
         justify-content: flex-end
 @media screen and (max-width: 420px)
+  .tol-wrapper
+    top: 0
   .top-nav
     transform: translate3d(0, -172px, 0)
     .toolbar-right
