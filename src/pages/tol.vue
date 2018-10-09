@@ -39,6 +39,18 @@
                 b-icon(icon="delete-sweep")
       .meta-info
         a(@click="showMetaInfo") About this app
+
+  .tol-wrapper(v-show="!treeIsEmpty")
+    TOLTree(
+      :leafs="leafs"
+      , :card-width="cardWidth"
+      , :hide-images="hideImages"
+      , :horizontal="horizontalMode"
+      , @remove="onRemoveLeaf"
+      , @cut="cutBranch"
+      , @add-node="addNode"
+      , @error="showError"
+    )
   .wrapper
     .inner
       b-loading(:is-full-page="false", :active="loading")
@@ -50,17 +62,6 @@
                 | Start your own tree by using the search bar to add species, or you can try a curated tree from the below suggestions.
         TOLSuggestedTrees(@suggest="setLeafs")
 
-      TOLTree(
-        v-show="!treeIsEmpty"
-        , :leafs="leafs"
-        , :card-width="cardWidth"
-        , :hide-images="hideImages"
-        , :horizontal="horizontalMode"
-        , @remove="onRemoveLeaf"
-        , @cut="cutBranch"
-        , @add-node="addNode"
-        , @error="showError"
-      )
   .fullscreen-prompt(v-if="canFullscreen")
     b-tooltip(:label="isInFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'", type="is-dark", position="is-left")
       .button.is-medium(@click="fullscreenToggle")
@@ -256,6 +257,13 @@ $topNavHeight: 100px
   right: 0
   .button
     border-radius: 3px 0 0 0
+.tol-wrapper
+  position: fixed
+  top: $topNavHeight
+  left: 0
+  right: 0
+  bottom: 0
+  z-index: 1
 .search-box
 .wrapper
   flex: 1

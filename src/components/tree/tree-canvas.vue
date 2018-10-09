@@ -1,7 +1,7 @@
 <template lang="pug">
 .tree-canvas(ref="wrapper")
   .svg(ref="svg")
-  .slot(:style="{ transform: `translate3d(${ox}px, 0, 0)` }")
+  .slot(:style="{ transform: `translate3d(${left}px, ${top}px, 0)` }")
     slot
 </template>
 
@@ -9,12 +9,40 @@
 import SVG from 'svg.js'
 import Impetus from 'impetus'
 import _debounce from 'lodash/debounce'
+
+// var isTouch = false
+// window.addEventListener('touchstart', function firstTouch(){
+//   isTouch = true
+//   window.removeEventListener('touchstart', firstTouch)
+// }, false)
+
+function clamp( v, min, max ){
+  return Math.min(Math.max(v, min), max)
+}
+
 export default {
   name: 'TreeCanvas'
-  , props: ['height']
+  , props: {
+    'width': {
+      type: Number
+      , default: 0
+    }
+    , 'height': {
+      type: Number
+      , default: 0
+    }
+    , 'offsetX': {
+      type: Number
+      , default: 0
+    }
+    , 'offsetY': {
+      type: Number
+      , default: 0
+    }
+  }
   , data: () => ({
-    ox: 0
-    , oy: 0
+    x: 0
+    , y: 0
   })
   , provide(){
     this.svgEl = document.createElement('svg')
@@ -26,66 +54,98 @@ export default {
   }
   , mounted(){
 
-    function getScrollHeight(){
-      return document.documentElement.scrollHeight - document.documentElement.offsetHeight
-    }
+    // function getScrollHeight(){
+    //   return document.documentElement.scrollHeight - document.documentElement.offsetHeight
+    // }
 
     this.$refs.svg.appendChild(this.svgEl.children[0])
     let impetus = new Impetus({
       source: this.$el
-      , boundY: [-getScrollHeight(), 0]
+      , boundX: this.xBounds
+      , boundY: this.yBounds
       , update: ( x, y ) => {
-        this.setOffset( x, y, true )
+        this.setOffset( x, y )
       }
     })
 
     const onResize = _debounce(() => {
-      impetus.setBoundY([ -getScrollHeight(), 0 ])
+      impetus.setBoundX( this.xBounds )
+      impetus.setBoundY( this.yBounds )
     }, 200)
 
     const onWheel = ( e ) => {
-      let x = this.ox - e.deltaX
-      let y = -window.pageYOffset - e.deltaY
+      e.preventDefault()
+      let [minX, maxX] = this.xBounds
+      let [minY, maxY] = this.yBounds
+      let x = clamp(this.x - e.deltaX, minX, maxX)
+      let y = clamp(this.y - e.deltaY, minY, maxY)
       impetus.setValues( x, y )
-      this.setOffset( x, y, true )
+      this.setOffset( x, y )
       return false
     }
 
-    window.addEventListener('wheel', onWheel)
+    const preventDefault = e => e.stopPropagation()
 
+    window.addEventListener('wheel', onWheel, false)
+    window.addEventListener('touchmove', preventDefault, {passive: false})
+
+    this.$watch('width', onResize)
     this.$watch('height', onResize)
     window.addEventListener('resize', onResize)
 
     this.$once( 'hook:beforeDestroy', () => {
+      window.removeEventListener('touchmove', preventDefault)
       window.removeEventListener('wheel', onWheel)
       window.removeEventListener('resize', onResize)
       impetus.destroy()
     })
   }
+  , watch: {
+    offsetX: 'fixSVGPosition'
+    , offsetY: 'fixSVGPosition'
+  }
+  , computed: {
+    left(){
+      return this.x + this.offsetX
+    }
+    , top(){
+      return this.y + this.offsetY
+    }
+    , xBounds(){
+      return [-this.width * 0.5, this.width * 0.5]
+    }
+    , yBounds(){
+      return [-this.height, 0]
+    }
+  }
   , methods: {
-
-    setOffset( x, y, scroll = false ){
-      this.ox = x
-      this.oy = y
-      this.svg.move(this.ox, 0)
-      if ( scroll ){
-        window.scrollTo(undefined, -this.oy)
-      }
-      this.$emit('move', { x, y })
+    fixSVGPosition(){
+      let x = this.left
+      let y = this.top
+      this.svg.move(x, y)
+    }
+    , setOffset( x2, y2 ){
+      this.x = x2
+      this.y = y2
+      this.fixSVGPosition()
     }
   }
 }
 </script>
 
 <style lang="sass">
+.tree-canvas
+  position: relative
+  width: 100%
+  height: 100%
 .slot
   position: relative
-  height: 100%
 .svg
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  z-index: 0
+  cursor: move
 </style>

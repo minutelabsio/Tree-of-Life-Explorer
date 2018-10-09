@@ -1,11 +1,15 @@
 <template lang="pug">
-.tree(:style="{ height: height + 'px' }", @click="openLeafContext = false")
-  TreeCanvas(@move="onCanvasDrag", :height="height")
+.tree(@click="openLeafContext = false")
+  TreeCanvas(:width="width", :height="height", :offset-x="x", :offset-y="y")
+    .parent-list.limit-dropdown.dropdown.is-active(v-if="openLeafContext", :style="{ top: leafContextY + 'px', left: leafContextX + 'px' }")
+      .dropdown-menu
+        .dropdown-content
+          a.dropdown-item(v-for="parent in leafContext.subtree.lineage", :class="{ 'has-text-grey': !parent.taxon }", @click="$emit('add-node', parent.node_id)") {{ parent | nodeName }}
     Tree(
       v-if="tree"
       , :tree="tree"
-      , :x="x"
-      , :y="y"
+      , :x="0"
+      , :y="0"
       , :width="cardWidth"
       , :cardHeight="cardHeight"
       , :horizontal="horizontal"
@@ -18,10 +22,6 @@
       , @add-node="$emit('add-node', arguments[0].node_id)"
       , @error="$emit('error', arguments[0])"
       )
-  .parent-list.limit-dropdown.dropdown.is-active(v-if="openLeafContext", :style="{ top: (leafContextY-100) + 'px', left: (canvasX + leafContextX + 30) + 'px' }")
-    .dropdown-menu
-      .dropdown-content
-        a.dropdown-item(v-for="parent in leafContext.subtree.lineage", :class="{ 'has-text-grey': !parent.taxon }", @click="$emit('add-node', parent.node_id)") {{ parent | nodeName }}
 </template>
 
 <script>
@@ -59,20 +59,29 @@ export default {
     , y(){
       if ( !this.tree || !this.$el ){ return 0 }
       if ( !this.horizontal ){ return this.topPadding }
-      return 0.5 * this.height
+      return 0.5 * this.height + this.topPadding
     }
 
     , branchSpacing(){
       return this.horizontal ? 160 : 80
     }
 
-    , height(){
+    , width(){
       if (!this.tree){ return 0 }
-      if ( this.horizontal ){
-        return this.tree.nTips * ( this.cardHeight + 2 * this.padding )
+      if ( !this.horizontal ){
+        return this.tree.nTips * ( this.cardWidth + 2 * this.padding )
       }
       let margin = 300
       return this.topPadding + this.tree.depth * (100 + this.branchSpacing) + margin
+    }
+
+    , height(){
+      if (!this.tree){ return 0 }
+      if ( this.horizontal ){
+        return this.tree.nTips * ( this.cardHeight + this.padding )
+      }
+      let margin = 0
+      return this.topPadding + this.tree.depth * (this.cardHeight + this.branchSpacing) + margin
     }
 
     , tree(){
@@ -85,23 +94,21 @@ export default {
       let height = leaf.subtree.lineage.length * 30
       this.openLeafContext = true
       this.leafContext = leaf
-      this.leafContextX = leaf.x
-      this.leafContextY = Math.max(100, leaf.y) + ((height < 100) ? 100 - height * 0.5 : 0)
-    }
-    , onCanvasDrag( pos ){
-      this.canvasX = pos.x
-      this.$emit('move', pos)
+      this.leafContextX = leaf.x + 30
+      this.leafContextY = Math.max(100, leaf.y) + ((height < 100) ? 100 - height * 0.5 : 0) - 100
     }
   }
 }
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 @import '@/styles/_variables.scss'
 .tree
   position: relative
   width: 100%
-
-  .svg
-    cursor: move
+  height: 100%
+.parent-list
+  position: absolute
+  //- for some reason ios doesn't like z-index
+  transform: translateZ(10px)
 </style>
