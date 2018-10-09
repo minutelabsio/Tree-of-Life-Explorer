@@ -61,7 +61,7 @@
         , @add-node="addNode"
         , @error="showError"
       )
-  .fullscreen-prompt
+  .fullscreen-prompt(v-if="canFullscreen")
     b-tooltip(:label="isInFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'", type="is-dark", position="is-left")
       .button.is-medium(@click="fullscreenToggle")
         b-icon(:icon="isInFullscreen ? 'compress' : 'expand'", pack="fas")
@@ -75,34 +75,11 @@ import { getNodeByName, getNode } from '@/lib/otol'
 // import { findByName } from '@/lib/gbif'
 import { getLeaf } from '@/lib/taxonomy'
 import { getChildren } from '@/lib/tree-utils'
+import { getFullscreenEl, requestFullscreen, exitFullscreen, canFullscreen } from '@/lib/fullscreen'
 import _difference from 'lodash/difference'
 import _castArray from 'lodash/castArray'
 import _uniq from 'lodash/uniq'
 import Promise from 'bluebird'
-
-function requestFullscreen( el ){
-  if (el.requestFullscreen) {
-    el.requestFullscreen()
-  } else if (el.webkitRequestFullscreen) {
-    el.webkitRequestFullscreen()
-  } else if (el.mozRequestFullScreen) {
-    el.mozRequestFullScreen()
-  } else if (el.msRequestFullscreen) {
-    el.msRequestFullscreen()
-  }
-}
-
-function exitFullscreen(){
-  if (document.exitFullscreen) {
-    document.exitFullscreen()
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen()
-  } else if (document.mozCancelFullScreen) {
-    document.mozCancelFullScreen()
-  } else if (document.msExitFullscreen) {
-    document.msExitFullscreen()
-  }
-}
 
 export default {
   name: 'page-tol'
@@ -119,6 +96,7 @@ export default {
   }
   , data: () => ({
     leafs: []
+    , canFullscreen
     , wideMode: false
     , horizontalMode: false
     , hideImages: false
@@ -131,22 +109,6 @@ export default {
     }
     , treeIsEmpty(){
       return !this.leafs.length
-    }
-  }
-  , mounted(){
-    const isMobile = (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1)
-
-    if ( isMobile ){
-      this.$snackbar.open({
-        message: 'On mobile devices, fullscreen mode is nicer.'
-        , type: 'is-warning'
-        , position: 'is-bottom'
-        , actionText: 'Enter Fullscreen'
-        , duration: 5000
-        , onAction: () => {
-          this.fullscreenToggle()
-        }
-      })
     }
   }
   , watch: {
@@ -245,10 +207,7 @@ export default {
     }
 
     , isInFullscreen(){
-      return !!(document.fullscreenElement ||
-        document.webkitFullscreenElement ||
-        document.mozFullScreenElement ||
-        document.msFullscreenElement)
+      return !!(getFullscreenEl())
     }
 
     , fullscreenToggle(){
@@ -267,7 +226,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="sass">
 @import '@/styles/_variables.scss'
-$topNavHeight: 138px
+$topNavHeight: 100px
 .main-title
   height: 45px
   width: 166px
