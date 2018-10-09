@@ -23,7 +23,7 @@
       //- )
       //- Motion(:values="{ x2: branch.x, y2: branch.y, dy: branch.dy }", :spring="{ stiffness: 300, damping: 60, precision: 1 }")
       //-   template(slot-scope="props")
-      Connection(v-if="!(branch.isRoot && !branch.tree.lineage.length)", :horizontal="horizontal", :x1="(branch.px || branch.x) + branch.pdx", :y1="(branch.py || branch.y) + branch.pdy", :x2="branch.x + branch.dx", :y2="branch.y + branch.dy", :padding="branch.dx || branch.dy")
+      Connection(v-if="!(branch.isRoot && !branch.tree.lineage.length)", :horizontal="horizontal", :x1="branch.px + branch.pdx", :y1="branch.py + branch.pdy", :x2="branch.x + branch.dx", :y2="branch.y + branch.dy", :padding="branch.dx || branch.dy")
       Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="branch.x", :y="branch.y", @click="$emit('leaf-click', arguments[0])")
 
       TOLLeafView(
@@ -61,8 +61,8 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
     tree
     , x
     , y
-    , px: opts.px
-    , py: opts.py
+    , px: opts.px === undefined ? x : opts.px
+    , py: opts.py === undefined ? y : opts.py
     , pdx: opts.pdx || 0
     , pdy: opts.pdy || 0
     , key: (tree.leaf.node_id || tree.leaf)

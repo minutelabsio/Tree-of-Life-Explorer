@@ -26,7 +26,7 @@ export default {
   }
   , methods: {
     plot(){
-      let spacing = this.padding || 40
+      let spacing = this.padding
       let x1 = this.x1
       let y1 = this.y1
       let x2 = this.x2
