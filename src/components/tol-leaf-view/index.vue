@@ -188,8 +188,8 @@ $greyBlue: desaturate(lighten($blue, 20), 50)
   color: $white
   .pin-btn
     position: absolute
-    top: -14px
-    right: -12px
+    top: 0
+    right: 0
     width: 24px
     height: 24px
     text-align: center
