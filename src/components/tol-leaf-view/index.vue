@@ -203,5 +203,5 @@ $greyBlue: desaturate(lighten($blue, 20), 50)
       background-color: $white
       color: $grey-darker
     &:active
-      top: -13px
+      top: 1px
 </style>

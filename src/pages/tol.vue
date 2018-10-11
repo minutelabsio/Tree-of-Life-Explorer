@@ -57,7 +57,9 @@
       .empty-state(v-show="treeIsEmpty")
         .columns
           .column.is-half.is-offset-one-quarter
-            .section
+            .welcome-msg
+              .section
+                img(src="~@/assets/logo-social.png")
               b-notification(type="is-info", has-icon, :closable="false")
                 | Start your own tree by using the search bar to add species, or you can try a curated tree from the below suggestions.
         TOLSuggestedTrees(@suggest="setLeafs")
@@ -303,7 +305,8 @@ $topNavHeight: 100px
 
   .menu-button
     display: none
-
+.welcome-msg
+  padding: 3rem 1.5rem 0
 @media screen and (max-width: 820px)
   .tol-wrapper
     top: 0

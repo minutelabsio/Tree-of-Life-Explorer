@@ -74,6 +74,7 @@ export default {
     }, 200)
 
     const onWheel = ( e ) => {
+      if ( !this.$el.contains(e.target) ){ return }
       e.preventDefault()
       let [minX, maxX] = this.xBounds
       let [minY, maxY] = this.yBounds
