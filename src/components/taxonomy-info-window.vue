@@ -2,8 +2,8 @@
 .card
   .card-content
     .content
-      .media
-        .media-content
+      .columns
+        .column.is-half
           .otl-id
             span='OTL Id: {{ leaf.node_id }} '
             a.has-text-small(@click="copyToClipboard(leaf.node_id)") (copy)
@@ -26,7 +26,7 @@
 
           b-message(v-if="isMRCA", type="is-info")
             | This is an MRCA node
-        .media-right(v-if="txnInfo.pic.length")
+        .column.is-half(v-if="txnInfo.pic.length")
           .controls
             b-field(position="is-centered")
               .control
@@ -39,8 +39,8 @@
             img(:src="txnInfo.pic[currentPic]")
     .links
       .is-size-5.heading Find more information on...
-      .columns
-        .column(v-for="link in links")
+      .columns.is-mobile.is-multiline
+        .column.is-one-quarter-tablet.is-half-mobile(v-for="link in links")
           a(:href="link.url", target="_blank")
             .card.clickable
               .card-image
@@ -175,8 +175,6 @@ export default {
   line-height: 1.5
   font-family: $family-monospace
 .links
-  .column
-    max-width: 25%
   .card
     height: 100%
 </style>
