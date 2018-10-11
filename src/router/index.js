@@ -13,7 +13,12 @@ export default new Router({
       path: '/'
       , name: 'index'
       , component: PageTOL
-      , props: (route) => ({ ids: _compact(_uniq(_castArray(route.query.ids))) })
+      , props: (route) => ({
+        ids: _compact(_uniq(_castArray(route.query.ids)))
+        , wideMode: !!route.query.w
+        , horizontalMode: !!route.query.h
+        , hideImages: !!route.query.im
+      })
     }
   ]
 })

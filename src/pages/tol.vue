@@ -22,15 +22,15 @@
         b-field
           .control
             b-tooltip(:label="wideMode ? 'Smaller cards' : 'Bigger cards'", type="is-dark", position="is-bottom")
-              .button(@click="wideMode = !wideMode")
+              .button(@click="setOption('w', !wideMode)")
                 b-icon(:icon="wideMode? 'arrow-collapse-horizontal' : 'arrow-expand-horizontal'")
           .control
             b-tooltip(:label="horizontalMode ? 'Vertical Display' : 'Horizontal Display'", type="is-dark", position="is-bottom")
-              .button(@click="horizontalMode = !horizontalMode")
+              .button(@click="setOption('h', !horizontalMode)")
                 b-icon(icon="format-rotate-90")
           .control
             b-tooltip(:label="hideImages ? 'Show Images' : 'Hide Images'", type="is-dark", position="is-bottom")
-              .button(@click="hideImages = !hideImages")
+              .button(@click="setOption('im', !hideImages)")
                 b-icon(:icon="hideImages ? 'image-plus' : 'image-off'")
         b-field
           .control
@@ -92,6 +92,18 @@ export default {
       type: Array
       , default: () => []
     }
+    , wideMode: {
+      type: Boolean
+      , default: false
+    }
+    , horizontalMode: {
+      type: Boolean
+      , default: true
+    }
+    , hideImages: {
+      type: Boolean
+      , default: false
+    }
   }
   , components: {
     TOLTree
@@ -101,9 +113,6 @@ export default {
   , data: () => ({
     leafs: []
     , canFullscreen
-    , wideMode: false
-    , horizontalMode: false
-    , hideImages: false
     , navOpen: true
     , loading: false
   })
@@ -226,6 +235,10 @@ export default {
       } else {
         requestFullscreen( document.documentElement )
       }
+    }
+
+    , setOption( name, val ){
+      this.$router.replace({ query: { ...this.$route.query, [name]: (val | 0) } })
     }
   }
 }
