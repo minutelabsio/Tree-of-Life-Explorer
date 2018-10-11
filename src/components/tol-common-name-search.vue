@@ -1,6 +1,6 @@
 <template lang="pug">
 .search(@keyup.esc="closeOverlay")
-  .overlay(v-show="overlayOpen", tabindex="-1")
+  .overlay.scrollbars(v-show="overlayOpen", tabindex="-1")
     .inner
       .delete.is-large(@click="closeOverlay")
       b-field
@@ -206,8 +206,7 @@ export default {
   position: fixed
   top: 0
   left: 0
-  right: 0
-  bottom: 0
+  height: 100vh
   background: rgba(255,255,255,1)
   z-index: 20
   overflow: auto

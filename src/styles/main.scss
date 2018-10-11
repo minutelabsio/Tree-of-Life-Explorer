@@ -36,7 +36,7 @@
   }
 }
 
-.limit-dropdown .dropdown-content {
+.scrollbars {
   &::-webkit-scrollbar {
     -webkit-appearance: none;
     width: 7px;
@@ -50,6 +50,10 @@
     background-color: $blue;
     box-shadow: 0 0 1px transparentize($blue, 0.5);
   }
+}
+
+.limit-dropdown .dropdown-content {
+  @extends .scrollbars
 
   overflow-y: auto;
   max-height: 400px;

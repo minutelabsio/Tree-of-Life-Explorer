@@ -262,7 +262,7 @@ $topNavHeight: 100px
   position: fixed
   bottom: 0
   right: 0
-  z-index: 100
+  z-index: 22
   .button
     border-radius: 3px 0 0 0
 .tol-wrapper

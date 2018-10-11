@@ -148,6 +148,8 @@ $menuBackgroundColor: $blue
   flex-direction: column
   flex-wrap: nowrap
   justify-content: center
+  word-break: break-all
+  hyphens: auto
   .common-name,
   .scientific-name
     display: block
