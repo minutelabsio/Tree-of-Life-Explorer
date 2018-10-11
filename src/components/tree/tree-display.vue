@@ -16,10 +16,10 @@
       v-for="branch in branches"
       , :class="{ 'horizontal': horizontal }"
       , :key="branch.key"
-      , :style="{ left: `${branch.x-(horizontal ? 0 : 0.5 * width) + branch.dx}px`, top: `${branch.y-(horizontal ? 0.5 * cardHeight : 0) + branch.dy}px`, width: width + 'px', height: cardHeight + 'px' }"
+      , :style="{ left: `${branch.x-(horizontal ? 0 : 0.5 * cardWidth) + branch.dx}px`, top: `${branch.y-(horizontal ? 0.5 * cardHeight : 0) + branch.dy}px`, width: cardWidth + 'px', height: cardHeight + 'px' }"
       , :tabindex="-1"
       )
-      //- , :style="{ transform: `translate3d(${branch.x-(0.5 * width)}px, ${branch.y + branch.dy}px, 0)`, width: width + 'px' }"
+      //- , :style="{ transform: `translate3d(${branch.x-(0.5 * cardWidth)}px, ${branch.y + branch.dy}px, 0)`, width: cardWidth + 'px' }"
       //- )
       //- Motion(:values="{ x2: branch.x, y2: branch.y, dy: branch.dy }", :spring="{ stiffness: 300, damping: 60, precision: 1 }")
       //-   template(slot-scope="props")
@@ -51,7 +51,7 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
 
   let hz = opts.horizontal
   let height = opts.cardHeight
-  let nodeContainerSize = 0.5 * (hz ? height : opts.width) + opts.padding
+  let nodeContainerSize = 0.5 * (hz ? height : opts.cardWidth) + opts.padding
   let count = tree.nTips
   let colstart = -(count - 1)
   let branchSpacing = opts.branchSpacing
@@ -86,8 +86,8 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
 
         if ( hz ){
           let fudge = 30
-          pdx = opts.width + fudge
-          xpos = x + branchSpacing + opts.width
+          pdx = opts.cardWidth + fudge
+          xpos = x + branchSpacing + opts.cardWidth
           ypos = y + (col + colstart) * nodeContainerSize
         } else {
           pdy = 0.75 * height
@@ -142,7 +142,7 @@ export default {
     , 'y': Number
     , 'px': Number
     , 'py': Number
-    , 'width': Number
+    , 'cardWidth': Number
     , 'cardHeight': Number
     , 'padding': Number
     , 'branchSpacing': Number
@@ -176,7 +176,7 @@ export default {
       let x = this.x
       let y = this.y
       let b = getBranches(tree, {
-        width: this.width
+        cardWidth: this.cardWidth
         , cardHeight: this.cardHeight
         , branchSpacing: this.branchSpacing
         , padding: this.padding
@@ -192,7 +192,7 @@ export default {
     }
 
     , truncateLength(){
-      return this.width / 10 | 0
+      return this.cardWidth / 10 | 0
     }
   }
   , methods: {

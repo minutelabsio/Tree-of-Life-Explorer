@@ -102,21 +102,23 @@ $menuBackgroundColor: $blue
   border-color: $blue
   background: $white
   transition: transform .3s ease-in-out
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
   &:hover
     cursor: pointer
 .primary
   background: $grey-darker
-  transform: rotateX(0deg) translateZ($menuHeight/2)
+  transform: translateZ(-$menuHeight/2) rotateX(0deg) translateZ($menuHeight/2)
   .active &
-    transform: rotateX(90deg) translateZ($menuHeight/2)
+    transform: translateZ(-$menuHeight/2) rotateX(90deg) translateZ($menuHeight/2)
 .secondary
   background: $grey-darker
   position: absolute
   top: 0
   left: 0
-  transform: rotateX(-90deg) translateZ($menuHeight/2)
+  transform: translateZ(-$menuHeight/2) rotateX(-90deg) translateZ($menuHeight/2)
   .active &
-    transform: rotateX(0deg) translateZ($menuHeight/2)
+    transform: translateZ(-$menuHeight/2) rotateX(0deg) translateZ($menuHeight/2)
 .toolbar .vertical-buttons .toolbar-control
   padding: 5px 5px
   transition: background 0.15s ease-in-out

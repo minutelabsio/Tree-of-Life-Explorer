@@ -89,11 +89,7 @@ export default {
             let nImages = ['species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
             this.txnImages = info.pic.slice(0, nImages)
           }
-        }).tapCatch( err => this.$snackbar.open({
-          message: `Error: ${err.message}`
-          , type: 'is-danger'
-          , position: 'is-top'
-        })).catch( ( err ) => this.$emit('error', err) )
+        }).catch( ( err ) => this.$emit('error', err) )
       }
       , immediate: true
     }
@@ -186,6 +182,8 @@ $greyBlue: desaturate(lighten($blue, 20), 50)
   border-radius: 3px
   background: $greyBlue
   color: $white
+  .common-name
+    padding-right: 24px
   .pin-btn
     position: absolute
     top: 0

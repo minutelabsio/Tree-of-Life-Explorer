@@ -28,13 +28,7 @@ export default {
 
         getTxnInfo( leaf ).then( leaf => {
           this.txnInfo = leaf.txnInfo
-        }).tapCatch( err =>
-          this.$snackbar.open({
-            message: `Error: ${err.message}`
-            , type: 'is-danger'
-            , position: 'is-top'
-          })
-        ).catch( ( err ) =>
+        }).catch( ( err ) =>
           this.$emit('error', err)
         ).finally( () => (this.loading = false) )
       }

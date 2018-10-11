@@ -49,7 +49,7 @@
       , @remove="onRemoveLeaf"
       , @cut="cutBranch"
       , @add-node="addNode"
-      , @error="showError"
+      , @error="onError"
     )
   .wrapper
     .inner
@@ -80,6 +80,7 @@ import { getFullscreenEl, requestFullscreen, exitFullscreen, canFullscreen } fro
 import _difference from 'lodash/difference'
 import _castArray from 'lodash/castArray'
 import _uniq from 'lodash/uniq'
+import _debounce from 'lodash/debounce'
 import Promise from 'bluebird'
 
 export default {
@@ -126,7 +127,12 @@ export default {
   }
   , methods: {
 
-    showError( e ){
+    onError( e ){
+      console.error( e )
+      this.showError( e )
+    }
+
+    , showError: _debounce(function( e ){
       var message = ''
       if ( e.message === 'Network Error' ){
         message = 'Trouble connecting with database! Sorry! Things might not work. Try refreshing...'
@@ -138,10 +144,9 @@ export default {
         message
         , type: 'is-danger'
         , duration: 10 * 1000
+        , queue: false
       })
-
-      console.error( e )
-    }
+    }, 100)
 
     , undo(){
       this.$router.back()
@@ -172,7 +177,7 @@ export default {
     , onSelect( entry ){
       getNodeByName( entry.scientificName ).then( (node) => {
         this.addLeaf( node.node_id )
-      }).catch( e => this.showError( e ) )
+      }).catch( e => this.onError( e ) )
     }
 
     , cutBranch( branch ){
@@ -191,7 +196,7 @@ export default {
       if ( !ids ){ return }
       Promise.map( ids, getLeaf )
         .then( leafs => (this.leafs = leafs) )
-        .catch( e => this.showError( e ) )
+        .catch( e => this.onError( e ) )
         .finally( () => { this.loading = false } )
     }
 
@@ -255,6 +260,7 @@ $topNavHeight: 100px
   position: fixed
   bottom: 0
   right: 0
+  z-index: 100
   .button
     border-radius: 3px 0 0 0
 .tol-wrapper

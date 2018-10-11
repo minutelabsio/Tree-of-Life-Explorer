@@ -1,7 +1,12 @@
 <template lang="pug">
 .tree(@click="openLeafContext = false")
   TreeCanvas(:width="width", :height="height", :offset-x="x", :offset-y="y")
-    .parent-list.limit-dropdown.dropdown.is-active(v-if="openLeafContext", :style="{ top: leafContextY + 'px', left: leafContextX + 'px' }")
+    .parent-list.limit-dropdown.dropdown.is-active(
+      v-if="openLeafContext"
+      , :style="{ top: leafContextY + 'px', left: leafContextX + 'px' }"
+      , @wheel.stop=""
+      , @touchstart.stop=""
+      )
       .dropdown-menu
         .dropdown-content
           a.dropdown-item(v-for="parent in leafContext.subtree.lineage", :class="{ 'has-text-grey': !parent.taxon }", @click="$emit('add-node', parent.node_id)") {{ parent | nodeName }}
@@ -10,7 +15,7 @@
       , :tree="tree"
       , :x="0"
       , :y="0"
-      , :width="cardWidth"
+      , :cardWidth="cardWidth"
       , :cardHeight="cardHeight"
       , :horizontal="horizontal"
       , :hide-images="hideImages"
@@ -51,7 +56,7 @@ export default {
   , computed: {
     x(){
       if ( !this.tree || !this.$el ){ return 0 }
-      if ( this.horizontal ){ return this.topPadding }
+      if ( this.horizontal ){ return -this.width * 0.5 + this.topPadding }
       // let width = this.tree.nTips * (this.cardWidth + 2 * this.padding)
       return 0.5 * this.$el.clientWidth
     }
@@ -67,20 +72,24 @@ export default {
     }
 
     , width(){
-      if (!this.tree){ return 0 }
+      if ( !this.tree ){ return 0 }
       if ( !this.horizontal ){
+        // vertical display
         return this.tree.nTips * ( this.cardWidth + 2 * this.padding )
       }
-      let margin = 300
-      return this.topPadding + this.tree.depth * (100 + this.branchSpacing) + margin
+      let margin = 0
+      // horizontal display
+      return this.topPadding + this.tree.depth * (this.cardWidth + this.branchSpacing) + margin
     }
 
     , height(){
-      if (!this.tree){ return 0 }
+      if ( !this.tree ){ return 0 }
       if ( this.horizontal ){
-        return this.tree.nTips * ( this.cardHeight + this.padding )
+        // horizontal display
+        return this.tree.nTips * ( this.cardHeight + 2 * this.padding )
       }
       let margin = 0
+      // vertical display
       return this.topPadding + this.tree.depth * (this.cardHeight + this.branchSpacing) + margin
     }
 
@@ -95,7 +104,7 @@ export default {
       this.openLeafContext = true
       this.leafContext = leaf
       this.leafContextX = leaf.x + 30
-      this.leafContextY = Math.max(100, leaf.y) + ((height < 100) ? 100 - height * 0.5 : 0) - 100
+      this.leafContextY = leaf.y - 50 + Math.max(0, 50 - height)
     }
   }
 }
@@ -107,8 +116,10 @@ export default {
   position: relative
   width: 100%
   height: 100%
+  z-index: 1
 .parent-list
   position: absolute
   //- for some reason ios doesn't like z-index
   transform: translateZ(10px)
+  z-index: 100
 </style>
