@@ -206,6 +206,7 @@ export default {
   position: fixed
   top: 0
   left: 0
+  right: 0
   height: 100vh
   background: rgba(255,255,255,1)
   z-index: 20
