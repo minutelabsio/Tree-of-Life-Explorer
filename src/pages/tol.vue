@@ -168,17 +168,17 @@ export default {
     }
 
     , setLeafs( ids ){
-      this.$router.push({ query: { ids: _uniq( ids ) } })
+      this.$router.push({ query: { ...this.$route.query, ids: _uniq( ids ) } })
     }
 
     , addLeaf( id ){
       var ids = [].concat( this.ids )
       ids.push( id )
-      this.$router.push({ query: { ids: _uniq( ids ) } })
+      this.$router.push({ query: { ...this.$route.query, ids: _uniq( ids ) } })
     }
 
     , removeLeaf( id ){
-      this.$router.push({ query: { ids: _difference( this.ids, _castArray(id) ) } })
+      this.$router.push({ query: { ...this.$route.query, ids: _difference( this.ids, _castArray(id) ) } })
     }
 
     , onRemoveLeaf( leaf ){
@@ -212,7 +212,7 @@ export default {
     }
 
     , clear(){
-      this.$router.push({ query: { ids: [] } })
+      this.$router.push({ query: { ...this.$route.query, ids: [] } })
     }
 
     , showMetaInfo(){
