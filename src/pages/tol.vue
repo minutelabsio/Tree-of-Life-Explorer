@@ -4,12 +4,17 @@
     .button.menu-button(@click="menuToggle")
       b-icon(:icon="navOpen ? 'chevron-up' : 'menu'")
     .toolbar-item
-      h1.title.main-title.is-pulled-left
+      h1.title.main-title.is-pulled-left.clickable(@click="clear")
         | Tree of Life Explorer
     .toolbar-item.search-container
       TOLCommonNameSearch.search-box(@select="onSelect")
     .toolbar-right
       b-field(grouped)
+        b-field
+          .control
+            b-tooltip(label="Clear the tree", type="is-dark", position="is-bottom")
+              .button.is-primary(@click="clear")
+                b-icon(icon="home")
         b-field
           .control
             b-tooltip(label="Undo", type="is-dark", position="is-bottom")
@@ -32,11 +37,7 @@
             b-tooltip(:label="hideImages ? 'Show Images' : 'Hide Images'", type="is-dark", position="is-bottom")
               .button(@click="setOption('im', !hideImages)")
                 b-icon(:icon="hideImages ? 'image-plus' : 'image-off'")
-        b-field
-          .control
-            b-tooltip(label="Clear All", type="is-dark", position="is-bottom")
-              .button.is-danger(@click="clear")
-                b-icon(icon="delete-sweep")
+
       .meta-info
         a(@click="showMetaInfo") About this app
 

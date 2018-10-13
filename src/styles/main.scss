@@ -36,6 +36,10 @@
   }
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .scrollbars {
   &::-webkit-scrollbar {
     -webkit-appearance: none;
@@ -53,7 +57,7 @@
 }
 
 .limit-dropdown .dropdown-content {
-  @extends .scrollbars
+  @extend .scrollbars;
 
   overflow-y: auto;
   max-height: 400px;
