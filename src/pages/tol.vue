@@ -37,6 +37,11 @@
             b-tooltip(:label="hideImages ? 'Show Images' : 'Hide Images'", type="is-dark", position="is-bottom")
               .button(@click="setOption('im', !hideImages)")
                 b-icon(:icon="hideImages ? 'image-plus' : 'image-off'")
+        b-field
+          .control
+            b-tooltip(label="Share this tree", type="is-dark", position="is-bottom")
+              .button.is-success(@click="share")
+                b-icon(icon="share")
 
       .meta-info
         a(@click="showMetaInfo") About this app
@@ -80,6 +85,7 @@ import { getNodeByName, getNode } from '@/lib/otol'
 import { getLeaf } from '@/lib/taxonomy'
 import { getChildren } from '@/lib/tree-utils'
 import { getFullscreenEl, requestFullscreen, exitFullscreen, canFullscreen } from '@/lib/fullscreen'
+import { copyToClipboard } from '@/lib/utils'
 import _difference from 'lodash/difference'
 import _castArray from 'lodash/castArray'
 import _uniq from 'lodash/uniq'
@@ -240,6 +246,15 @@ export default {
 
     , setOption( name, val ){
       this.$router.replace({ query: { ...this.$route.query, [name]: (val | 0) } })
+    }
+
+    , share(){
+      copyToClipboard( window.location )
+      this.$toast.open({
+        message: 'URL copied to clipboard!'
+        , type: 'is-success'
+        , position: 'is-top-right'
+      })
     }
   }
 }

@@ -54,18 +54,7 @@
 import _remove from 'lodash/remove'
 import { isMRCA } from '@/lib/taxonomy'
 import { getTxnSourceId } from '@/lib/otol'
-
-function copyToClipboard( str ) {
-  const el = document.createElement('textarea')
-  el.value = str
-  el.setAttribute('readonly', '')
-  el.style.position = 'absolute'
-  el.style.left = '-9999px'
-  document.body.appendChild(el)
-  el.select()
-  document.execCommand('copy')
-  document.body.removeChild(el)
-}
+import { copyToClipboard } from '@/lib/utils'
 
 export default {
   name: 'TaxonomyInfoWindow'
