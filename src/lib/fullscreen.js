@@ -37,3 +37,20 @@ export function getFullscreenEl(){
     document.mozFullScreenElement ||
     document.msFullscreenElement
 }
+
+export const fullscreenEventName = (function(){
+  const events = [
+    [ 'requestFullscreen', 'fullscreenchange' ]
+    , [ 'webkitRequestFullScreen', 'webkitfullscreenchange' ]
+    , [ 'mozRequestFullScreen', 'mozfullscreenchange' ]
+    , [ 'msRequestFullscreen', 'onmsfullscreenchange' ]
+  ]
+
+  for ( let e of events ){
+    if ( document.body[e[0]] ){
+      return e[1]
+    }
+  }
+
+  return null
+})()

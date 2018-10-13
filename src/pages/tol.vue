@@ -84,7 +84,7 @@ import { getNodeByName, getNode } from '@/lib/otol'
 // import { findByName } from '@/lib/gbif'
 import { getLeaf } from '@/lib/taxonomy'
 import { getChildren } from '@/lib/tree-utils'
-import { getFullscreenEl, requestFullscreen, exitFullscreen, canFullscreen } from '@/lib/fullscreen'
+import { getFullscreenEl, requestFullscreen, exitFullscreen, canFullscreen, fullscreenEventName } from '@/lib/fullscreen'
 import { copyToClipboard } from '@/lib/utils'
 import _difference from 'lodash/difference'
 import _castArray from 'lodash/castArray'
@@ -122,7 +122,15 @@ export default {
     , canFullscreen
     , navOpen: true
     , loading: false
+    , isInFullscreen: false
   })
+  , created(){
+    if ( fullscreenEventName ){
+      window.addEventListener(fullscreenEventName, () => {
+        this.isInFullscreen = !!(getFullscreenEl())
+      }, { passive: true })
+    }
+  }
   , computed: {
     cardWidth(){
       return this.wideMode ? 260 : 160
@@ -230,12 +238,8 @@ export default {
       this.navOpen = !this.navOpen
     }
 
-    , isInFullscreen(){
-      return !!(getFullscreenEl())
-    }
-
     , fullscreenToggle(){
-      let fs = this.isInFullscreen()
+      let fs = this.isInFullscreen
 
       if ( fs ){
         exitFullscreen()
