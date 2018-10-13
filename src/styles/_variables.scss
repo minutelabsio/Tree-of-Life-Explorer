@@ -32,8 +32,8 @@ $danger:  $red;
 
 // Typography
 
-$family-sans-serif: 'Roboto Condensed', BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif !default
-$family-monospace: 'Nanum Gothic Coding', monospace !default
+$family-sans-serif: pt-sans, BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif !default
+$family-monospace: latin-modern-mono, monospace !default
 $render-mode: optimizeLegibility !default
 
 $size-1: 3rem !default

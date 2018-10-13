@@ -1,10 +1,20 @@
 // Common
 @import "./_variables";
-
+@import "./_fonts";
 @import "~bulma/sass/utilities/initial-variables";
 @import "~buefy/src/scss/utils/_all";
 @import "~bulma/bulma";
 @import "~buefy/src/scss/buefy";
+
+.heading,
+.button {
+  font-family: $family-monospace;
+}
+
+.menu-label {
+  font-family: $family-monospace;
+  font-size: 1em;
+}
 
 .toolbar {
   width: 100%;

@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'latin_modern_mono10_regular';
+    src: url('lmmono10-regular-webfont.eot');
+    src: url('lmmono10-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('lmmono10-regular-webfont.woff') format('woff'),
+         url('lmmono10-regular-webfont.ttf') format('truetype'),
+         url('lmmono10-regular-webfont.svg#latin_modern_mono10_regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
