@@ -148,6 +148,7 @@ export default {
     , 'branchSpacing': Number
     , 'horizontal': Boolean
     , 'hide-images': Boolean
+    , 'computedBranches': null
   }
   , data: () => ({
     subtreeLeaf: null
@@ -182,6 +183,7 @@ export default {
         , padding: this.padding
         , horizontal: this.horizontal
       }, x, y)
+      this.$emit('update:computedBranches', b)
       return b
     }
 

@@ -8,6 +8,7 @@
 <script>
 import SVG from 'svg.js'
 import Impetus from 'impetus'
+import TWEEN from '@tweenjs/tween.js'
 import _debounce from 'lodash/debounce'
 
 // var isTouch = false
@@ -19,6 +20,12 @@ import _debounce from 'lodash/debounce'
 function clamp( v, min, max ){
   return Math.min(Math.max(v, min), max)
 }
+
+// Setup the animation loop.
+requestAnimationFrame(function animate(time) {
+  requestAnimationFrame(animate)
+  TWEEN.update(time)
+})
 
 export default {
   name: 'TreeCanvas'
@@ -39,10 +46,16 @@ export default {
       type: Number
       , default: 0
     }
+    , 'panDuration': {
+      type: Number
+      , default: 1000
+    }
   }
   , data: () => ({
     x: 0
     , y: 0
+    , elWidth: 0
+    , elHeight: 0
   })
   , provide(){
     this.svgEl = document.createElement('svg')
@@ -59,16 +72,16 @@ export default {
     // }
 
     this.$refs.svg.appendChild(this.svgEl.children[0])
-    let impetus = new Impetus({
+    let impetus = this.impetus = new Impetus({
       source: this.$el
-      , boundX: this.xBounds
-      , boundY: this.yBounds
       , update: ( x, y ) => {
+        this.cancelPan()
         this.setOffset( x, y )
       }
     })
 
     const onResize = _debounce(() => {
+      this.onResize()
       impetus.setBoundX( this.xBounds )
       impetus.setBoundY( this.yBounds )
     }, 200)
@@ -76,11 +89,9 @@ export default {
     const onWheel = ( e ) => {
       if ( !this.$el.contains(e.target) ){ return }
       e.preventDefault()
-      let [minX, maxX] = this.xBounds
-      let [minY, maxY] = this.yBounds
-      let x = clamp(this.x - e.deltaX, minX, maxX)
-      let y = clamp(this.y - e.deltaY, minY, maxY)
+      let { x, y } = this.getClampedCoords( this.x - e.deltaX, this.y - e.deltaY )
       impetus.setValues( x, y )
+      this.cancelPan()
       this.setOffset( x, y )
       return false
     }
@@ -100,23 +111,25 @@ export default {
       window.removeEventListener('resize', onResize)
       impetus.destroy()
     })
+
+    onResize()
   }
   , watch: {
-    offsetX: 'fixSVGPosition'
-    , offsetY: 'fixSVGPosition'
+    top: 'fixSVGPosition'
+    , left: 'fixSVGPosition'
   }
   , computed: {
     left(){
-      return this.x + this.offsetX
+      return this.x + this.offsetX + this.elWidth * 0.5
     }
     , top(){
-      return this.y + this.offsetY
+      return this.y + this.offsetY + this.elHeight * 0.5
     }
     , xBounds(){
-      return [-this.width * 0.5, this.width * 0.5]
+      return [-(this.width + this.elWidth) * 0.5, (this.width + this.elWidth) * 0.5]
     }
     , yBounds(){
-      return [-this.height, 0]
+      return [-(this.height + this.elHeight) * 0.5, (this.height + this.elHeight) * 0.5]
     }
   }
   , methods: {
@@ -128,7 +141,46 @@ export default {
     , setOffset( x2, y2 ){
       this.x = x2
       this.y = y2
-      this.fixSVGPosition()
+    }
+    , getClampedCoords( x, y ){
+      let [minX, maxX] = this.xBounds
+      let [minY, maxY] = this.yBounds
+      x = clamp(x, minX, maxX)
+      y = clamp(y, minY, maxY)
+      return { x, y }
+    }
+    , onResize(){
+      this.elWidth = this.$el.offsetWidth
+      this.elHeight = this.$el.offsetHeight
+    }
+    , panTo( x, y, animate = true ){
+      let coords = { x: this.x, y: this.y }
+
+      x = -x
+      y = -y
+      ;({ x, y } = this.getClampedCoords(x, y))
+
+      this.cancelPan()
+
+      if ( !animate ){
+        this.impetus.setValues( x, y )
+        this.setOffset( x, y )
+        return
+      }
+
+      this._activeTween = new TWEEN.Tween( coords )
+        .to({ x, y }, this.panDuration)
+        .easing(TWEEN.Easing.Quadratic.InOut)
+        .onUpdate(() => {
+          this.impetus.setValues( coords.x, coords.y )
+          this.setOffset( coords.x, coords.y )
+        })
+        .start()
+    }
+    , cancelPan(){
+      if ( this._activeTween ){
+        this._activeTween.stop()
+      }
     }
   }
 }
