@@ -8,6 +8,10 @@ import _get from 'lodash/get'
 
 Vue.use(Router)
 
+function getOption( query, name ){
+  return !!parseInt(_get(query, name, 0))
+}
+
 export default new Router({
   routes: [
     {
@@ -16,9 +20,9 @@ export default new Router({
       , component: PageTOL
       , props: (route) => ({
         ids: _compact(_uniq(_castArray(route.query.ids)))
-        , wideMode: !!_get(route.query, 'w', false)
-        , horizontalMode: !!_get(route.query, 'h', false)
-        , hideImages: !!_get(route.query, 'im', false)
+        , wideMode: getOption(route.query, 'w')
+        , horizontalMode: getOption(route.query, 'h')
+        , hideImages: getOption(route.query, 'im')
       })
     }
   ]
