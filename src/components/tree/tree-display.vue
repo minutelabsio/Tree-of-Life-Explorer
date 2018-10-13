@@ -194,7 +194,7 @@ export default {
     }
 
     , truncateLength(){
-      return this.cardWidth / 10 | 0
+      return this.cardWidth / 11 | 0
     }
   }
   , methods: {

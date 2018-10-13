@@ -14,13 +14,17 @@
             b-icon.front-icon(icon="file-tree", slot="trigger")
             b-loading(:is-full-page="false", :active="loading")
             b-dropdown-item.heading.has-text-info Children
+            b-dropdown-item(v-if="children && children.length", @click="$emit('add-node', children.map(n => n.node_id))")
+              .button.is-small
+                b-icon(icon="plus-circle-multiple-outline", size="is-small")
+                span Expand All
             hr.dropdown-divider
             b-dropdown-item(
               v-if="children && children.length",
               v-for="child in children",
               :class="{ 'has-text-grey-light': childIsAdded(child) }"
               :key="child.node_id",
-              @click="$emit('add-node', child)"
+              @click="$emit('add-node', child.node_id)"
               )
               | {{ child | nodeName }}
             b-dropdown-item(v-if="!loading && children && !children.length")

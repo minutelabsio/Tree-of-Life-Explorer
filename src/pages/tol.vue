@@ -80,7 +80,7 @@
 import TOLTree from '@/components/tol-tree'
 import TOLCommonNameSearch from '@/components/tol-common-name-search'
 import TOLSuggestedTrees from '@/components/tol-suggested-trees'
-import { getNodeByName, getNode } from '@/lib/otol'
+import { getNodeByName } from '@/lib/otol'
 // import { findByName } from '@/lib/gbif'
 import { getLeaf } from '@/lib/taxonomy'
 import { getChildren } from '@/lib/tree-utils'
@@ -89,6 +89,9 @@ import { copyToClipboard } from '@/lib/utils'
 import _difference from 'lodash/difference'
 import _castArray from 'lodash/castArray'
 import _uniq from 'lodash/uniq'
+import _startsWith from 'lodash/startsWith'
+import _filter from 'lodash/filter'
+import _union from 'lodash/union'
 import _debounce from 'lodash/debounce'
 import Promise from 'bluebird'
 
@@ -186,10 +189,11 @@ export default {
       this.$router.push({ query: { ...this.$route.query, ids: _uniq( ids ) } })
     }
 
-    , addLeaf( id ){
-      var ids = [].concat( this.ids )
-      ids.push( id )
-      this.$router.push({ query: { ...this.$route.query, ids: _uniq( ids ) } })
+    , addLeaf( ids ){
+      ids = _castArray( ids )
+      ids = _filter( ids, id => _startsWith(id, 'ott') || _startsWith(id, 'mrca') )
+      ids = _union( ids, this.ids )
+      this.$router.push({ query: { ...this.$route.query, ids } })
     }
 
     , removeLeaf( id ){
@@ -212,10 +216,7 @@ export default {
     }
 
     , addNode( nodeId ){
-      return getNode( nodeId )
-        .then( node => {
-          this.addLeaf( node.node_id )
-        })
+      return this.addLeaf( nodeId )
     }
 
     , onIdsChanged( ids ){
