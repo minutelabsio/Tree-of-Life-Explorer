@@ -21,6 +21,9 @@ export default {
     let nodeWidth = 36
     let scene = this.svg
     this.node = scene.group().addClass('svg-node').move( 0, 0 )
+
+    this.node.rect(nodeWidth, nodeWidth).center(6, -6).radius(7)
+    this.node.rect(nodeWidth, nodeWidth).center(3, -3).radius(7)
     this.node.rect(nodeWidth, nodeWidth).center(0, 0).radius(7)
 
     this.label = this.node.plain( `${this.tree.lineage.length}` ).attr('y', 2)
@@ -46,6 +49,7 @@ export default {
   transition: transform 0.7s ease-in-out
   rect
     fill: desaturate(lighten($blue, 20), 50)
+    stroke: white
     transition: all 0.15s linear
 
   // circle
