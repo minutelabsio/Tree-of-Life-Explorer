@@ -1,5 +1,6 @@
 // Helpers for https://commons.wikimedia.org
 // ---------------------------------------
+const SERVER_TIMEOUT = 10 * 1000
 
 import Promise from 'bluebird'
 import axios from 'axios'
@@ -19,7 +20,7 @@ const cache = setupCache({
 
 const wikimedia = axios.create({
   baseURL: 'https://commons.wikimedia.org/w'
-  , timeout: 10000
+  , timeout: SERVER_TIMEOUT
   , crossdomain: true
   , adapter: cache.adapter
 })

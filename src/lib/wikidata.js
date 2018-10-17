@@ -1,5 +1,6 @@
 // Helpers for https://query.wikidata.org
 // ---------------------------------------
+const SERVER_TIMEOUT = 10 * 1000
 
 import Promise from 'bluebird'
 import axios from 'axios'
@@ -29,7 +30,7 @@ const wikidata = axios.create({
     // origin: window.location.origin
   }
   , crossdomain: true
-  , timeout: 10000
+  , timeout: SERVER_TIMEOUT
   , adapter: cache.adapter
 })
 

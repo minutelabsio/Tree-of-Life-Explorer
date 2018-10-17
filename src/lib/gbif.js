@@ -1,6 +1,7 @@
 // Helpers for https://www.gbif.org/developer
 // https://www.gbif.org/developer/registry
 // ---------------------------------------
+const SERVER_TIMEOUT = 10 * 1000
 
 import Promise from 'bluebird'
 import axios from 'axios'
@@ -44,7 +45,7 @@ const cache = setupCache({
 
 const gbif = axios.create({
   baseURL: 'http://api.gbif.org/v1'
-  , timeout: 5000
+  , timeout: SERVER_TIMEOUT
   , adapter: cache.adapter
   , crossdomain: true
   , paramsSerializer: params => parseParams(params)
