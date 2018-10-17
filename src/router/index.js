@@ -8,8 +8,8 @@ import _get from 'lodash/get'
 
 Vue.use(Router)
 
-function getOption( query, name ){
-  return !!parseInt(_get(query, name, 0))
+function getOption( query, name, def = 0 ){
+  return !!parseInt(_get(query, name, def))
 }
 
 export default new Router({
@@ -21,7 +21,7 @@ export default new Router({
       , props: (route) => ({
         ids: _compact(_uniq(_castArray(route.query.ids)))
         , wideMode: getOption(route.query, 'w')
-        , horizontalMode: getOption(route.query, 'h')
+        , horizontalMode: getOption(route.query, 'h', 1)
         , hideImages: getOption(route.query, 'im')
       })
     }
