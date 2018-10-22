@@ -44,7 +44,7 @@ const cache = setupCache({
 })
 
 const gbif = axios.create({
-  baseURL: 'http://api.gbif.org/v1'
+  baseURL: 'https://api.gbif.org/v1'
   , timeout: SERVER_TIMEOUT
   , adapter: cache.adapter
   , crossdomain: true

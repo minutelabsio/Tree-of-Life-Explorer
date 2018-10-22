@@ -37,6 +37,11 @@ const MetaInfoComponent = {
   }
 }
 
+if ( window.location.protocol === 'https:' ){
+  // ensure http
+  window.location.protocol = 'http:'
+}
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app'
