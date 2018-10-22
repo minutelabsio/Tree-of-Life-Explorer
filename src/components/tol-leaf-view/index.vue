@@ -10,7 +10,7 @@
         @click="openInfoWindow"
         )
         b-tooltip(label="See children", type="is-dark", slot="front-button")
-          b-dropdown.limit-dropdown(@active-change="getSubtree()")
+          b-dropdown.limit-dropdown(@active-change="getSubtree()", @wheel.native.stop="")
             b-icon.front-icon(icon="file-tree", slot="trigger")
             b-loading(:is-full-page="false", :active="loading")
             b-dropdown-item.heading.has-text-info Children
@@ -22,7 +22,7 @@
             b-dropdown-item(
               v-if="children && children.length",
               v-for="child in children",
-              :class="{ 'has-text-grey-light': childIsAdded(child) }"
+              :class="{ 'has-text-grey-light': childIsAdded(child) }",
               :key="child.node_id",
               @click="$emit('add-node', child.node_id)"
               )
@@ -35,9 +35,9 @@
         b-tooltip(label="Cut tree here", type="is-dark")
           a.cut-button.toolbar-control(@click="$emit('cut', leaf)")
             b-icon(icon="content-cut")
-  .minimal(v-if="!isAddedToTree")
+  .minimal(v-if="!isAddedToTree", @click="$emit('add-node', leaf.node_id)")
     .common-name {{ (commonName || shortScientificName) | titleCase }}
-    .pin-btn(@click="$emit('add-node', leaf)")
+    .pin-btn
       b-icon(icon="file-plus", size="is-small")
 </template>
 
@@ -186,6 +186,7 @@ $greyBlue: desaturate(lighten($blue, 20), 50)
   border-radius: 3px
   background: $greyBlue
   color: $white
+  cursor: pointer
   .common-name
     padding-right: 24px
   .pin-btn
@@ -202,10 +203,10 @@ $greyBlue: desaturate(lighten($blue, 20), 50)
     line-height: 24px
     padding-left: 1px
     cursor: pointer
-    &:hover
-      border-color: $greyBlue
-      background-color: $white
-      color: $grey-darker
-    &:active
-      top: 1px
+  &:hover .pin-btn
+    border-color: $greyBlue
+    background-color: $white
+    color: $grey-darker
+  &:active .pin-btn
+    top: 1px
 </style>

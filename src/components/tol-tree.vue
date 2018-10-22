@@ -10,6 +10,7 @@ transition(name="tree", appear)
         )
         .dropdown-menu
           .dropdown-content
+            .dropdown-item.heading.has-text-info Parents
             a.dropdown-item(v-for="parent in leafContext.subtree.lineage", :class="{ 'has-text-grey': !parent.taxon }", @click="$emit('add-node', parent.node_id)") {{ parent | nodeName }}
       Tree(
         :tree="tree"

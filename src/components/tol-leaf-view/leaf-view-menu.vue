@@ -123,7 +123,12 @@ $menuBackgroundColor: $blue
   padding: 5px 5px
   transition: background 0.15s ease-in-out
   background: darken($menuBackgroundColor, 8)
-  box-shadow: inset 1px 0px 0px 0px darken($menuBackgroundColor, 20)
+  box-shadow: inset 1px 0px 0px 0px darken($menuBackgroundColor, 18)
+  border-top: 1px solid darken($menuBackgroundColor, 2)
+  border-bottom: 1px solid darken($menuBackgroundColor, 18)
+
+  &:first-child
+    border-top: none
 
   &:hover
     background: darken($menuBackgroundColor, 4)
@@ -131,7 +136,7 @@ $menuBackgroundColor: $blue
     background: darken($menuBackgroundColor, 2)
   .icon
     color: darken($menuBackgroundColor, 30)
-    text-shadow: 0.5px 0.5px 1px lighten($menuBackgroundColor, 20)
+    text-shadow: 0.5px 0.5px 1px lighten($menuBackgroundColor, 18)
 
 .toolbar-control
   color: $white-ter
