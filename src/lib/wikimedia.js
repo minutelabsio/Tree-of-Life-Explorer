@@ -1,7 +1,5 @@
 // Helpers for https://commons.wikimedia.org
 // ---------------------------------------
-const SERVER_TIMEOUT = 10 * 1000
-
 import Promise from 'bluebird'
 import axios from 'axios'
 import { setupCache } from 'axios-cache-adapter'
@@ -9,6 +7,8 @@ import _values from 'lodash/values'
 import _get from 'lodash/get'
 import _sortBy from 'lodash/sortBy'
 // import _mapValues from 'lodash/mapValues'
+
+const SERVER_TIMEOUT = 10 * 1000
 
 const cache = setupCache({
   maxAge: 15 * 60 * 1000

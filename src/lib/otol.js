@@ -1,8 +1,6 @@
 // Helpers for OTL api
 // https://github.com/OpenTreeOfLife/germinator/wiki/TNRS-API-v3
 // ---------------------------------------
-const SERVER_TIMEOUT = 10 * 1000
-
 import Promise from 'bluebird'
 import _castArray from 'lodash/castArray'
 import _startsWith from 'lodash/startsWith'
@@ -12,6 +10,8 @@ import _takeWhile from 'lodash/takeWhile'
 import _every from 'lodash/every'
 import cacher from './cacher'
 import axios from 'axios'
+
+const SERVER_TIMEOUT = 10 * 1000
 
 const otol = axios.create({
   baseURL: 'https://api.opentreeoflife.org/v3'

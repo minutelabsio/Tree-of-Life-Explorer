@@ -1,7 +1,5 @@
 // Helpers for https://query.wikidata.org
 // ---------------------------------------
-const SERVER_TIMEOUT = 10 * 1000
-
 import Promise from 'bluebird'
 import axios from 'axios'
 import { setupCache } from 'axios-cache-adapter'
@@ -12,6 +10,8 @@ import _omit from 'lodash/omit'
 import _values from 'lodash/values'
 import _mapValues from 'lodash/mapValues'
 import Throttler from './throttler'
+
+const SERVER_TIMEOUT = 10 * 1000
 
 const cache = setupCache({
   maxAge: 15 * 60 * 1000

@@ -1,8 +1,6 @@
 // Helpers for https://www.gbif.org/developer
 // https://www.gbif.org/developer/registry
 // ---------------------------------------
-const SERVER_TIMEOUT = 10 * 1000
-
 import Promise from 'bluebird'
 import axios from 'axios'
 import { setupCache } from 'axios-cache-adapter'
@@ -10,6 +8,8 @@ import _startCase from 'lodash/startCase'
 import _uniq from 'lodash/uniq'
 // import _union from 'lodash/union'
 import _flow from 'lodash/flow'
+
+const SERVER_TIMEOUT = 10 * 1000
 
 const parseParams = (params) => {
   const keys = Object.keys(params)
