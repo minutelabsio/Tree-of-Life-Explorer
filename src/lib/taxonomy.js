@@ -95,6 +95,19 @@ export function getMapping( data = {}, mapping ){
   }, {})
 }
 
+function ensureVernacularNames( node, txn ){
+  if ( txn.vernacularNameList && txn.vernacularNameList.length ){
+    return txn
+  }
+
+  if ( !node.taxon ){ return txn }
+
+  return gbif.findByScientificName( node.taxon.unique_name )
+    .then( results => results[0] )
+    .then( data => getMapping( data, gbifMapping ) )
+    .then( data => ({ ...txn, ...data }) )
+}
+
 export function getTaxonomyInfo( node ){
 
   var types = {
@@ -118,6 +131,7 @@ export function getTaxonomyInfo( node ){
   return Promise.all(queries)
     .then( resultList => _union(...resultList) )
     .then( results => results.reduce( (txn, data) => ({...txn, ...data}), {} ) )
+    .then( txn => ensureVernacularNames(node, txn) )
 }
 
 export function getImagesAndCommonNames( name, ncbiId, options = {} ){

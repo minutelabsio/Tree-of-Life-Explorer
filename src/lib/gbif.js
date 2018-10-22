@@ -78,6 +78,7 @@ export function findByCommonName( q ){
   var params = {
     qField: 'VERNACULAR'
     , status: 'ACCEPTED'
+    , dataset_key: 'fab88965-e69d-4491-a04d-e3198b626e52' // NCBI Database
     // , rank: ['SUBSPECIES', 'SPECIES']
     , q
   }
@@ -90,6 +91,7 @@ export function findByScientificName( q ){
   var params = {
     qField: 'SCIENTIFIC'
     , status: 'ACCEPTED'
+    , dataset_key: 'fab88965-e69d-4491-a04d-e3198b626e52' // NCBI Database
     // , rank: 'SUBSPECIES'
     , q
   }
