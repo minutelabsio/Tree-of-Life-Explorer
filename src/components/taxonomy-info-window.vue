@@ -13,7 +13,7 @@
             span.has-text-success {{ commonName }}
 
           .tag-list(v-if="!isMRCA")
-            .tags.has-addons
+            .tags.has-addons(v-if="txnInfo.rank")
               span.tag.is-dark
                 | Rank
               a(:href="rankLink", target="_blank").tag.rank-tag
