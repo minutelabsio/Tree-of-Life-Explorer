@@ -201,7 +201,7 @@ export default {
     }
 
     , onRemoveLeaf( leaf ){
-      this.removeLeaf( leaf.node_id )
+      this.removeLeaf( leaf.node_id || leaf )
     }
 
     , onSelect( entry ){

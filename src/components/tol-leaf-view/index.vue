@@ -14,10 +14,16 @@
             b-icon.front-icon(icon="file-tree", slot="trigger")
             b-loading(:is-full-page="false", :active="loading")
             b-dropdown-item.heading.has-text-info Children
-            b-dropdown-item(v-if="children && children.length", @click="$emit('add-node', children.map(n => n.node_id))")
-              .button.is-small
-                b-icon(icon="plus-circle-multiple-outline", size="is-small")
-                span Expand All
+            b-dropdown-item(v-if="children && children.length")
+              b-field
+                .control
+                  .button.is-small(@click="$emit('add-node', children.map(n => n.node_id))")
+                    b-icon(icon="expand-all", size="is-small")
+                    span Expand All
+                .control
+                  .button.is-small(@click="$emit('remove-node', children.map(n => n.node_id))")
+                    b-icon(icon="collapse-all", size="is-small")
+                    span Remove All
             hr.dropdown-divider
             b-dropdown-item(
               v-if="children && children.length",
@@ -86,11 +92,17 @@ export default {
         getTxnInfo( leaf, { thumbSize: 200 } ).then( info => {
           this.txnInfo = info
           this.otherCommonNames = info.commonName
+
+          // no images for higher ranks
+          if ( ['variety', 'species', 'subspecies', 'family'].indexOf(this.txnInfo.rank) === -1 ){
+            return
+          }
+
           if ( info.thumbnail ){
-            let nImages = ['species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
+            let nImages = ['variety', 'species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
             this.txnImages = info.thumbnail.slice(0, nImages)
           } else if ( info.pic ){
-            let nImages = ['species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
+            let nImages = ['variety', 'species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
             this.txnImages = info.pic.slice(0, nImages)
           }
         }).catch( ( err ) => this.$emit('error', err) )
