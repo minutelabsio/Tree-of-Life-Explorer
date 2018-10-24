@@ -16,17 +16,20 @@ transition(name="tree", appear)
         :tree="tree"
         , :x="x"
         , :y="y"
+        , :compactView="compactView"
         , :cardWidth="cardWidth"
         , :cardHeight="cardHeight"
         , :horizontal="horizontal"
         , :hide-images="hideImages"
         , :padding="padding"
         , :branchSpacing="branchSpacing"
+        , :transitions="transitions"
         , :computedBranches.sync="branches"
         , @remove="$emit('remove', arguments[0])"
         , @cut="$emit('cut', arguments[0])"
         , @leaf-click="showLeafDetails"
         , @add-node="$emit('add-node', arguments[0])"
+        , @zoom-in="zoomTo(arguments[0].leaf.node_id)"
         , @error="$emit('error', arguments[0])"
         )
 </template>
@@ -41,7 +44,7 @@ import _find from 'lodash/find'
 
 export default {
   name: 'TOLTree'
-  , props: [ 'leafs', 'cardWidth', 'horizontal', 'hideImages' ]
+  , props: [ 'leafs', 'cardWidth', 'horizontal', 'hideImages', 'compactView' ]
   , components: {
     Tree
     , TreeCanvas
@@ -56,6 +59,7 @@ export default {
     , outerPadding: -80
     , canvasX: 0
     , cardHeight: 74
+    , transitions: true
     , branches: [] // READ ONLY
   })
   , computed: {
@@ -114,10 +118,13 @@ export default {
       let newLeafs = _differenceBy( newVal, oldVal, 'node_id' )
       if ( !newLeafs.length ){ return }
       this.$nextTick(() => {
-        let branch = _find(this.branches, { key: newLeafs[0].node_id })
-        if ( !branch ){ return }
-        this.$refs.treeCanvas.panTo( branch.x, branch.y )
+        this.panTo( newLeafs[0].node_id )
       })
+    }
+    , compactView(){
+      if ( this.compactView ){
+        this.centerTree()
+      }
     }
   }
   , methods: {
@@ -127,6 +134,21 @@ export default {
       this.leafContext = leaf
       this.leafContextX = leaf.x + 30
       this.leafContextY = leaf.y - 50 + Math.max(0, 50 - height)
+    }
+
+    , zoomTo( nodeId ){
+      this.$router.replace({ query: {...this.$route.query, c: false} })
+      this.transitions = false
+      this.$nextTick(() => {
+        this.panTo( nodeId )
+        this.transitions = true
+      })
+    }
+
+    , panTo( nodeId ){
+      let branch = _find(this.branches, { key: nodeId })
+      if ( !branch ){ return }
+      this.$refs.treeCanvas.panTo( branch.x, branch.y )
     }
 
     , centerTree(){

@@ -140,6 +140,10 @@ export function getImagesAndCommonNames( name, ncbiId, options = {} ){
     .then( data => {
       let firstResult = (data && data[0]) || {}
 
+      if ( options.images === false ){
+        return firstResult
+      }
+
       if ( options.getAllImages || !firstResult.pic || !firstResult.pic.length ){
         return wikimedia.findImagesByName( name, { thumbSize: options.thumbSize } )
           .then( data => {
@@ -162,12 +166,12 @@ export const getTxnInfo = cacher(Promise.coroutine(function* ( leaf, options ){
     leaf = yield getLeaf( leaf.node_id )
   }
 
-  let getAllImages = ['species', 'subspecies'].indexOf(leaf.taxon.rank) === -1
+  let getAllImages = ['species', 'subspecies', 'variety'].indexOf(leaf.taxon.rank) === -1
 
   if ( isMRCA(leaf) ){
     let names = leaf.taxon.name.split(' and ')
     return Promise.map( names, name =>
-      getImagesAndCommonNames( name, null, {getAllImages, thumbSize: options.thumbSize} )
+      getImagesAndCommonNames( name, null, {getAllImages, thumbSize: options.thumbSize, images: options.images} )
     ).then( results => {
       return _mergeWith({}, leaf.taxon, ...results, (objValue, srcValue) => {
         if ( _isArray(objValue) ) {
@@ -181,7 +185,7 @@ export const getTxnInfo = cacher(Promise.coroutine(function* ( leaf, options ){
 
   return Promise.all([
     getTaxonomyInfo( leaf )
-    , getImagesAndCommonNames( leaf.taxon.unique_name, ncbiId, {getAllImages, thumbSize: options.thumbSize} )
+    , getImagesAndCommonNames( leaf.taxon.unique_name, ncbiId, {getAllImages, thumbSize: options.thumbSize, images: options.images} )
   ]).spread( (txnInfo, imgNameData) => {
     return Object.assign({}, leaf.taxon, txnInfo, imgNameData)
   })

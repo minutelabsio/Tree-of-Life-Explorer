@@ -23,6 +23,7 @@ export default new Router({
         , wideMode: getOption(route.query, 'w')
         , horizontalMode: getOption(route.query, 'h', 1)
         , hideImages: getOption(route.query, 'im')
+        , compactView: getOption(route.query, 'c')
       })
     }
   ]

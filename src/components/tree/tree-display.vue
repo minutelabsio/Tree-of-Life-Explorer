@@ -11,7 +11,17 @@
   //-         v-if="col.tree.leaf"
   //-         , :leaf="col.tree.leaf"
   //-       )
-  transition-group(name="tree")
+  template(v-if="compactView")
+    .tol-leaf(
+      v-for="branch in branches"
+      , :class="{ 'horizontal': horizontal }"
+      , :style="{ left: `${branch.x + branch.dx}px`, top: `${branch.y + branch.dy}px` }"
+      , :tabindex="-1"
+      )
+      Connection(v-if="!(branch.isRoot && !branch.tree.lineage.length)", :horizontal="horizontal", :x1="branch.px", :y1="branch.py", :x2="branch.x + branch.dx", :y2="branch.y + branch.dy", :padding="branch.dx || branch.dy")
+      CondensedNode(v-if="!branch.tree.split.length", :leaf="branch.tree.leaf", :x="branch.x + branch.dx", :y="branch.y", :horizontal="horizontal", @click="$emit('zoom-in', arguments[0])")
+
+  transition-group(name="tree", v-if="!compactView", :css="transitions")
     .tol-leaf(
       v-for="branch in branches"
       , :class="{ 'horizontal': horizontal }"
@@ -23,7 +33,7 @@
       //- )
       //- Motion(:values="{ x2: branch.x, y2: branch.y, dy: branch.dy }", :spring="{ stiffness: 300, damping: 60, precision: 1 }")
       //-   template(slot-scope="props")
-      Connection(v-if="!(branch.isRoot && !branch.tree.lineage.length)", :horizontal="horizontal", :x1="branch.px + branch.pdx", :y1="branch.py + branch.pdy", :x2="branch.x + branch.dx", :y2="branch.y + branch.dy", :padding="branch.dx || branch.dy")
+      Connection(v-if="!(branch.isRoot && !branch.tree.lineage.length)", :horizontal="horizontal", :x1="branch.px", :y1="branch.py", :x2="branch.x + branch.dx", :y2="branch.y + branch.dy", :padding="(horizontal ? cardWidth : cardHeight) * 1.5")
       Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="branch.x", :y="branch.y", @click="$emit('leaf-click', arguments[0])")
 
       TOLLeafView(
@@ -34,6 +44,7 @@
         , @cut="$emit( 'cut', branch.tree )"
         , @error="$emit( 'error', arguments[0] )"
         , @add-node="$emit( 'add-node', arguments[0] )"
+        , @remove-node="$emit( 'remove', arguments[0] )"
         )
 </template>
 
@@ -42,6 +53,7 @@ import TOLNodeCard from '@/components/tol-node-card'
 import TOLLeafView from '@/components/tol-leaf-view'
 import TOLMRCAView from '@/components/tol-mrca-view'
 import Node from './node'
+import CondensedNode from './condensed-node'
 import Tail from './tail'
 import Connection from './connection'
 import ChildMenu from './child-menu'
@@ -63,8 +75,6 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
     , y
     , px: opts.px === undefined ? x : opts.px
     , py: opts.py === undefined ? y : opts.py
-    , pdx: opts.pdx || 0
-    , pdy: opts.pdy || 0
     , key: (tree.leaf.node_id || tree.leaf)
     , dx: hz ? nodeContainerSize : 0
     , dy: hz ? 0 : 0.75 * height
@@ -81,23 +91,18 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
       tree.split.map( (subtree, idx) => {
         let col = subtree.nTips - 1
         var xpos, ypos
-        var pdx = 0
-        var pdy = 0
 
         if ( hz ){
-          let fudge = 30
-          pdx = opts.cardWidth + fudge
           xpos = x + branchSpacing + opts.cardWidth
           ypos = y + (col + colstart) * nodeContainerSize
         } else {
-          pdy = 0.75 * height
           xpos = x + (col + colstart) * nodeContainerSize
           ypos = y + branchSpacing + 1.5 * height
         }
 
         colstart = 2 * col + colstart + 2
 
-        return getBranches( subtree, {...opts, px: x, py: y, pdy, pdx}, xpos, ypos, level + 1 )
+        return getBranches( subtree, {...opts, px: x, py: y}, xpos, ypos, level + 1 )
       })
     )
   )
@@ -149,6 +154,11 @@ export default {
     , 'horizontal': Boolean
     , 'hide-images': Boolean
     , 'computedBranches': null
+    , 'compactView': Boolean
+    , 'transitions': {
+      type: Boolean
+      , default: true
+    }
   }
   , data: () => ({
     subtreeLeaf: null
@@ -159,6 +169,7 @@ export default {
     Connection
     , ChildMenu
     , Node
+    , CondensedNode
     , Tail
     , TOLNodeCard
     , TOLLeafView
@@ -177,10 +188,10 @@ export default {
       let x = this.x
       let y = this.y
       let b = getBranches(tree, {
-        cardWidth: this.cardWidth
-        , cardHeight: this.cardHeight
-        , branchSpacing: this.branchSpacing
-        , padding: this.padding
+        cardWidth: this.compactView ? 0 : this.cardWidth
+        , cardHeight: this.compactView ? 0 : this.cardHeight
+        , branchSpacing: this.compactView ? 40 : this.branchSpacing
+        , padding: this.compactView ? 10 : this.padding
         , horizontal: this.horizontal
       }, x, y)
       this.$emit('update:computedBranches', b)

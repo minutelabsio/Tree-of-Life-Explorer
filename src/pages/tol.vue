@@ -51,6 +51,7 @@
       :leafs="leafs"
       , :card-width="cardWidth"
       , :hide-images="hideImages"
+      , :compactView="compactView"
       , :horizontal="horizontalMode"
       , @remove="onRemoveLeaf"
       , @cut="cutBranch"
@@ -71,9 +72,15 @@
         TOLSuggestedTrees(@suggest="setLeafs")
 
   .fullscreen-prompt(v-if="canFullscreen")
-    b-tooltip(:label="isInFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'", type="is-dark", position="is-left")
-      .button.is-medium(@click="fullscreenToggle")
-        b-icon(:icon="isInFullscreen ? 'compress' : 'expand'", pack="fas")
+    b-field
+      .control
+        b-tooltip(:label="compactView ? 'Normal View' : 'Compact View'", type="is-dark", position="is-left")
+          .button.is-medium(@click="setOption('c', !compactView)")
+            b-icon(:icon="compactView ? 'magnify-plus' : 'magnify-minus'")
+      .control
+        b-tooltip(:label="isInFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'", type="is-dark", position="is-left")
+          .button.is-medium(@click="fullscreenToggle")
+            b-icon(:icon="isInFullscreen ? 'compress' : 'expand'", pack="fas")
 </template>
 
 <script>
@@ -111,6 +118,10 @@ export default {
       , default: true
     }
     , hideImages: {
+      type: Boolean
+      , default: false
+    }
+    , compactView: {
       type: Boolean
       , default: false
     }
