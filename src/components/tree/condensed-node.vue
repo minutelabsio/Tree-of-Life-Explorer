@@ -69,7 +69,11 @@ export default {
     } else {
       this.label.addClass('vertical')
     }
-    this.label.plain( `${this.commonName}` )
+    if ( this.commonName ){
+      this.label.plain( `${this.commonName}` )
+    } else {
+      this.label.plain( `(${this.scientificName})` )
+    }
     return this.node
   }
 }
