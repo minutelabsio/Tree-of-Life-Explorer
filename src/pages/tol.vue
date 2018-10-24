@@ -71,13 +71,13 @@
                 | Start your own tree by using the search bar to add species, or you can try a curated tree from the below suggestions.
         TOLSuggestedTrees(@suggest="setLeafs")
 
-  .fullscreen-prompt(v-if="canFullscreen")
+  .fullscreen-prompt
     b-field
       .control
         b-tooltip(:label="compactView ? 'Normal View' : 'Compact View'", type="is-dark", position="is-left")
           .button.is-medium(@click="setOption('c', !compactView)")
             b-icon(:icon="compactView ? 'magnify-plus' : 'magnify-minus'")
-      .control
+      .control(v-if="canFullscreen")
         b-tooltip(:label="isInFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'", type="is-dark", position="is-left")
           .button.is-medium(@click="fullscreenToggle")
             b-icon(:icon="isInFullscreen ? 'compress' : 'expand'", pack="fas")
