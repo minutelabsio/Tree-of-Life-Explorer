@@ -35,6 +35,7 @@ transition(name="tree", appear)
 </template>
 
 <script>
+import PubSub from '@/lib/pubsub'
 import Tree from '@/components/tree/tree-display'
 import TreeCanvas from '@/components/tree/tree-canvas'
 import TOLNodeCard from '@/components/tol-node-card'
@@ -103,6 +104,12 @@ export default {
       if (!this.leafs || !this.leafs.length){ return null }
       return buildReducedTree( this.leafs )
     }
+  }
+  , mounted(){
+    PubSub.$on('tree:pan-to', (nodeId) => this.$nextTick(() => this.panTo(nodeId)))
+  }
+  , beforeDestroy(){
+    PubSub.$off('tree:pan-to')
   }
   , watch: {
     tree( newVal, oldVal ){

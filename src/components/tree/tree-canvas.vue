@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import PubSub from '@/lib/pubsub'
 import SVG from 'svg.js'
 import Impetus from 'impetus'
 import TWEEN from '@tweenjs/tween.js'
@@ -141,6 +142,7 @@ export default {
     , setOffset( x2, y2 ){
       this.x = x2
       this.y = y2
+      PubSub.$emit('tree:move')
     }
     , getClampedCoords( x, y ){
       let [minX, maxX] = this.xBounds

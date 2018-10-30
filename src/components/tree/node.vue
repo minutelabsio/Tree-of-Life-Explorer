@@ -35,6 +35,7 @@ export default {
   }
   , render( h ){
     // this.node.move( this.xTween, this.yTween ).front()
+    this.node.data( 'ott', this.tree.leaf.node_id )
     this.node.style( 'transform', `translate3d(${this.x}px, ${this.y}px, 0)`).front()
     this.label.plain( `${this.tree.lineage.length}` )
     return this.node

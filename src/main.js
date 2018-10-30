@@ -5,8 +5,12 @@ import App from './app'
 import router from './router'
 import Filters from './plugins/filters'
 import VueMotion from 'vue-motion'
+import VueTour from 'vue-tour'
 import Buefy from 'buefy'
+
+import 'vue-tour/dist/vue-tour.css'
 import './styles/main.scss'
+
 Vue.use(Buefy, {
   // defaultContainerElement: '#app'
   // , defaultIconPack: 'fas'
@@ -14,6 +18,7 @@ Vue.use(Buefy, {
 
 Vue.use(Filters)
 Vue.use(VueMotion)
+Vue.use(VueTour)
 
 Vue.config.productionTip = false
 

@@ -28,6 +28,7 @@
       , :key="branch.key"
       , :style="{ left: `${branch.x-(horizontal ? 0 : 0.5 * cardWidth) + branch.dx}px`, top: `${branch.y-(horizontal ? 0.5 * cardHeight : 0) + branch.dy}px`, width: cardWidth + 'px', height: cardHeight + 'px' }"
       , :tabindex="-1"
+      , :data-ott="branch.tree.leaf.node_id"
       )
       //- , :style="{ transform: `translate3d(${branch.x-(0.5 * cardWidth)}px, ${branch.y + branch.dy}px, 0)`, width: cardWidth + 'px' }"
       //- )

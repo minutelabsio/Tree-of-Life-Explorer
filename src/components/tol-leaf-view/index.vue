@@ -1,5 +1,5 @@
 <template lang="pug">
-.item(@mousedown.stop="")
+.item(@mousedown.stop="", :data-ott="leaf.node_id")
   .card.is-shadowless(v-if="isAddedToTree")
     .card-header
       LeafViewMenu(:common-name="commonName",
@@ -10,7 +10,7 @@
         @click="openInfoWindow"
         )
         b-tooltip(label="See children", type="is-dark", slot="front-button")
-          b-dropdown.limit-dropdown(@active-change="getSubtree()", @wheel.native.stop="")
+          b-dropdown.limit-dropdown(@active-change="getSubtree()", @wheel.native.stop="", :mobile-modal="false")
             b-icon.front-icon(icon="file-tree", slot="trigger")
             b-loading(:is-full-page="false", :active="loading")
             b-dropdown-item.heading.has-text-info Children

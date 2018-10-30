@@ -25,6 +25,7 @@
     "vue-mixin-tween": "^0.1.3",
     "vue-motion": "^0.2.2",
     "vue-router": "^3.0.1",
+    "vue-tour": "^1.1.0",
     "vue-truncate-filter": "^1.1.7"
   },
   "devDependencies": {

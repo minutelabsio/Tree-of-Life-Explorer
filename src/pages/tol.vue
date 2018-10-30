@@ -4,11 +4,11 @@
     .button.menu-button(@click="menuToggle")
       b-icon(:icon="navOpen ? 'chevron-up' : 'menu'")
     .toolbar-item
-      h1.title.main-title.is-pulled-left.clickable(@click="clear")
+      h1.title.main-title.is-pulled-left.clickable(@click="clear", data-v-tour="start")
         | Tree of Life Explorer
     .toolbar-item.search-container
       TOLCommonNameSearch.search-box(@select="onSelect")
-    .toolbar-right
+    .toolbar-right.top-controls
       b-field(grouped)
         b-field
           .control
@@ -71,11 +71,11 @@
                 | Start your own tree by using the search bar to add species, or you can try a curated tree from the below suggestions.
         TOLSuggestedTrees(@suggest="setLeafs")
 
-  .fullscreen-prompt
+  .bottom-controls
     b-field
       .control
         b-tooltip(:label="compactView ? 'Normal View' : 'Compact View'", type="is-dark", position="is-left")
-          .button.is-medium(@click="setOption('c', !compactView)")
+          .button.button-compact-view.is-medium(@click="setOption('c', !compactView)")
             b-icon(:icon="compactView ? 'magnify-plus' : 'magnify-minus'")
       .control(v-if="canFullscreen")
         b-tooltip(:label="isInFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'", type="is-dark", position="is-left")
@@ -84,6 +84,7 @@
 </template>
 
 <script>
+// import PubSub from '@/lib/pubsub'
 import TOLTree from '@/components/tol-tree'
 import TOLCommonNameSearch from '@/components/tol-common-name-search'
 import TOLSuggestedTrees from '@/components/tol-suggested-trees'
@@ -303,7 +304,7 @@ $topNavHeight: 100px
   flex-direction: column
   align-items: stretch
   min-height: 100vh
-.fullscreen-prompt
+.bottom-controls
   position: fixed
   bottom: 0
   right: 0
