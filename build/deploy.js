@@ -8,7 +8,10 @@ const spinner = ora('deploying to github pages...')
 spinner.start()
 ghpages.publish(config.build.assetsRoot, function(err) {
   spinner.stop()
-  if (err) throw err
+  if (err) {
+    console.error(err)
+    return
+  }
 
 
   console.log(chalk.cyan('  Deployed to github pages.\n'))
