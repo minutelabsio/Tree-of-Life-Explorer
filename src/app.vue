@@ -40,7 +40,7 @@ const TourSteps = [
   }
   , {
     target: `.tol-leaf[data-ott="${txnCats}"]`
-    , content: 'This is a "clade node". It can represent any <a href="https://en.wikipedia.org/wiki/Taxonomic_rank" target="_blank">taxonomic rank</a> (species, family, genus, ...). In this case, it represents the Cat <u>Family</u>.'
+    , content: 'This is a "clade node". It can represent any <a href="https://en.wikipedia.org/wiki/Taxonomic_rank" target="_blank">taxonomic rank</a> (species, family, genus, ...). In this case, it represents the Cat <em>Family</em>.'
     , onEnter(){
       PubSub.$emit('tree:pan-to', txnCats)
     }
@@ -54,9 +54,9 @@ const TourSteps = [
   }
   , {
     target: `.tol-leaf[data-ott="${txnCats}"] .vertical-buttons .toolbar-control:last-child`
-    , content: `This button will show the decendents (children) of this clade. There are a bunch for Cats!`
+    , content: `This button will show the descendants (children) of this clade. There are a bunch for Cats!`
     , params: {
-      placement: 'right'
+      placement: 'left'
     }
   }
   , {
@@ -79,7 +79,7 @@ const TourSteps = [
     , content: `There are more controls to manipulate the tree up here.`
   }
   , {
-    target: '.top-nav .search-container'
+    target: '.top-nav .search-box'
     , content: `This will allow you to find clades and add them to the tree. You can search by their common name, or (if you know it) scientific name.<br/>Go ahead and give it a try by typing in something like "Blue Whale" or "Platypus"`
   }
 ]
@@ -128,8 +128,10 @@ export default {
       step.createStep()
     }, 500))
 
-    if ( this.$route.query.tour ){
-      this.$tours['TOLTour'].start()
+    if ( !this.$route.query.ids ){
+      setTimeout(() => {
+        this.$tours['TOLTour'].start()
+      }, 1000)
     }
   }
 }
@@ -146,11 +148,12 @@ body {
 }
 
 #app .v-step {
-  $step-color: darken($blue, 22);
-  z-index: 100;
+  $step-color: desaturate($green, 30);
+  z-index: 1000;
   background: $step-color;
   a {
-    color: $yellow;
+    color: lighten($yellow, 10);
+    text-decoration: underline;
   }
   &[x-placement^=bottom] .v-step__arrow {
     border-bottom-color: $step-color;
