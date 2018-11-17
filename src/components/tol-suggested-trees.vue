@@ -1,15 +1,19 @@
 <template lang="pug">
-.suggested-trees.section
-  .columns.is-multiline
-    .column.is-one-quarter(v-for="sug in suggestions")
-      .card.clickable(@click="suggest(sug.ottIds)")
-        .card-image
-          figure.image.is-4by3
-            img(:src="sug.image")
-        .card-content
-          .content
-            p.title {{ sug.title }}
-            p(v-html="sug.desc")
+.suggested-trees
+  .hero.is-primary
+    .hero-body
+      .container
+        h2.title Welcome!
+        p Here's a list of curated trees for you to start from...
+  .container
+    article.suggestion.media.clickable(v-for="sug in suggestions", @click="suggest(sug.ottIds)")
+      figure.media-left
+        p.image
+          img(:src="sug.image")
+      .media-content
+        .content
+          p.title {{ sug.title }}
+          p(v-html="sug.desc")
 </template>
 
 <script>
@@ -161,4 +165,28 @@ export default {
 @import '@/styles/_variables.scss'
 .card
   height: 100%
+.suggestion
+  .media-content
+    display: flex
+    flex-direction: row
+    align-items: center
+    align-self: stretch
+  .image
+    width: 256px
+  .title
+    transition: color 0.3s ease-in-out
+  &:hover .title
+    color: $blue
+
+@media screen and (max-width: $tablet)
+  .suggestion
+    .image
+      margin: auto
+      width: 100%
+  .media
+    flex-direction: column
+    .media-left
+      margin: 0
+    .media-content
+      padding: 3rem 1.5rem
 </style>

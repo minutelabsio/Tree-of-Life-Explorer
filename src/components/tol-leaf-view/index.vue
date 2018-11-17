@@ -9,11 +9,11 @@
         :images="hideImages ? [] : txnImages",
         @click="openInfoWindow"
         )
-        b-tooltip(label="See children", type="is-dark", slot="front-button")
+        b-tooltip(label="See descendants", type="is-dark", slot="front-button")
           b-dropdown.limit-dropdown(@active-change="getSubtree()", @wheel.native.stop="", :mobile-modal="false")
             b-icon.front-icon(icon="file-tree", slot="trigger")
             b-loading(:is-full-page="false", :active="loading")
-            b-dropdown-item.heading.has-text-info Children
+            b-dropdown-item.heading.has-text-info Descendants
             b-dropdown-item(v-if="children && children.length")
               b-field
                 .control

@@ -62,14 +62,8 @@
     .inner
       b-loading(:is-full-page="false", :active="loading")
       .empty-state(v-show="treeIsEmpty")
-        .columns
-          .column.is-half.is-offset-one-quarter
-            .welcome-msg
-              .section
-                img.splash-image(src="~@/assets/logo-vertical.png")
-              b-notification(type="is-info", has-icon, :closable="false")
-                | Start your own tree by using the search bar to add species, or you can try a curated tree from the below suggestions.
-        TOLSuggestedTrees(@suggest="setLeafs")
+        .suggested
+          TOLSuggestedTrees(@suggest="setLeafs")
 
   .bottom-controls
     b-field
@@ -164,6 +158,13 @@ export default {
         this.onIdsChanged( this.ids )
       }
       , immediate: true
+    }
+  }
+  , mounted(){
+    if (this.$el.offsetWidth < 780){
+      setTimeout(() => {
+        this.navOpen = false
+      }, 1000)
     }
   }
   , methods: {
@@ -356,6 +357,8 @@ $topNavHeight: 100px
   .splash-image
     padding: 0 4em
 @media screen and (max-width: 820px)
+  .wrapper
+    margin-top: 0
   .tol-wrapper
     top: 0
   .top-nav
