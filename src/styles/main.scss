@@ -95,3 +95,19 @@
 .icon-270 {
   transform: rotate(270deg);
 }
+
+@keyframes pulse {
+  from {
+    box-shadow: 0 0 0 $red inset;
+  }
+  50% {
+    box-shadow: 0 0 15px 5px $red inset;
+  }
+  to {
+    box-shadow: 0 0 0 $red inset;
+  }
+}
+
+.pulsing {
+  animation: pulse 1s ease-in-out infinite;
+}

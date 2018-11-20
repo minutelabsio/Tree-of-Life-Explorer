@@ -4,7 +4,7 @@
     .button.menu-button(@click="menuToggle")
       b-icon(:icon="navOpen ? 'chevron-up' : 'menu'")
     .toolbar-item
-      h1.title.main-title.is-pulled-left.clickable(@click="clear", data-v-tour="start")
+      h1.title.main-title.is-pulled-left.clickable(@click="clear")
         | Tree of Life Explorer
     .toolbar-item.search-container
       TOLCommonNameSearch.search-box(@select="onSelect")
@@ -42,28 +42,33 @@
             b-tooltip(label="Share this tree", type="is-dark", position="is-bottom")
               .button.is-success(@click="share")
                 b-icon(icon="share")
+          .control
+            b-tooltip(label="Take a helpful tour", type="is-dark", position="is-bottom", data-v-tour="start")
+              .button.is-dark(@click="startTour", :class="{ pulsing: tourMessage }")
+                b-icon(icon="help-network")
 
       .meta-info
         a(@click="showMetaInfo") About this app
 
-  .tol-wrapper(v-show="!treeIsEmpty")
-    TOLTree(
-      :leafs="leafs"
-      , :card-width="cardWidth"
-      , :hide-images="hideImages"
-      , :compactView="compactView"
-      , :horizontal="horizontalMode"
-      , @remove="onRemoveLeaf"
-      , @cut="cutBranch"
-      , @add-node="addNode"
-      , @error="onError"
-    )
-  .wrapper
-    .inner
-      b-loading(:is-full-page="false", :active="loading")
-      .empty-state(v-show="treeIsEmpty")
-        .suggested
-          TOLSuggestedTrees(@suggest="setLeafs")
+  .below-nav
+    .tol-wrapper(v-show="!treeIsEmpty")
+      TOLTree(
+        :leafs="leafs"
+        , :card-width="cardWidth"
+        , :hide-images="hideImages"
+        , :compactView="compactView"
+        , :horizontal="horizontalMode"
+        , @remove="onRemoveLeaf"
+        , @cut="cutBranch"
+        , @add-node="addNode"
+        , @error="onError"
+      )
+    .wrapper
+      .inner
+        b-loading(:is-full-page="false", :active="loading")
+        .empty-state(v-show="treeIsEmpty")
+          .suggested
+            TOLSuggestedTrees(@suggest="setLeafs")
 
   .bottom-controls
     b-field
@@ -78,7 +83,7 @@
 </template>
 
 <script>
-// import PubSub from '@/lib/pubsub'
+import PubSub from '@/lib/pubsub'
 import TOLTree from '@/components/tol-tree'
 import TOLCommonNameSearch from '@/components/tol-common-name-search'
 import TOLSuggestedTrees from '@/components/tol-suggested-trees'
@@ -132,6 +137,7 @@ export default {
     , navOpen: true
     , loading: false
     , isInFullscreen: false
+    , tourMessage: false
   })
   , created(){
     if ( fullscreenEventName ){
@@ -166,6 +172,23 @@ export default {
         this.navOpen = false
       }, 1000)
     }
+
+    // welcome message
+    if ( this.ids && this.ids.length ){ return }
+    setTimeout(() => {
+      const delay = 10000
+      this.tourMessage = true
+      this.$snackbar.open({
+        message: 'Hi there! If you would like me to show you around, click the tour button highlighted above!'
+        , position: 'is-top-right'
+        , duration: delay
+        , type: 'is-white'
+        , actionText: 'go away'
+      })
+      setTimeout( () => {
+        this.tourMessage = false
+      }, delay)
+    }, 2000)
   }
   , methods: {
 
@@ -274,6 +297,10 @@ export default {
         , position: 'is-top-right'
       })
     }
+
+    , startTour(){
+      PubSub.$emit('tour:start')
+    }
   }
 }
 </script>
@@ -312,6 +339,10 @@ $topNavHeight: 100px
   z-index: 22
   .button
     border-radius: 3px 0 0 0
+.below-nav
+  position: relative
+  flex: 1
+  margin-top: $topNavHeight
 .tol-wrapper
   position: fixed
   top: $topNavHeight
@@ -322,7 +353,6 @@ $topNavHeight: 100px
 .search-box
 .wrapper
   flex: 1
-  margin-top: $topNavHeight
   overflow: hidden
   display: flex
   align-items: stretch
@@ -357,7 +387,7 @@ $topNavHeight: 100px
   .splash-image
     padding: 0 4em
 @media screen and (max-width: 820px)
-  .wrapper
+  .below-nav
     margin-top: 0
   .tol-wrapper
     top: 0

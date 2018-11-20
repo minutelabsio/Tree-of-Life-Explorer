@@ -12,7 +12,7 @@ import 'vue-tour/dist/vue-tour.css'
 import './styles/main.scss'
 
 Vue.use(Buefy, {
-  // defaultContainerElement: '#app'
+  defaultContainerElement: '#app .below-nav'
   // , defaultIconPack: 'fas'
 })
 

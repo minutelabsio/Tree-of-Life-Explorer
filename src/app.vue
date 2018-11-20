@@ -128,11 +128,9 @@ export default {
       step.createStep()
     }, 500))
 
-    if ( !this.$route.query.ids ){
-      setTimeout(() => {
-        this.$tours['TOLTour'].start()
-      }, 1000)
-    }
+    PubSub.$on('tour:start', () => {
+      this.$tours['TOLTour'].start()
+    })
   }
 }
 </script>
@@ -148,12 +146,23 @@ body {
 }
 
 #app .v-step {
-  $step-color: desaturate($green, 30);
+  $step-color: saturate(lighten($yellow, 30), 20);
+  $text-color: $blue;
   z-index: 1000;
   background: $step-color;
+  color: darken($blue, 20);
   a {
-    color: lighten($yellow, 10);
+    color: $text-color;
     text-decoration: underline;
+  }
+  .v-step__button {
+    color: $text-color;
+    border-color: $text-color;
+
+    &:hover {
+      background-color: $text-color;
+      color: $step-color;
+    }
   }
   &[x-placement^=bottom] .v-step__arrow {
     border-bottom-color: $step-color;
