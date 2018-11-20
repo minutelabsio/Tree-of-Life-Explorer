@@ -2,9 +2,11 @@
 .search(@keyup.esc="closeOverlay")
   .overlay.scrollbars(v-show="overlayOpen", tabindex="-1")
     .inner
-      .delete.is-large(@click="closeOverlay")
+      .button.is-outlined.is-large.close(@click="closeOverlay")
+        b-icon(icon="backburger", size="is-medium")
       b-field
-        b-input(size="is-large", v-model="searchEntry", ref="overlayInput", icon="magnify", placeholder="eg. Snow Leopard")
+        b-input(expanded, size="is-large", v-model="searchEntry", ref="overlayInput", icon="magnify", placeholder="eg. Snow Leopard")
+        span.clear-btn.delete.is-large(@click="clear")
       .results
         b-loading(:active="isFetching || isFetchingSci", :is-full-page="false")
         .columns
@@ -195,6 +197,10 @@ export default {
         , type: 'is-danger'
       })
     }
+
+    , clear(){
+      this.searchEntry = ''
+    }
   }
 }
 </script>
@@ -211,12 +217,17 @@ export default {
   background: rgba(255,255,255,1)
   z-index: 20
   overflow: auto
-  .delete
+  .close
     position: absolute
-    top: 35px
-    right: 25px
+    top: 25px
+    left: 15px
   .inner
-    margin: 25px 80px 25px 50px
+    margin: 25px 50px 25px 80px
+  .clear-btn
+    position: absolute
+    top: 36px
+    right: 58px
+    z-index: 5
 .results
   position: relative
   margin-top: 1.5em
