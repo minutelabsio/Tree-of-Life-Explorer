@@ -30,9 +30,9 @@
               .button(@click="setOption('w', !wideMode)")
                 b-icon(:icon="wideMode? 'arrow-collapse-horizontal' : 'arrow-expand-horizontal'")
           .control
-            b-tooltip(:label="horizontalMode ? 'Vertical Display' : 'Horizontal Display'", type="is-dark", position="is-bottom")
+            b-tooltip(:label="'Change Tree Orientation'", type="is-dark", position="is-bottom")
               .button(@click="setOption('h', !horizontalMode)")
-                b-icon(icon="format-rotate-90")
+                b-icon(icon="tournament", :custom-class="horizontalMode ? 'icon-anim icon-180' : 'icon-anim icon-270'")
           .control
             b-tooltip(:label="hideImages ? 'Show Images' : 'Hide Images'", type="is-dark", position="is-bottom")
               .button(@click="setOption('im', !hideImages)")

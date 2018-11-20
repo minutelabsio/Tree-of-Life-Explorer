@@ -81,3 +81,17 @@
     box-shadow: 0 2px 3px transparentize($blue, 0.6), 0 0 0 1px transparentize($blue, 0.6);
   }
 }
+
+// Icon stuff
+.icon-anim {
+  transition: transform 0.3s ease-in-out;
+}
+.icon-180 {
+  transform: rotate(180deg);
+}
+.icon-90 {
+  transform: rotate(90deg);
+}
+.icon-270 {
+  transform: rotate(270deg);
+}
