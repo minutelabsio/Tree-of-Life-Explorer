@@ -5,15 +5,16 @@
       .container
         h2.title Welcome!
         p Here's a list of curated trees for you to start from...
-  .container
-    article.suggestion.media.clickable(v-for="sug in suggestions", @click="suggest(sug.ottIds)")
-      figure.media-left
-        p.image
-          img(:src="sug.image")
-      .media-content
-        .content
-          p.title {{ sug.title }}
-          p(v-html="sug.desc")
+  article.suggestion.clickable(v-for="sug in suggestions", @click="suggest(sug.ottIds)")
+    .container
+      .media
+        figure.media-left
+          p.image
+            img(:src="sug.image")
+        .media-content
+          .content
+            p.title {{ sug.title }}
+            p(v-html="sug.desc")
 </template>
 
 <script>
@@ -166,6 +167,12 @@ export default {
 .card
   height: 100%
 .suggestion
+  transition: all .15s linear
+  @media screen and (min-width: $tablet)
+    &
+      padding-top: 0.5rem
+      padding-bottom: 0.5rem
+
   .media-content
     display: flex
     flex-direction: row
@@ -173,10 +180,15 @@ export default {
     align-self: stretch
   .image
     width: 256px
+    overflow: hidden
+    border-radius: 3px
   .title
-    transition: color 0.3s ease-in-out
-  &:hover .title
-    color: $blue
+    transition: all .15s linear
+  &:hover
+    color: $white
+    background: $blue
+    .title
+      color: $white
 
 @media screen and (max-width: $tablet)
   .suggestion
@@ -186,6 +198,7 @@ export default {
   .media
     flex-direction: column
     .media-left
+      width: 100%
       margin: 0
     .media-content
       padding: 3rem 1.5rem
