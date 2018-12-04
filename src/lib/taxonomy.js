@@ -6,7 +6,7 @@ import _isArray from 'lodash/isArray'
 import cacher from '@/lib/cacher'
 import * as otol from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
-import * as worms from '@/lib/worms'
+// import * as worms from '@/lib/worms'
 import * as wikidata from '@/lib/wikidata'
 import * as wikimedia from '@/lib/wikimedia'
 
@@ -43,33 +43,33 @@ const gbifMapping = {
   , 'synonym': false
 }
 
-const wormsMapping = {
-  'AphiaID': false
-  , 'url': false
-  , 'scientificname': 'canonicalName'
-  , 'authority': false
-  , 'rank': 'rank'
-  , 'status': false
-  , 'unacceptreason': false
-  , 'valid_AphiaID': false
-  , 'valid_name': false
-  , 'valid_authority': false
-  , 'kingdom': true
-  , 'phylum': true
-  , 'class': true
-  , 'order': true
-  , 'family': true
-  , 'genus': true
-  , 'citation': false
-  , 'lsid': false
-  , 'isMarine': false
-  , 'isBrackish': false
-  , 'isFreshwater': false
-  , 'isTerrestrial': false
-  , 'isExtinct': true
-  , 'match_type': false
-  , 'modified': false
-}
+// const wormsMapping = {
+//   'AphiaID': false
+//   , 'url': false
+//   , 'scientificname': 'canonicalName'
+//   , 'authority': false
+//   , 'rank': 'rank'
+//   , 'status': false
+//   , 'unacceptreason': false
+//   , 'valid_AphiaID': false
+//   , 'valid_name': false
+//   , 'valid_authority': false
+//   , 'kingdom': true
+//   , 'phylum': true
+//   , 'class': true
+//   , 'order': true
+//   , 'family': true
+//   , 'genus': true
+//   , 'citation': false
+//   , 'lsid': false
+//   , 'isMarine': false
+//   , 'isBrackish': false
+//   , 'isFreshwater': false
+//   , 'isTerrestrial': false
+//   , 'isExtinct': true
+//   , 'match_type': false
+//   , 'modified': false
+// }
 
 // function mapWikidataImages( data ){
 //   return data.reduce( (output, entry) => {
@@ -112,7 +112,7 @@ export function getTaxonomyInfo( node ){
 
   var types = {
     'gbif': ( id ) => gbif.getById( id ).then( data => getMapping( data, gbifMapping ) )
-    , 'worms': ( id ) => worms.getById( id ).then( data => getMapping( data, wormsMapping ) )
+    // , 'worms': ( id ) => worms.getById( id ).then( data => getMapping( data, wormsMapping ) )
   }
 
   var queries = []
@@ -132,6 +132,11 @@ export function getTaxonomyInfo( node ){
     .then( resultList => _union(...resultList) )
     .then( results => results.reduce( (txn, data) => ({...txn, ...data}), {} ) )
     .then( txn => ensureVernacularNames(node, txn) )
+}
+
+function toHTTPS( images ){
+  if ( !images || !images.map ){ return images }
+  return images.map( url => url.replace('http:', 'https:') )
 }
 
 export function getImagesAndCommonNames( name, ncbiId, options = {} ){
@@ -154,6 +159,11 @@ export function getImagesAndCommonNames( name, ncbiId, options = {} ){
       }
 
       return firstResult
+    })
+    .then( data => {
+      data.pic = toHTTPS( data.pic )
+      data.thumbnail = toHTTPS( data.thumbnail )
+      return data
     })
 }
 

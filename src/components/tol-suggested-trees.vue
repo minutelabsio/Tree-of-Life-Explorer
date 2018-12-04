@@ -127,7 +127,7 @@ const suggestions = [
   , {
     title: 'Eat your veggies'
     , desc: 'Closely related and good for you! Get to know your greens.'
-    , image: 'http://commons.wikimedia.org/wiki/Special:FilePath/Broccoli%20and%20cross%20section%20edit.jpg'
+    , image: 'https://commons.wikimedia.org/wiki/Special:FilePath/Broccoli%20and%20cross%20section%20edit.jpg'
     , ottIds: [
       'ott833618'
       , 'ott472637'

@@ -6,7 +6,7 @@ import { setupCache } from 'axios-cache-adapter'
 import _values from 'lodash/values'
 import _get from 'lodash/get'
 import _sortBy from 'lodash/sortBy'
-// import _mapValues from 'lodash/mapValues'
+import _mapValues from 'lodash/mapValues'
 
 const SERVER_TIMEOUT = 10 * 1000
 
@@ -28,6 +28,7 @@ const wikimedia = axios.create({
 function mapImageResults( results ){
   return results.map( (page) => {
     let image = page.imageinfo[0]
+    image = _mapValues( image, val => typeof val === 'string' ? val.replace('http:', 'https:') : val )
     return {
       pageid: page.pageid
       , image
