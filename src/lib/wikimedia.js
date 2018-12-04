@@ -45,7 +45,7 @@ export function findImagesByName( name, { limit, thumbSize } = {} ){
     , 'gsrsearch': `File:${name}`
     , 'format': 'json'
     , 'origin': '*'
-    , 'iiprop': 'url'
+    , 'iiprop': 'url|size'
   }
 
   if ( thumbSize ){

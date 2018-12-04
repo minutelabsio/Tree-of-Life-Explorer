@@ -149,16 +149,12 @@ export function getImagesAndCommonNames( name, ncbiId, options = {} ){
         return firstResult
       }
 
-      if ( options.getAllImages || !firstResult.pic || !firstResult.pic.length ){
-        return wikimedia.findImagesByName( name, { thumbSize: options.thumbSize } )
-          .then( data => {
-            firstResult.pic = _union(data.map( item => _get( item, 'image.url' ) ), firstResult.pic)
-            firstResult.thumbnail = _union(data.map( item => _get( item, 'image.thumburl' ) ), firstResult.pic)
-            return firstResult
-          })
-      }
-
-      return firstResult
+      return wikimedia.findImagesByName( name, { thumbSize: options.thumbSize } )
+        .then( data => {
+          firstResult.pic = _union(data.map( item => _get( item, 'image.url' ) ), options.getAllImages ? firstResult.pic : [])
+          firstResult.thumbnail = _union(data.map( item => _get( item, 'image.thumburl' ) ))
+          return firstResult
+        })
     })
     .then( data => {
       data.pic = toHTTPS( data.pic )

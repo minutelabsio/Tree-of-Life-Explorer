@@ -6,8 +6,11 @@ import router from './router'
 import Filters from './plugins/filters'
 import VueMotion from 'vue-motion'
 import VueTour from 'vue-tour'
+import VueAwesomeSwiper from 'vue-awesome-swiper'
 import Buefy from 'buefy'
 
+// require styles
+import 'swiper/dist/css/swiper.css'
 import 'vue-tour/dist/vue-tour.css'
 import './styles/main.scss'
 
@@ -19,6 +22,7 @@ Vue.use(Buefy, {
 Vue.use(Filters)
 Vue.use(VueMotion)
 Vue.use(VueTour)
+Vue.use(VueAwesomeSwiper)
 
 Vue.config.productionTip = false
 

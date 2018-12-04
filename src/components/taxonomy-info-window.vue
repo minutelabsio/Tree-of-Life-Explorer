@@ -26,17 +26,16 @@
 
           b-message(v-if="isMRCA", type="is-info")
             | This is an MRCA node
-        .column.is-half(v-if="txnInfo.pic.length")
-          .controls
-            b-field(position="is-centered")
-              .control
-                .button.is-small.is-rounded(@click="prevImage")
-                  b-icon(icon="menu-left")
-              .control
-                .button.is-small.is-rounded(@click="nextImage")
-                  b-icon(icon="menu-right")
-          .image
-            img(:src="txnInfo.pic[currentPic]")
+        .column.is-half(v-if="txnInfo.thumbnail && txnInfo.thumbnail.length")
+          swiper(:options="swiperOptions")
+            swiper-slide(v-for="img in txnInfo.thumbnail", :key="img")
+              .image-slide
+                img(:src="img")
+            .swiper-button-prev(v-if="!isTouch", slot="button-prev")
+              b-icon(icon="chevron-left")
+            .swiper-button-next(v-if="!isTouch", slot="button-next")
+              b-icon(icon="chevron-right")
+            .swiper-pagination(slot="pagination")
     .links
       .is-size-5.heading Find more information on...
       .columns.is-mobile.is-multiline
@@ -64,6 +63,16 @@ export default {
   }
   , data: () => ({
     currentPic: 0
+    , swiperOptions: {
+      navigation: {
+        nextEl: '.swiper-button-next'
+        , prevEl: '.swiper-button-prev'
+      }
+      , pagination: {
+        el: '.swiper-pagination'
+      }
+    }
+    , isTouch: ('ontouchstart' in document.documentElement)
   })
   , computed: {
     commonName(){
@@ -119,11 +128,11 @@ export default {
   }
   , methods: {
     nextImage(){
-      let len = this.txnInfo.pic.length
+      let len = this.txnInfo.thumbnail.length
       this.currentPic = (this.currentPic + 1) % len
     }
     , prevImage(){
-      let len = this.txnInfo.pic.length
+      let len = this.txnInfo.thumbnail.length
       this.currentPic = (this.currentPic - 1 + len) % len
     }
     , copyToClipboard( str ){
@@ -141,6 +150,31 @@ export default {
 
 <style lang="sass" scoped>
 @import '@/styles/_variables.scss'
+.swiper-container
+  border-radius: 3px
+  background: $white-ter
+  .swiper-button-next,
+  .swiper-button-prev
+    height: 38px
+    top: auto
+    bottom: 0
+    width: 38px
+    margin-top: 0
+    transition: background-color 0.3s ease
+    background: transparentize($black, 0.4)
+    border-radius: 3px
+    color: white
+    text-align: center
+    line-height: 45px
+    &:hover
+      background: transparentize($blue, 0.4)
+.swiper-button-prev
+  left: 0
+.swiper-button-next
+  right: 0
+.image-slide
+  text-align: center
+  max-height: 400px
 .media-right
   position: relative
   width: 256px
