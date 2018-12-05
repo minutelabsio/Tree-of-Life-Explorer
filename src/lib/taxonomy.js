@@ -172,12 +172,10 @@ export const getTxnInfo = cacher(Promise.coroutine(function* ( leaf, options ){
     leaf = yield getLeaf( leaf.node_id )
   }
 
-  let getAllImages = ['species', 'subspecies', 'variety'].indexOf(leaf.taxon.rank) === -1
-
   if ( isMRCA(leaf) ){
     let names = leaf.taxon.name.split(' and ')
     return Promise.map( names, name =>
-      getImagesAndCommonNames( name, null, {getAllImages, thumbSize: options.thumbSize, images: options.images} )
+      getImagesAndCommonNames( name, null, {getAllImages: false, thumbSize: options.thumbSize, images: options.images} )
     ).then( results => {
       return _mergeWith({}, leaf.taxon, ...results, (objValue, srcValue) => {
         if ( _isArray(objValue) ) {
@@ -189,11 +187,18 @@ export const getTxnInfo = cacher(Promise.coroutine(function* ( leaf, options ){
 
   let ncbiId = otol.getTxnSourceId( 'ncbi', leaf )
 
-  return Promise.all([
-    getTaxonomyInfo( leaf )
-    , getImagesAndCommonNames( leaf.taxon.unique_name, ncbiId, {getAllImages, thumbSize: options.thumbSize, images: options.images} )
-  ]).spread( (txnInfo, imgNameData) => {
-    return Object.assign({}, leaf.taxon, txnInfo, imgNameData)
+  return getTaxonomyInfo( leaf ).then( txnInfo => {
+    return getImagesAndCommonNames(
+      leaf.taxon.unique_name
+      , ncbiId
+      , {
+        getAllImages: false
+        , thumbSize: options.thumbSize
+        , images: options.images
+      }
+    ).then( imgNameData => {
+      return Object.assign({}, leaf.taxon, txnInfo, imgNameData)
+    })
   })
 }))
 

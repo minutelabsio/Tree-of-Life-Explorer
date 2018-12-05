@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import TOLNodeCard from '@/components/tol-node-card'
 import TOLLeafView from '@/components/tol-leaf-view'
 import TOLMRCAView from '@/components/tol-mrca-view'
 import Node from './node'
@@ -172,7 +171,6 @@ export default {
     , Node
     , CondensedNode
     , Tail
-    , TOLNodeCard
     , TOLLeafView
     , TOLMRCAView
   }

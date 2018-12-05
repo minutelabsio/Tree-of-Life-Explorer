@@ -66,6 +66,18 @@ function shortName( str, target ){
   return out
 }
 
+function isLowerRank( rank = '' ){
+  return [
+    'variety'
+    , 'species'
+    , 'subspecies'
+    , 'genus'
+    , 'subgenus'
+    , 'family'
+    , 'subfamily'
+  ].indexOf(rank) > -1
+}
+
 export default {
   name: 'TOLLeafView'
   , props: ['leaf', 'truncateLength', 'hideImages']
@@ -94,15 +106,15 @@ export default {
           this.otherCommonNames = info.commonName
 
           // no images for higher ranks
-          if ( ['variety', 'species', 'subspecies', 'family'].indexOf(this.txnInfo.rank) === -1 ){
+          if ( !isLowerRank(this.txnInfo.rank) ){
             return
           }
 
           if ( info.thumbnail ){
-            let nImages = ['variety', 'species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
+            let nImages = ['variety', 'species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 2 : 1
             this.txnImages = info.thumbnail.slice(0, nImages)
           } else if ( info.pic ){
-            let nImages = ['variety', 'species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 5 : 1
+            let nImages = ['variety', 'species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 2 : 1
             this.txnImages = info.pic.slice(0, nImages)
           }
         }).catch( ( err ) => this.$emit('error', err) )

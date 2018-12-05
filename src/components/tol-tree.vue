@@ -38,7 +38,6 @@ transition(name="tree", appear)
 import PubSub from '@/lib/pubsub'
 import Tree from '@/components/tree/tree-display'
 import TreeCanvas from '@/components/tree/tree-canvas'
-import TOLNodeCard from '@/components/tol-node-card'
 import { buildReducedTree } from '@/lib/tree-utils'
 import _differenceBy from 'lodash/differenceBy'
 import _find from 'lodash/find'
@@ -49,7 +48,6 @@ export default {
   , components: {
     Tree
     , TreeCanvas
-    , TOLNodeCard
   }
   , data: () => ({
     leafContext: null
