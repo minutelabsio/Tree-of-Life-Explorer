@@ -46,7 +46,7 @@ export default {
   text
     font-size: 20px
     text-anchor: middle
-    alignment-baseline: middle
+    dominant-baseline: middle
     fill: $grey-darker
     transition: fill 0.15s linear
 

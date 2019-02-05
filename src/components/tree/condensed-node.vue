@@ -93,7 +93,7 @@ export default {
     font-family: $family-monospace
     font-size: 16px
     text-anchor: left
-    alignment-baseline: middle
+    dominant-baseline: middle
     fill: darken($blue, 15)
     transition: fill 0.15s linear
 
