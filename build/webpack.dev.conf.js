@@ -10,7 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
-const HOST = '0.0.0.0' //process.env.HOST
+const HOST = process.env.HOST // '0.0.0.0'
 const PORT = process.env.PORT && Number(process.env.PORT)
 
 const devWebpackConfig = merge(baseWebpackConfig, {
@@ -22,7 +22,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
-    https: true,
+    https: false,
     clientLogLevel: 'warning',
     historyApiFallback: {
       rewrites: [

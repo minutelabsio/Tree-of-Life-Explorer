@@ -27,7 +27,7 @@
           b-message(v-if="isMRCA", type="is-info")
             | This is an MRCA node
         .column.is-half(v-if="txnInfo.thumbnail && txnInfo.thumbnail.length")
-          swiper(:options="swiperOptions")
+          swiper.info-window-swiper(:options="swiperOptions")
             swiper-slide(v-for="img in txnInfo.thumbnail", :key="img")
               .image-slide
                 img(:src="img")
@@ -152,7 +152,7 @@ export default {
 @import '@/styles/_variables.scss'
 .swiper-container
   border-radius: 3px
-  background: $white-ter
+  background: $black
   .swiper-button-next,
   .swiper-button-prev
     height: 38px
@@ -175,6 +175,9 @@ export default {
 .image-slide
   text-align: center
   max-height: 400px
+  img
+    width: 100%
+    max-width: none
 .media-right
   position: relative
   width: 256px

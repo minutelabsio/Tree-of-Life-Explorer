@@ -16,6 +16,16 @@
   font-size: 1em;
 }
 
+.info-window-swiper {
+  .swiper-wrapper {
+    align-items: center;
+  }
+
+  .swiper-pagination .swiper-pagination-bullet {
+    background: $white;
+  }
+}
+
 .toolbar {
   width: 100%;
   display: flex;
