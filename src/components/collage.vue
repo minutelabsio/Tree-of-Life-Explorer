@@ -37,6 +37,9 @@ export default {
   overflow: hidden
   border-radius: 2px 0 0 2px
 
+  .single img
+    width: 100%
+
 .collage
   height: 200%
   column-count: 2;
