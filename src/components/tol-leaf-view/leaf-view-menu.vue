@@ -79,7 +79,7 @@ export default {
 
 <style lang="sass" scoped>
 @import '@/styles/_variables.scss'
-$menuHeight: 74px
+$menuHeight: 76px
 $menuBackgroundColor: $blue
 .leaf-menu
   position: relative
@@ -129,6 +129,9 @@ $menuBackgroundColor: $blue
 
   &:first-child
     border-top: none
+    border-radius: 0 2px 0 0
+  &:last-child
+    border-radius: 0 0 2px 0
 
   &:hover
     background: darken($menuBackgroundColor, 4)

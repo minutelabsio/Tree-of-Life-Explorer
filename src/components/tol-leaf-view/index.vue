@@ -1,7 +1,7 @@
 <template lang="pug">
 .item(@mousedown.stop="", :data-ott="leaf.node_id")
   .card.is-shadowless(v-if="isAddedToTree")
-    .card-header
+    .card-header.is-shadowless
       LeafViewMenu(:common-name="commonName",
         :scientific-name="scientificName",
         :short-scientific-name="shortScientificName",
