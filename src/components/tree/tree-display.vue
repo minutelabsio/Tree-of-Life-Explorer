@@ -35,7 +35,8 @@
       //- Motion(:values="{ x2: branch.x, y2: branch.y, dy: branch.dy }", :spring="{ stiffness: 300, damping: 60, precision: 1 }")
       //-   template(slot-scope="props")
       Connection(v-if="!(branch.isRoot && !branch.tree.lineage.length)", :horizontal="horizontal", :x1="branch.px", :y1="branch.py", :x2="branch.x + branch.dx", :y2="branch.y + branch.dy", :padding="(horizontal ? cardWidth : cardHeight) * 1.5")
-      Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="branch.x", :y="branch.y", @click="$emit('leaf-click', arguments[0])")
+      //- Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="branch.x", :y="branch.y", @click="$emit('leaf-click', arguments[0])")
+      AncestorCollapse(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="branch.x", :y="branch.y", :horizontal="horizontal", @click="$emit('leaf-click', arguments[0])")
 
       TOLLeafView(
         :leaf="branch.tree.leaf"
@@ -53,6 +54,7 @@
 import TOLLeafView from '@/components/tol-leaf-view'
 import TOLMRCAView from '@/components/tol-mrca-view'
 import Node from './node'
+import AncestorCollapse from './ancestor-collapse'
 import CondensedNode from './condensed-node'
 import Tail from './tail'
 import Connection from './connection'
@@ -169,6 +171,7 @@ export default {
     Connection
     , ChildMenu
     , Node
+    , AncestorCollapse
     , CondensedNode
     , Tail
     , TOLLeafView
