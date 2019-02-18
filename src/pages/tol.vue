@@ -25,18 +25,35 @@
               .button(@click="redo")
                 b-icon(icon="redo")
         b-field
-          .control
-            b-tooltip(:label="wideMode ? 'Smaller cards' : 'Bigger cards'", type="is-dark", position="is-bottom")
-              .button(@click="setOption('w', !wideMode)")
-                b-icon(:icon="wideMode? 'arrow-collapse-horizontal' : 'arrow-expand-horizontal'")
-          .control
-            b-tooltip(:label="'Change Tree Orientation'", type="is-dark", position="is-bottom")
-              .button(@click="setOption('h', !horizontalMode)")
-                b-icon(icon="tournament", :custom-class="horizontalMode ? 'icon-anim icon-180' : 'icon-anim icon-270'")
-          .control
-            b-tooltip(:label="hideImages ? 'Show Images' : 'Hide Images'", type="is-dark", position="is-bottom")
-              .button(@click="setOption('im', !hideImages)")
-                b-icon(:icon="hideImages ? 'image-plus' : 'image-off'")
+          b-dropdown.options-dropdown(:mobile-modal="false")
+            .button(slot="trigger")
+              span Options
+              b-icon(icon="menu-down")
+            b-dropdown-item(@click="setOption('fs', !flapStyle)")
+              b-icon(:icon="flapStyle ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'")
+              span Flap Style Cards
+            b-dropdown-item(@click="setOption('im', !hideImages)")
+              b-icon(:icon="hideImages ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'")
+              span Hide Images
+            b-dropdown-item(@click="setOption('h', !horizontalMode)")
+              b-icon(:icon="horizontalMode ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'")
+              span Horizontal Tree
+            b-dropdown-item(@click="setOption('w', !wideMode)")
+              b-icon(:icon="wideMode ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'")
+              span Wide Cards
+
+          //- .control
+          //-   b-tooltip(:label="wideMode ? 'Smaller cards' : 'Bigger cards'", type="is-dark", position="is-bottom")
+          //-     .button(@click="setOption('w', !wideMode)")
+          //-       b-icon(:icon="wideMode? 'arrow-collapse-horizontal' : 'arrow-expand-horizontal'")
+          //- .control
+          //-   b-tooltip(:label="'Change Tree Orientation'", type="is-dark", position="is-bottom")
+          //-     .button(@click="setOption('h', !horizontalMode)")
+          //-       b-icon(icon="tournament", :custom-class="horizontalMode ? 'icon-anim icon-180' : 'icon-anim icon-270'")
+          //- .control
+          //-   b-tooltip(:label="hideImages ? 'Show Images' : 'Hide Images'", type="is-dark", position="is-bottom")
+          //-     .button(@click="setOption('im', !hideImages)")
+          //-       b-icon(:icon="hideImages ? 'image-plus' : 'image-off'")
         b-field
           .control
             b-tooltip(label="Share this tree", type="is-dark", position="is-bottom")
@@ -58,6 +75,7 @@
         , :hide-images="hideImages"
         , :compactView="compactView"
         , :horizontal="horizontalMode"
+        , :flap-style="flapStyle"
         , @remove="onRemoveLeaf"
         , @cut="cutBranch"
         , @add-node="addNode"
@@ -122,6 +140,10 @@ export default {
       , default: false
     }
     , compactView: {
+      type: Boolean
+      , default: false
+    }
+    , flapStyle: {
       type: Boolean
       , default: false
     }
@@ -386,6 +408,13 @@ $topNavHeight: 100px
   padding: 3rem 1.5rem 0
   .splash-image
     padding: 0 4em
+
+.options-dropdown .dropdown-item
+  display: flex
+  align-items: center
+  flex-direction: row
+  .icon
+    margin-right: 1ex
 @media screen and (max-width: 820px)
   .below-nav
     margin-top: 0

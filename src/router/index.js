@@ -24,6 +24,7 @@ export default new Router({
         , horizontalMode: getOption(route.query, 'h', 1)
         , hideImages: getOption(route.query, 'im')
         , compactView: getOption(route.query, 'c')
+        , flapStyle: getOption(route.query, 'fs')
       })
     }
   ]

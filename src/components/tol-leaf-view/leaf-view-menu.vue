@@ -1,10 +1,16 @@
 <template lang="pug">
 .leaf-menu(:class="{ active: active }", @mouseleave="onMouseLeave", @mouseenter="onMouseEnter")
+  .flap-title(v-if="flapStyle")
+    b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > (truncateLength + 5) || shortScientificName.length < scientificName.length")
+      .text {{ shortScientificName }}
+  .flap-title.flap-title-bottom(v-if="flapStyle && commonName")
+    b-tooltip.common-name(:label="commonName | titleCase", type="is-dark", :active="commonName.length > (truncateLength + 5)")
+      .text {{ commonName | titleCase }}
   .toolbar.primary(@click="$emit('click')")
-    .background-image
+    .background-image(:class="{ darken: !flapStyle }")
       Collage(:images="images")
-    .toolbar-item.item-title
-      .toolbar-text.names
+    .toolbar-item
+      .toolbar-text.names.item-title(v-if="!flapStyle")
         b-tooltip.common-name(v-if="commonName", :label="commonName | titleCase", type="is-dark", :active="commonName.length > truncateLength")
           | {{ commonName | titleCase | truncate(truncateLength) }}
         b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > truncateLength || shortScientificName.length < scientificName.length")
@@ -30,6 +36,7 @@ export default {
   name: 'LeafViewMenu'
   , props: {
     commonName: String
+    , flapStyle: Boolean
     , scientificName: String
     , shortScientificName: String
     , images: Array
@@ -84,6 +91,29 @@ $menuBackgroundColor: $blue
 .leaf-menu
   position: relative
   width: 100%
+.flap-title
+  position: absolute
+  top: -1.4em
+  left: 10px
+  right: 10px
+  border-radius: 3px 3px 0 0
+  background: $white
+  border: 1px solid desaturate(lighten($blue, 20), 50)
+  color: darken($menuBackgroundColor, 8)
+  .scientific-name,
+  .common-name
+    display: block
+    width: 100%
+  .text
+    padding: 0 0.5em
+    white-space: nowrap
+    text-align: center
+    text-overflow: ellipsis
+    overflow: hidden
+.flap-title-bottom
+  top: auto
+  bottom: -1.4em
+  border-radius: 0 0 3px 3px
 .background-image
   position: absolute
   top: 0
@@ -94,7 +124,8 @@ $menuBackgroundColor: $blue
   background-position: center top
   background-size: cover
   background-repeat: no-repeat
-  filter: saturate(0.8) brightness(0.65)
+  &.darken
+    filter: saturate(0.8) brightness(0.65)
 .primary, .secondary
   height: $menuHeight
   border: 1px solid $grey-light

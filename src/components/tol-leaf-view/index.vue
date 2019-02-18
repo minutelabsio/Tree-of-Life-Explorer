@@ -4,6 +4,7 @@
     .card-header.is-shadowless
       LeafViewMenu(:common-name="commonName",
         :scientific-name="scientificName",
+        :flap-style="flapStyle",
         :short-scientific-name="shortScientificName",
         :truncate-length="commonName ? truncateLength : truncateLength * 2",
         :images="hideImages ? [] : txnImages",
@@ -84,7 +85,7 @@ function isLowerRank( rank = '' ){
 
 export default {
   name: 'TOLLeafView'
-  , props: ['leaf', 'truncateLength', 'hideImages']
+  , props: ['leaf', 'truncateLength', 'hideImages', 'flapStyle']
   , components: {
     LeafViewMenu
   }

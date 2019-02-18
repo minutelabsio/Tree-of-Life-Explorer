@@ -20,6 +20,7 @@ transition(name="tree", appear)
         , :cardWidth="cardWidth"
         , :cardHeight="cardHeight"
         , :horizontal="horizontal"
+        , :flap-style="flapStyle"
         , :hide-images="hideImages"
         , :padding="padding"
         , :branchSpacing="branchSpacing"
@@ -44,7 +45,7 @@ import _find from 'lodash/find'
 
 export default {
   name: 'TOLTree'
-  , props: [ 'leafs', 'cardWidth', 'horizontal', 'hideImages', 'compactView' ]
+  , props: [ 'leafs', 'cardWidth', 'horizontal', 'hideImages', 'compactView', 'flapStyle' ]
   , components: {
     Tree
     , TreeCanvas
@@ -57,7 +58,6 @@ export default {
     , padding: 10
     , outerPadding: -80
     , canvasX: 0
-    , cardHeight: 74
     , transitions: true
     , branches: [] // READ ONLY
   })
@@ -76,6 +76,10 @@ export default {
 
     , branchSpacing(){
       return this.horizontal ? 160 : 80
+    }
+
+    , cardHeight(){
+      return this.flapStyle ? 110 : 74
     }
 
     , width(){

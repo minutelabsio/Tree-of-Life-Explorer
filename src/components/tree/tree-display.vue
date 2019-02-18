@@ -42,6 +42,7 @@
         :leaf="branch.tree.leaf"
         , :truncate-length="truncateLength"
         , :hide-images="hideImages"
+        , :flap-style="flapStyle"
         , @remove="$emit( 'remove', branch.tree.leaf )"
         , @cut="$emit( 'cut', branch.tree )"
         , @error="$emit( 'error', arguments[0] )"
@@ -154,6 +155,7 @@ export default {
     , 'padding': Number
     , 'branchSpacing': Number
     , 'horizontal': Boolean
+    , 'flapStyle': Boolean
     , 'hide-images': Boolean
     , 'computedBranches': null
     , 'compactView': Boolean
