@@ -19,7 +19,8 @@ const cache = setupCache({
 })
 
 const wikimedia = axios.create({
-  baseURL: 'https://commons.wikimedia.org/w'
+  // baseURL: 'https://commons.wikimedia.org/w'
+  baseURL: 'https://species.wikimedia.org/w'
   , timeout: SERVER_TIMEOUT
   , crossdomain: true
   , adapter: cache.adapter
@@ -42,7 +43,7 @@ export function findImagesByName( name, { limit, thumbSize } = {} ){
     'action': 'query'
     , 'prop': 'imageinfo'
     , 'generator': 'search'
-    , 'gsrsearch': `File:${name}`
+    , 'gsrsearch': `File:${name} NOT map NOT atlas NOT lineage NOT svg NOT phylogram NOT cladogram`
     , 'format': 'json'
     , 'origin': '*'
     , 'iiprop': 'url|size'

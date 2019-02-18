@@ -75,6 +75,10 @@ function isLowerRank( rank = '' ){
     , 'subgenus'
     , 'family'
     , 'subfamily'
+    , 'class'
+    , 'subclass'
+    , 'order'
+    , 'superorder'
   ].indexOf(rank) > -1
 }
 
