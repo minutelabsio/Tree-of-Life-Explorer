@@ -1,32 +1,22 @@
 <template lang="pug">
-.leaf-menu(:class="{ active: active }", @mouseleave="onMouseLeave", @mouseenter="onMouseEnter")
+.leaf-menu()
   .flap-title(v-if="flapStyle && commonName")
     b-tooltip.common-name(:label="commonName | titleCase", type="is-dark", :active="commonName.length > (truncateLength + 5)")
       .text {{ commonName | titleCase }}
   .flap-title.flap-title-bottom(v-if="flapStyle")
     b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > (truncateLength + 5) || shortScientificName.length < scientificName.length")
       .text {{ shortScientificName }}
-  .toolbar.primary(@click="$emit('click')")
+  .toolbar.primary
+    .button-overlay
+      slot
     .background-image(:class="{ darken: !flapStyle }")
       Collage(:images="images")
-    .toolbar-item
-      .toolbar-text.names.item-title(v-if="!flapStyle")
+    .toolbar-item(v-if="!flapStyle")
+      .toolbar-text.names.item-title
         b-tooltip.common-name(v-if="commonName", :label="commonName | titleCase", type="is-dark", :active="commonName.length > truncateLength")
           | {{ commonName | titleCase | truncate(truncateLength) }}
         b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > truncateLength || shortScientificName.length < scientificName.length")
           | {{ shortScientificName | truncate(truncateLength) }}
-    .toolbar-right
-      .vertical-buttons
-        .toolbar-control(@click.stop="show()")
-          b-icon(icon="menu-up")
-        .toolbar-control(@click.stop="")
-          slot(name="front-button")
-  .toolbar.secondary
-    .toolbar-item
-      slot
-    a.toolbar-right.menu-button-container(@click="hide()")
-      .toolbar-control
-        b-icon(icon="menu-down")
 </template>
 
 <script>
@@ -44,13 +34,9 @@ export default {
       type: Number
       , default: 10
     }
-    , interactionHideDelay: {
-      type: Number
-      , default: 3000
-    }
   }
   , data: () => ({
-    active: false
+
   })
   , computed: {
     backgroundStyle(){
@@ -62,24 +48,7 @@ export default {
     Collage
   }
   , methods: {
-    show(){
-      this.active = true
-    }
-    , hide(){
-      this.active = false
-    }
-    , startTimer(){
-      this.timer = setTimeout(() => this.hide(), this.interactionHideDelay)
-    }
-    , clearTimer(){
-      clearTimeout( this.timer )
-    }
-    , onMouseLeave( e ){
-      this.startTimer()
-    }
-    , onMouseEnter( e ){
-      this.clearTimer()
-    }
+
   }
 }
 </script>
@@ -119,7 +88,7 @@ $lighterGrey: lighten($grey, 12)
   position: absolute
   top: 0
   left: 0
-  right: 34px
+  right: 0
   bottom: 0
   z-index: -1
   background-position: center top
@@ -152,6 +121,31 @@ $lighterGrey: lighten($grey, 12)
   transform: translateZ(-$menuHeight/2) rotateX(-90deg) translateZ($menuHeight/2)
   .active &
     transform: translateZ(-$menuHeight/2) rotateX(0deg) translateZ($menuHeight/2)
+.button-overlay
+  position: absolute
+  z-index: 2
+  width: 100%
+  height: 100%
+  display: flex
+  align-items: stretch
+  > *
+    flex-grow: 1
+    display: flex
+    align-items: center
+    justify-content: center
+    background: rgba(0, 0, 0, 0.5)
+    transition: background 0.3s ease
+    &:hover
+      background: transparentize($blue, 0.2)
+    &:first-child
+      border-radius: 2px 0 0 2px
+      border-right: 1px solid rgba(255, 255, 255, 0.6)
+    &:last-child
+      border-radius: 0 2px 2px 0
+
+  // &:hover
+  //   color: $primary
+// legacy...
 .toolbar .vertical-buttons .toolbar-control
   padding: 5px 5px
   transition: background 0.15s ease-in-out
@@ -174,10 +168,6 @@ $lighterGrey: lighten($grey, 12)
     color: darken($menuBackgroundColor, 30)
     text-shadow: 0.5px 0.5px 1px lighten($menuBackgroundColor, 18)
 
-.toolbar-control
-  color: $white-ter
-  // &:hover
-  //   color: $primary
 .secondary .toolbar-control
   color: $grey-light
   &:hover

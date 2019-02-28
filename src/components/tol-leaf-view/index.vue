@@ -1,47 +1,57 @@
 <template lang="pug">
-.item(@mousedown.stop="", :data-ott="leaf.node_id", :class="{ horizontal: horizontal, vertical: !horizontal }")
-  .card.is-shadowless(v-if="isAddedToTree")
+.item(
+  @mousedown.stop=""
+  , :data-ott="leaf.node_id"
+  , :class="{ hovering: hovering, 'flap-style': flapStyle, horizontal: horizontal, vertical: !horizontal }"
+)
+  .card.is-shadowless(
+    v-if="isAddedToTree"
+    , @mouseleave.stop.prevent="onMouseLeave"
+    , @mouseenter.stop.prevent="onMouseEnter"
+  )
     .card-header.is-shadowless
+      b-tooltip.overlay-btn.cut-btn(label="Cut tree here", type="is-dark")
+        .btn(@click="$emit('cut', leaf)")
+          b-icon(icon="scissors-cutting", size="is-medium")
+      b-tooltip.overlay-btn.descendants-btn(label="See descendants", type="is-dark", slot="front-button")
+        b-dropdown.limit-dropdown(@active-change="getSubtree()", @wheel.native.stop="", :mobile-modal="false")
+          b-icon(icon="file-tree", size="is-medium", slot="trigger")
+          b-loading(:is-full-page="false", :active="loading")
+          b-dropdown-item.heading.has-text-info Descendants
+          b-dropdown-item(v-if="children && children.length")
+            b-field
+              .control
+                .button.is-small(@click="$emit('add-node', children.map(n => n.node_id))")
+                  b-icon(icon="expand-all", size="is-small")
+                  span Expand All
+              .control
+                .button.is-small(@click="$emit('remove-node', children.map(n => n.node_id))")
+                  b-icon(icon="collapse-all", size="is-small")
+                  span Remove All
+          hr.dropdown-divider
+          b-dropdown-item(
+            v-if="children && children.length",
+            v-for="child in children",
+            :class="{ 'has-text-grey-light': childIsAdded(child) }",
+            :key="child.node_id",
+            @click="$emit('add-node', child.node_id)"
+            )
+            | {{ child | nodeName }}
+          b-dropdown-item(v-if="!loading && children && !children.length")
+            | None
       LeafViewMenu(:common-name="commonName",
         :scientific-name="scientificName",
         :flap-style="flapStyle",
         :short-scientific-name="shortScientificName",
         :truncate-length="commonName ? truncateLength : truncateLength * 2",
-        :images="hideImages ? [] : txnImages",
-        @click="openInfoWindow"
+        :images="hideImages ? [] : txnImages"
         )
-        b-tooltip(label="See descendants", type="is-dark", slot="front-button")
-          b-dropdown.limit-dropdown(@active-change="getSubtree()", @wheel.native.stop="", :mobile-modal="false")
-            b-icon.front-icon(icon="file-tree", slot="trigger")
-            b-loading(:is-full-page="false", :active="loading")
-            b-dropdown-item.heading.has-text-info Descendants
-            b-dropdown-item(v-if="children && children.length")
-              b-field
-                .control
-                  .button.is-small(@click="$emit('add-node', children.map(n => n.node_id))")
-                    b-icon(icon="expand-all", size="is-small")
-                    span Expand All
-                .control
-                  .button.is-small(@click="$emit('remove-node', children.map(n => n.node_id))")
-                    b-icon(icon="collapse-all", size="is-small")
-                    span Remove All
-            hr.dropdown-divider
-            b-dropdown-item(
-              v-if="children && children.length",
-              v-for="child in children",
-              :class="{ 'has-text-grey-light': childIsAdded(child) }",
-              :key="child.node_id",
-              @click="$emit('add-node', child.node_id)"
-              )
-              | {{ child | nodeName }}
-            b-dropdown-item(v-if="!loading && children && !children.length")
-              | None
-        b-tooltip(label="Remove from tree", type="is-dark")
-          a.remove-button.toolbar-control(@click="$emit('remove')")
-            b-icon(icon="close-network")
-        b-tooltip(label="Cut tree here", type="is-dark")
-          a.cut-button.toolbar-control(@click="$emit('cut', leaf)")
-            b-icon(icon="content-cut")
+        b-tooltip.overlay-btn(label="More Information", type="is-dark")
+          a.toolbar-control(@click.native.prevent="hovering && openInfoWindow", @tapstart.native.prevent="hovering && openInfoWindow")
+            b-icon(icon="feature-search", size="is-large")
+        b-tooltip.overlay-btn.remove-btn(label="Remove from tree", type="is-dark")
+          a.toolbar-control(@click.native.prevent="hovering && $emit('remove', leaf.node_id)", @tapstart.native.prevent="hovering && $emit('remove', leaf.node_id)")
+            b-icon(icon="close-network", size="is-large")
   .minimal(v-if="!isAddedToTree", @click="$emit('add-node', leaf.node_id)")
     .card-title {{ (commonName || shortScientificName) | titleCase }}
     //- .pin-btn
@@ -83,6 +93,8 @@ function isLowerRank( rank = '' ){
   ].indexOf(rank) > -1
 }
 
+const interactionHideDelay = 2000
+
 export default {
   name: 'TOLLeafView'
   , props: ['leaf', 'truncateLength', 'hideImages', 'flapStyle', 'horizontal']
@@ -100,6 +112,7 @@ export default {
     , txnInfo: null
     , children: null
     , loading: true
+    , hovering: false
   })
   , watch: {
     leaf: {
@@ -187,27 +200,83 @@ export default {
         , hasModalCard: false
       })
     }
+    , show(){
+      this.hovering = true
+    }
+    , hide(){
+      this.hovering = false
+    }
+    , startTimer(){
+      this.timer = setTimeout(() => this.hide(), interactionHideDelay)
+    }
+    , clearTimer(){
+      clearTimeout( this.timer )
+    }
+    , onMouseLeave( e ){
+      this.startTimer()
+    }
+    , onMouseEnter( e ){
+      setTimeout(() => this.show(), 50)
+      this.clearTimer()
+    }
   }
 }
 </script>
 
 <style scoped lang="sass">
 @import '@/styles/_variables.scss'
+$greyBlue: desaturate(lighten($blue, 20), 50)
+
+.overlay-btn
+  transition: opacity 0.15s ease
+  opacity: 0
+  .hovering &
+    opacity: 1
+.cut-btn,
+.descendants-btn
+  position: absolute
+  color: $yellow
+  cursor: pointer
+  &:active
+    color: $blue
+.cut-btn
+  .icon
+    overflow: hidden
+    height: 26px
+    padding-top: 6px
+  .horizontal &
+    left: -36px
+    top: 9px
+  .vertical &
+    left: calc(50% - 2px)
+    top: -32px
+    .icon
+      transform: rotate(90deg)
+  .vertical.flap-style &
+    top: -54px
+
+.descendants-btn
+  background: $white
+  .horizontal &
+    right: -35px
+    top: 18px
+  .vertical &
+    left: calc(50% - 1rem)
+    bottom: -2.4em
+    padding-top: 4px
+  .vertical.flap-style &
+    bottom: -56px
+.toolbar-control
+  color: $grey-lighter
 .icon-button
   color: $white
   &:hover,
   .dropdown.is-active &
     color: lighten($blue, 10)
-.remove-button,
-.cut-button
-  color: $white
+.item .remove-btn
   &:hover
-    color: lighten($red, 10)
-.front-icon
-  color: darken($blue, 30)
-  text-shadow: 0.5px 0.5px 1px lighten($blue, 20)
+    background: transparentize($red, 0.2)
 
-$greyBlue: desaturate(lighten($blue, 20), 50)
 .minimal
   position: relative
   bottom: 1px

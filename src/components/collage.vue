@@ -35,7 +35,7 @@ export default {
   width: 100%
   height: 100%
   overflow: hidden
-  border-radius: 2px 0 0 2px
+  border-radius: 2px
 
   .single img
     width: 100%
