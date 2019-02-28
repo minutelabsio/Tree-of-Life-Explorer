@@ -42,7 +42,7 @@ export default {
 
 .collage
   height: 200%
-  column-count: 2;
-  column-gap: 0;
-  column-fill: balance;
+  column-count: 2
+  column-gap: 0
+  column-fill: balance
 </style>

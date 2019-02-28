@@ -30,11 +30,7 @@
       , :tabindex="-1"
       , :data-ott="branch.tree.leaf.node_id"
       )
-      //- , :style="{ transform: `translate3d(${branch.x-(0.5 * cardWidth)}px, ${branch.y + branch.dy}px, 0)`, width: cardWidth + 'px' }"
-      //- )
-      //- Motion(:values="{ x2: branch.x, y2: branch.y, dy: branch.dy }", :spring="{ stiffness: 300, damping: 60, precision: 1 }")
-      //-   template(slot-scope="props")
-      Connection(v-if="!(branch.isRoot && !branch.tree.lineage.length)", :horizontal="horizontal", :x1="branch.px", :y1="branch.py", :x2="branch.x + branch.dx", :y2="branch.y + branch.dy", :padding="(horizontal ? cardWidth : cardHeight) * 1.5")
+      Connection(v-if="!(branch.isRoot && !branch.tree.lineage.length)", :horizontal="horizontal", :x1="branch.px", :y1="branch.py", :x2="branch.x + branch.dx", :y2="branch.y + branch.dy", :padding="(horizontal ? cardWidth : cardHeight) * 1.7")
       //- Node(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="branch.x", :y="branch.y", @click="$emit('leaf-click', arguments[0])")
       AncestorCollapse(v-if="branch.tree.lineage.length", :tree="branch.tree", :x="branch.x", :y="branch.y", :horizontal="horizontal", @click="$emit('leaf-click', arguments[0])")
 
@@ -43,6 +39,7 @@
         , :truncate-length="truncateLength"
         , :hide-images="hideImages"
         , :flap-style="flapStyle"
+        , :horizontal="horizontal"
         , @remove="$emit( 'remove', branch.tree.leaf )"
         , @cut="$emit( 'cut', branch.tree )"
         , @error="$emit( 'error', arguments[0] )"
@@ -96,11 +93,11 @@ function getBranches( tree, opts, x = 0, y = 0, level = 0 ){
         var xpos, ypos
 
         if ( hz ){
-          xpos = x + branchSpacing + opts.cardWidth
+          xpos = x + branchSpacing + 1.3 * opts.cardWidth
           ypos = y + (col + colstart) * nodeContainerSize
         } else {
           xpos = x + (col + colstart) * nodeContainerSize
-          ypos = y + branchSpacing + 1.5 * height
+          ypos = y + branchSpacing + 1.3 * height
         }
 
         colstart = 2 * col + colstart + 2

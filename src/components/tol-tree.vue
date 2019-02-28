@@ -79,7 +79,7 @@ export default {
     }
 
     , cardHeight(){
-      return this.flapStyle ? 110 : 74
+      return this.flapStyle ? 110 : 90
     }
 
     , width(){

@@ -59,6 +59,7 @@ export default {
 @import '@/styles/_variables.scss'
 .svg-connection
   fill: none
-  stroke-width: 2
-  stroke: desaturate(lighten($blue, 20), 50)
+  stroke-width: 3
+  stroke: hsl(208, 40%, 75%)
+  shape-rendering: cripsedges
 </style>

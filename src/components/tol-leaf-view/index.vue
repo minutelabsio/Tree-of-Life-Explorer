@@ -1,5 +1,5 @@
 <template lang="pug">
-.item(@mousedown.stop="", :data-ott="leaf.node_id")
+.item(@mousedown.stop="", :data-ott="leaf.node_id", :class="{ horizontal: horizontal, vertical: !horizontal }")
   .card.is-shadowless(v-if="isAddedToTree")
     .card-header.is-shadowless
       LeafViewMenu(:common-name="commonName",
@@ -43,9 +43,9 @@
           a.cut-button.toolbar-control(@click="$emit('cut', leaf)")
             b-icon(icon="content-cut")
   .minimal(v-if="!isAddedToTree", @click="$emit('add-node', leaf.node_id)")
-    .common-name {{ (commonName || shortScientificName) | titleCase }}
-    .pin-btn
-      b-icon(icon="file-plus", size="is-small")
+    .card-title {{ (commonName || shortScientificName) | titleCase }}
+    //- .pin-btn
+    //-   b-icon(icon="file-plus", size="is-small")
 </template>
 
 <script>
@@ -85,7 +85,7 @@ function isLowerRank( rank = '' ){
 
 export default {
   name: 'TOLLeafView'
-  , props: ['leaf', 'truncateLength', 'hideImages', 'flapStyle']
+  , props: ['leaf', 'truncateLength', 'hideImages', 'flapStyle', 'horizontal']
   , components: {
     LeafViewMenu
   }
@@ -210,14 +210,24 @@ export default {
 $greyBlue: desaturate(lighten($blue, 20), 50)
 .minimal
   position: relative
+  bottom: 1px
   text-align: center
-  border: 1px solid $greyBlue
-  border-radius: 3px
-  background: $greyBlue
-  color: $white
+  // border: 1px solid $greyBlue
+  // border-radius: 3px
+  // background: $greyBlue
   cursor: pointer
-  .common-name
-    padding-right: 24px
+
+  .vertical &
+    bottom: -25px
+
+  .card-title
+    display: inline-block
+    background: $white
+    color: lighten($grey, 12)
+    padding: 0 1rem
+
+  // .common-name
+  //   padding-right: 24px
   .pin-btn
     position: absolute
     top: 0

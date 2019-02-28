@@ -1,11 +1,11 @@
 <template lang="pug">
 .leaf-menu(:class="{ active: active }", @mouseleave="onMouseLeave", @mouseenter="onMouseEnter")
-  .flap-title(v-if="flapStyle")
-    b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > (truncateLength + 5) || shortScientificName.length < scientificName.length")
-      .text {{ shortScientificName }}
-  .flap-title.flap-title-bottom(v-if="flapStyle && commonName")
+  .flap-title(v-if="flapStyle && commonName")
     b-tooltip.common-name(:label="commonName | titleCase", type="is-dark", :active="commonName.length > (truncateLength + 5)")
       .text {{ commonName | titleCase }}
+  .flap-title.flap-title-bottom(v-if="flapStyle")
+    b-tooltip.scientific-name(:label="scientificName | titleCase", type="is-dark", :active="scientificName.length > (truncateLength + 5) || shortScientificName.length < scientificName.length")
+      .text {{ shortScientificName }}
   .toolbar.primary(@click="$emit('click')")
     .background-image(:class="{ darken: !flapStyle }")
       Collage(:images="images")
@@ -86,8 +86,9 @@ export default {
 
 <style lang="sass" scoped>
 @import '@/styles/_variables.scss'
-$menuHeight: 76px
+$menuHeight: 74px
 $menuBackgroundColor: $blue
+$lighterGrey: lighten($grey, 12)
 .leaf-menu
   position: relative
   width: 100%
@@ -98,8 +99,8 @@ $menuBackgroundColor: $blue
   right: 10px
   border-radius: 3px 3px 0 0
   background: $white
-  border: 1px solid desaturate(lighten($blue, 20), 50)
-  color: darken($menuBackgroundColor, 8)
+  // border: 1px solid desaturate(lighten($blue, 20), 50)
+  color: $lighterGrey
   .scientific-name,
   .common-name
     display: block
@@ -128,7 +129,7 @@ $menuBackgroundColor: $blue
     filter: saturate(0.8) brightness(0.65)
 .primary, .secondary
   height: $menuHeight
-  border: 1px solid $grey-light
+  // border: 1px solid $grey-light
   border-radius: 3px
   border-color: $blue
   background: $white
@@ -138,6 +139,7 @@ $menuBackgroundColor: $blue
   &:hover
     cursor: pointer
 .primary
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.2)
   background: $grey-darker
   transform: translateZ(-$menuHeight/2) rotateX(0deg) translateZ($menuHeight/2)
   .active &

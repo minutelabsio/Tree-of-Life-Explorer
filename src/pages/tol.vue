@@ -31,7 +31,7 @@
               b-icon(icon="menu-down")
             b-dropdown-item(@click="setOption('fs', !flapStyle)")
               b-icon(:icon="flapStyle ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'")
-              span Flap Style Cards
+              span Uncover Images
             b-dropdown-item(@click="setOption('im', !hideImages)")
               b-icon(:icon="hideImages ? 'checkbox-marked-circle' : 'checkbox-blank-circle-outline'")
               span Hide Images

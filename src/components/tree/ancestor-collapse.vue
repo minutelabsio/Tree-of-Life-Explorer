@@ -70,7 +70,7 @@ export default {
 
 <style lang="sass">
 @import '@/styles/_variables.scss'
-$mutedBlue: desaturate(lighten($blue, 20), 50)
+$mutedBlue: hsl(208, 40%, 75%)
 .svg-ancestor-collapse
   cursor: pointer
   // transition: transform 0.7s ease-in-out
@@ -81,6 +81,7 @@ $mutedBlue: desaturate(lighten($blue, 20), 50)
 
   circle
     fill: $mutedBlue
+    transition: all 0.15s linear
 
   // circle
   //   fill: $white
