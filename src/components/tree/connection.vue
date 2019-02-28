@@ -61,5 +61,6 @@ export default {
   fill: none
   stroke-width: 3
   stroke: hsl(208, 40%, 75%)
+  -moz-shape-rendering: cripsedges
   shape-rendering: cripsedges
 </style>

@@ -8,6 +8,7 @@
     v-if="isAddedToTree"
     , @mouseleave.stop.prevent="onMouseLeave"
     , @mouseenter.stop.prevent="onMouseEnter"
+    , @click.capture="bufferEvent"
   )
     .card-header.is-shadowless
       b-tooltip.overlay-btn.cut-btn(label="Cut tree here", type="is-dark")
@@ -47,10 +48,10 @@
         :images="hideImages ? [] : txnImages"
         )
         b-tooltip.overlay-btn(label="More Information", type="is-dark")
-          a.toolbar-control(@click.native.prevent="hovering && openInfoWindow", @tapstart.native.prevent="hovering && openInfoWindow")
+          a.toolbar-control(@click="$root.isTouch || hovering && openInfoWindow()", @touchstart.native="hovering && openInfoWindow()")
             b-icon(icon="feature-search", size="is-large")
         b-tooltip.overlay-btn.remove-btn(label="Remove from tree", type="is-dark")
-          a.toolbar-control(@click.native.prevent="hovering && $emit('remove', leaf.node_id)", @tapstart.native.prevent="hovering && $emit('remove', leaf.node_id)")
+          a.toolbar-control(@click="$root.isTouch || hovering && $emit('remove', leaf.node_id)", @touchstart.native="hovering && $emit('remove', leaf.node_id)")
             b-icon(icon="close-network", size="is-large")
   .minimal(v-if="!isAddedToTree", @click="$emit('add-node', leaf.node_id)")
     .card-title {{ (commonName || shortScientificName) | titleCase }}
@@ -218,6 +219,13 @@ export default {
     , onMouseEnter( e ){
       setTimeout(() => this.show(), 50)
       this.clearTimer()
+    }
+    , bufferEvent( e ){
+      if ( !this.hovering ){
+        e.preventDefault()
+        e.stopImmediatePropagation()
+        return false
+      }
     }
   }
 }
