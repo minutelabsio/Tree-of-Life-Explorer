@@ -203,5 +203,6 @@ export default {
   bottom: 0
   z-index: 0
   cursor: move
-  shape-rendering: cripsedges
+  svg
+    shape-rendering: cripsedges
 </style>
