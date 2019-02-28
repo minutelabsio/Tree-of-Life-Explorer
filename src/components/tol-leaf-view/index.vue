@@ -48,10 +48,10 @@
         :images="hideImages ? [] : txnImages"
         )
         b-tooltip.overlay-btn(label="More Information", type="is-dark")
-          a.toolbar-control(@click="$root.isTouch || hovering && openInfoWindow()", @touchstart.native="hovering && openInfoWindow()")
+          a.toolbar-control(@click="$root.isTouch || hovering && openInfoWindow()", @touchstart="hovering && openInfoWindow()")
             b-icon(icon="feature-search", size="is-large")
         b-tooltip.overlay-btn.remove-btn(label="Remove from tree", type="is-dark")
-          a.toolbar-control(@click="$root.isTouch || hovering && $emit('remove', leaf.node_id)", @touchstart.native="hovering && $emit('remove', leaf.node_id)")
+          a.toolbar-control(@click="$root.isTouch || hovering && $emit('remove', leaf.node_id)", @touchstart="hovering && $emit('remove', leaf.node_id)")
             b-icon(icon="close-network", size="is-large")
   .minimal(v-if="!isAddedToTree", @click="$emit('add-node', leaf.node_id)")
     .card-title {{ (commonName || shortScientificName) | titleCase }}
