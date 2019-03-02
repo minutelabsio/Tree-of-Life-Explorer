@@ -303,6 +303,10 @@ $greyBlue: desaturate(lighten($blue, 20), 50)
     background: $white
     color: lighten($grey, 12)
     padding: 0 1rem
+    transition: color 0.15s ease
+
+  &:hover .card-title
+    color: $blue
 
   // .common-name
   //   padding-right: 24px
