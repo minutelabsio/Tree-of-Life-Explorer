@@ -47,7 +47,7 @@
         :truncate-length="commonName ? truncateLength : truncateLength * 2",
         :images="hideImages ? [] : txnImages"
         )
-        b-tooltip.overlay-btn(label="More Information", type="is-dark")
+        b-tooltip.overlay-btn.info-btn(label="More Information", type="is-dark")
           a.toolbar-control(@click="$root.isTouch || hovering && openInfoWindow()", @touchstart="hovering && openInfoWindow()")
             b-icon(icon="feature-search", size="is-large")
         b-tooltip.overlay-btn.remove-btn(label="Remove from tree", type="is-dark")
@@ -238,7 +238,8 @@ $greyBlue: desaturate(lighten($blue, 20), 50)
 .overlay-btn
   transition: opacity 0.15s ease
   opacity: 0
-  .hovering &
+  .hovering &,
+  .tour-hover &
     opacity: 1
 .cut-btn,
 .descendants-btn

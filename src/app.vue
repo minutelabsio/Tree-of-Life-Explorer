@@ -53,30 +53,52 @@ const TourSteps = [
     }
   }
   , {
-    target: `.tol-leaf[data-ott="${txnCats}"] .vertical-buttons .toolbar-control:last-child`
+    target: `.tol-leaf[data-ott="${txnCats}"]`
+    , content: 'Hovering (or tapping in touchscreens) will show buttons related to this node.'
+    , onEnter(){
+      const el = document.querySelector('.tol-leaf[data-ott="ott563159"]')
+      el.classList.add('tour-hover')
+    }
+  }
+  , {
+    target: `.tol-leaf[data-ott="${txnCats}"] .overlay-btn.descendants-btn`
     , content: `This button will show the descendants (children) of this clade. There are a bunch for Cats!`
     , params: {
       placement: 'left'
     }
   }
   , {
-    target: `.tol-leaf[data-ott="${txnCats}"] .vertical-buttons .toolbar-control:first-child`
-    , content: `This button will flip the card to give you more options to remove the node, or even cut the tree at this node.`
+    target: `.tol-leaf[data-ott="${txnCats}"] .overlay-btn.cut-btn`
+    , content: `You can delete this whole branch of the tree by using this button.`
     , params: {
-      placement: 'top'
+      placement: 'bottom'
     }
   }
   , {
-    target: `.svg-node[data-ott="${txnCats}"]`
+    target: `.tol-leaf[data-ott="${txnCats}"] .overlay-btn.info-btn`
+    , content: `You can see more information about the taxon with this button.`
+    , params: {
+      placement: 'bottom'
+    }
+  }
+  , {
+    target: `.tol-leaf[data-ott="${txnCats}"] .overlay-btn.remove-btn`
+    , content: `This removes the card.`
+    , params: {
+      placement: 'bottom'
+    }
+    , onLeave(){
+      const el = document.querySelector('.tol-leaf[data-ott="ott563159"]')
+      el.classList.remove('tour-hover')
+    }
+  }
+  , {
+    target: `.svg-ancestor-collapse[data-ott="${txnCats}"]`
     , content: `This icon shows how many ancestors are between the Cat Family clade and the next node shown up the tree.`
   }
   , {
-    target: '.button-compact-view'
-    , content: `Use this button to see a compact overview of the tree.`
-  }
-  , {
-    target: '.top-nav .top-controls'
-    , content: `There are more controls to manipulate the tree up here.`
+    target: '.options-dropdown'
+    , content: `Use this button to control how the tree is displayed.`
   }
   , {
     target: '.top-nav .search-box'
