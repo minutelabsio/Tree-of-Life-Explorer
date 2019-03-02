@@ -43,6 +43,54 @@ const suggestions = [
     ]
   }
   , {
+    title: 'Our "Cousins"'
+    , image: 'https://upload.wikimedia.org/wikipedia/commons/f/fb/Lightmatter_chimp.jpg'
+    , desc: 'Species of Ape near Humans on the tree of life'
+    , ottIds: [
+      'ott312031'
+      , 'ott417957'
+      , 'ott351685'
+      , 'ott417965'
+      , 'ott770315'
+      , 'ott770311'
+      , 'ott417949'
+    ]
+  }
+  , {
+    title: 'Dinosaurs (and friends)'
+    , desc: 'Dinosaurs, their desendants, and near cousins.'
+    , image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Palais_de_la_Decouverte_Tyrannosaurus_rex_p1050042.jpg/320px-Palais_de_la_Decouverte_Tyrannosaurus_rex_p1050042.jpg'
+    , ottIds: [
+      'ott90215'
+      , 'ott81461'
+      , 'ott195672'
+      , 'ott195670'
+      , 'ott335582'
+      , 'ott639666'
+      , 'ott329823'
+      , 'ott35888'
+      , 'ott35887'
+    ]
+  }
+  , {
+    title: 'Cats'
+    , desc: 'The ones we keep as pets, and the... bigger ones'
+    , image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Two_littermates_cuddling_06.jpg/320px-Two_littermates_cuddling_06.jpg'
+    , ottIds: [
+      'ott763018'
+      , 'ott532127'
+      , 'ott563166'
+      , 'ott563159'
+      , 'ott886829'
+      , 'ott752759'
+      , 'ott42307'
+      , 'ott42314'
+      , 'ott563151'
+      , 'ott42324'
+      , 'ott42322'
+    ]
+  }
+  , {
     title: 'Peculiar Animals'
     , image: 'https://upload.wikimedia.org/wikipedia/commons/f/f6/AxolotlBE.jpg'
     , desc: 'A collection of strange looking animals.'
@@ -62,20 +110,6 @@ const suggestions = [
       , 'ott496400'
       , 'ott50727'
       , 'ott962377'
-    ]
-  }
-  , {
-    title: 'Our "Cousins"'
-    , image: 'https://upload.wikimedia.org/wikipedia/commons/f/fb/Lightmatter_chimp.jpg'
-    , desc: 'Species of Ape near Humans on the tree of life'
-    , ottIds: [
-      'ott312031'
-      , 'ott417957'
-      , 'ott351685'
-      , 'ott417965'
-      , 'ott770315'
-      , 'ott770311'
-      , 'ott417949'
     ]
   }
   , {
@@ -106,22 +140,6 @@ const suggestions = [
       , 'ott335582'
       , 'ott397243'
       , 'ott3617970'
-    ]
-  }
-  , {
-    title: 'Dinosaurs (and friends)'
-    , desc: 'Dinosaurs, their desendants, and near cousins.'
-    , image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Palais_de_la_Decouverte_Tyrannosaurus_rex_p1050042.jpg/320px-Palais_de_la_Decouverte_Tyrannosaurus_rex_p1050042.jpg'
-    , ottIds: [
-      'ott90215'
-      , 'ott81461'
-      , 'ott195672'
-      , 'ott195670'
-      , 'ott335582'
-      , 'ott639666'
-      , 'ott329823'
-      , 'ott35888'
-      , 'ott35887'
     ]
   }
   , {
