@@ -52,17 +52,9 @@ new Vue({
   , router
   , data: () => ({
     showMetaInfo: false
-    , isTouch: false
   })
   , components: { App, MetaInfoComponent }
   , template: '<App><MetaInfoComponent :show.sync="showMetaInfo"/></App>'
-  , created(){
-    const checkTouch = () => {
-      this.isTouch = true
-      document.removeEventListener('touchstart', checkTouch)
-    }
-    document.addEventListener('touchstart', checkTouch)
-  }
   , computed: {
   }
 })

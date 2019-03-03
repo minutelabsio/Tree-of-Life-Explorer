@@ -8,12 +8,13 @@
     v-if="isAddedToTree"
     , @mouseleave.stop.prevent="onMouseLeave"
     , @mouseenter.stop.prevent="onMouseEnter"
-    , @click.capture="bufferEvent"
+    , @touchstart.prevent.capture="onTouch"
   )
     .card-header.is-shadowless
-      b-tooltip.overlay-btn.cut-btn(label="Cut tree here", type="is-dark")
+      b-tooltip.overlay-btn.cut-btn(label="Remove this whole branch", type="is-dark")
         .btn(@click="$emit('cut', leaf)")
           b-icon(icon="scissors-cutting", size="is-medium")
+          b-icon.trash(icon="close", size="is-small")
       b-tooltip.overlay-btn.descendants-btn(label="See descendants", type="is-dark", slot="front-button")
         b-dropdown.limit-dropdown(@active-change="getSubtree()", @wheel.native.stop="", :mobile-modal="false")
           b-icon(icon="file-tree", size="is-medium", slot="trigger")
@@ -48,10 +49,10 @@
         :images="hideImages ? [] : txnImages"
         )
         b-tooltip.overlay-btn.info-btn(label="More Information", type="is-dark")
-          a.toolbar-control(@click="$root.isTouch || hovering && openInfoWindow()", @touchstart="hovering && openInfoWindow()")
+          a.toolbar-control(@click="hovering && openInfoWindow()", @touchstart="hovering && openInfoWindow()")
             b-icon(icon="feature-search", size="is-large")
-        b-tooltip.overlay-btn.remove-btn(label="Remove from tree", type="is-dark")
-          a.toolbar-control(@click="$root.isTouch || hovering && $emit('remove', leaf.node_id)", @touchstart="hovering && $emit('remove', leaf.node_id)")
+        b-tooltip.overlay-btn.remove-btn(label="Remove just this node", type="is-dark")
+          a.toolbar-control(@click="hovering && $emit('remove', leaf.node_id)", @touchstart="hovering && $emit('remove', leaf.node_id)")
             b-icon(icon="close-network", size="is-large")
   .minimal(v-if="!isAddedToTree", @click="$emit('add-node', leaf.node_id)")
     .card-title {{ (commonName || shortScientificName) | titleCase }}
@@ -94,7 +95,7 @@ function isLowerRank( rank = '' ){
   ].indexOf(rank) > -1
 }
 
-const interactionHideDelay = 2000
+const interactionHideDelay = 200
 
 export default {
   name: 'TOLLeafView'
@@ -207,11 +208,20 @@ export default {
     , hide(){
       this.hovering = false
     }
-    , startTimer(){
-      this.timer = setTimeout(() => this.hide(), interactionHideDelay)
+    , startTimer( delay ){
+      this.timer = setTimeout(() => this.hide(), delay || interactionHideDelay)
     }
     , clearTimer(){
       clearTimeout( this.timer )
+    }
+    , onTouch( e ){
+      if ( !this.hovering ){
+        e.stopImmediatePropagation()
+      }
+
+      this.clearTimer()
+      this.show()
+      this.startTimer( 3000 )
     }
     , onMouseLeave( e ){
       this.startTimer()
@@ -219,13 +229,6 @@ export default {
     , onMouseEnter( e ){
       setTimeout(() => this.show(), 50)
       this.clearTimer()
-    }
-    , bufferEvent( e ){
-      if ( !this.hovering ){
-        e.preventDefault()
-        e.stopImmediatePropagation()
-        return false
-      }
     }
   }
 }
@@ -263,7 +266,16 @@ $greyBlue: desaturate(lighten($blue, 20), 50)
       transform: rotate(90deg)
   .vertical.flap-style &
     top: -54px
-
+  .icon.trash
+    display: block
+    position: relative
+    bottom: 25px
+    left: 20px
+    overflow: visible
+    color: lighten($red, 15)
+    .vertical &
+      bottom: 23px
+      left: -1px
 .descendants-btn
   background: $white
   .horizontal &
@@ -283,8 +295,9 @@ $greyBlue: desaturate(lighten($blue, 20), 50)
   .dropdown.is-active &
     color: lighten($blue, 10)
 .item .remove-btn
+  background: transparentize($red, 0.4)
   &:hover
-    background: transparentize($red, 0.2)
+    background: transparentize($red, 0.1)
 
 .minimal
   position: relative

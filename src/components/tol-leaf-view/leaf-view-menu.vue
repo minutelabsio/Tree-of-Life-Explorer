@@ -133,10 +133,10 @@ $lighterGrey: lighten($grey, 12)
     display: flex
     align-items: center
     justify-content: center
-    background: rgba(0, 0, 0, 0.5)
+    background: transparentize($blue, 0.4)
     transition: background 0.3s ease
     &:hover
-      background: transparentize($blue, 0.2)
+      background: transparentize($blue, 0.1)
     &:first-child
       border-radius: 2px 0 0 2px
       border-right: 1px solid rgba(255, 255, 255, 0.6)
