@@ -8,7 +8,7 @@
     v-if="isAddedToTree"
     , @mouseleave.stop.prevent="onMouseLeave"
     , @mouseenter.stop.prevent="onMouseEnter"
-    , @touchstart.prevent.capture="onTouch"
+    , @touchstart.capture="onTouch"
   )
     .card-header.is-shadowless
       b-tooltip.overlay-btn.cut-btn(label="Remove this whole branch", type="is-dark")
@@ -216,6 +216,7 @@ export default {
     }
     , onTouch( e ){
       if ( !this.hovering ){
+        e.preventDefault()
         e.stopImmediatePropagation()
       }
 
