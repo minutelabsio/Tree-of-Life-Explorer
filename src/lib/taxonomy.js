@@ -3,12 +3,17 @@ import _union from 'lodash/union'
 import _get from 'lodash/get'
 import _mergeWith from 'lodash/mergeWith'
 import _isArray from 'lodash/isArray'
+import _indexOf from 'lodash/indexOf'
+import _reject from 'lodash/reject'
+import _filter from 'lodash/filter'
 import cacher from '@/lib/cacher'
 import * as otol from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 // import * as worms from '@/lib/worms'
 import * as wikidata from '@/lib/wikidata'
 import * as wikimedia from '@/lib/wikimedia'
+import imageBlacklist from '@/lib/image-blacklist'
+import imageWhitelist from '@/lib/image-whitelist'
 
 const gbifMapping = {
   'key': false
@@ -139,7 +144,19 @@ function toHTTPS( images ){
   return images.map( url => url.replace('http:', 'https:') )
 }
 
-export function getImagesAndCommonNames( name, ncbiId, options = {} ){
+function applyImageBlacklist( results ){
+  return _reject( results, item => {
+    return _indexOf( imageBlacklist, _get(item, 'image.thumburl') ) > -1
+  })
+}
+
+function applyImageWhitelist( results ){
+  return _union( _filter( results, item => {
+    return _indexOf( imageWhitelist, _get(item, 'image.thumburl') ) > -1
+  } ), results )
+}
+
+export function getImagesAndCommonNames( name, ncbiId, rank, options = {} ){
 
   return wikidata.findInfoBy({ ncbiId, name })
     .then( data => {
@@ -149,10 +166,27 @@ export function getImagesAndCommonNames( name, ncbiId, options = {} ){
         return firstResult
       }
 
-      return wikimedia.findImagesByName( name, { thumbSize: options.thumbSize } )
+      let promise
+
+      if ( rank && rank !== 'unranked' && rank !== 'class' ){
+        promise = Promise.join(
+          wikimedia.findImagesByName( `${rank} ${name}`, { thumbSize: options.thumbSize } )
+          , wikimedia.findImagesByName( name, { thumbSize: options.thumbSize } )
+          , ( first, second ) => _union( first, second )
+        )
+      } else {
+        promise = wikimedia.findImagesByName( name, { thumbSize: options.thumbSize } )
+      }
+
+      return promise
+        .then( data => applyImageBlacklist(data) )
+        .then( data => applyImageWhitelist(data) )
         .then( data => {
-          firstResult.pic = _union(data.map( item => _get( item, 'image.url' ) ), options.getAllImages ? firstResult.pic : [])
-          firstResult.thumbnail = _union(data.map( item => _get( item, 'image.thumburl' ) ))
+          let images = data.map( item => _get( item, 'image.url' ) )
+          let thumbnails = data.map( item => _get( item, 'image.thumburl' ) )
+
+          firstResult.pic = _union( images, options.getAllImages ? firstResult.pic : [] )
+          firstResult.thumbnail = _union( thumbnails )
           return firstResult
         })
     })
@@ -175,7 +209,7 @@ export const getTxnInfo = cacher(Promise.coroutine(function* ( leaf, options ){
   if ( isMRCA(leaf) ){
     let names = leaf.taxon.name.split(' and ')
     return Promise.map( names, name =>
-      getImagesAndCommonNames( name, null, {getAllImages: false, thumbSize: options.thumbSize, images: options.images} )
+      getImagesAndCommonNames( name, null, leaf.taxon.rank, {getAllImages: false, thumbSize: options.thumbSize, images: options.images} )
     ).then( results => {
       return _mergeWith({}, leaf.taxon, ...results, (objValue, srcValue) => {
         if ( _isArray(objValue) ) {
@@ -191,6 +225,7 @@ export const getTxnInfo = cacher(Promise.coroutine(function* ( leaf, options ){
     return getImagesAndCommonNames(
       leaf.taxon.unique_name
       , ncbiId
+      , leaf.taxon.rank
       , {
         getAllImages: false
         , thumbSize: options.thumbSize
