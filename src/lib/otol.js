@@ -14,8 +14,8 @@ import axios from 'axios'
 const SERVER_TIMEOUT = 10 * 1000
 
 const otol = axios.create({
-  // baseURL: 'https://api.opentreeoflife.org/v3'
-  baseURL: 'https://ot39.opentreeoflife.org/v3'
+  baseURL: 'https://api.opentreeoflife.org/v3'
+  // baseURL: 'https://ot39.opentreeoflife.org/v3'
   , timeout: SERVER_TIMEOUT
   , crossdomain: true
 })
@@ -47,6 +47,11 @@ export const getNode = cacher(function( id ){
   }
   return Promise.resolve( otol.post('/tree_of_life/node_info', data) )
     .then( res => res.data )
+    .tap( data => {
+      if ( data.response_for_mrca_of_broken_taxon ){
+        console.error('WARNING: Received response_for_mrca_of_broken_taxon from OTOL')
+      }
+    })
 })
 
 // Get most recent common ancestor of nodes by id or mrca id string
