@@ -39,4 +39,16 @@ export default {
     pic: 'https://upload.wikimedia.org/wikipedia/commons/4/46/PortraitGirl2005-1a.jpg'
     , thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/PortraitGirl2005-1a.jpg/200px-PortraitGirl2005-1a.jpg'
   }
+  , 'ott563166': {
+    pic: 'https://upload.wikimedia.org/wikipedia/commons/d/dc/Felis_catus_02.jpg'
+    , thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Felis_catus_02.jpg/200px-Felis_catus_02.jpg'
+  }
+  , 'ott763018': {
+    pic: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/CloudedLeopard.jpg'
+    , thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/CloudedLeopard.jpg/200px-CloudedLeopard.jpg'
+  }
+  , 'ott532127': {
+    pic: 'https://upload.wikimedia.org/wikipedia/commons/c/c5/Snow_leoaprd_in_snow.jpg'
+    , thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Snow_leoaprd_in_snow.jpg/200px-Snow_leoaprd_in_snow.jpg'
+  }
 }
