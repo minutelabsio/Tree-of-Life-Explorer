@@ -43,7 +43,7 @@ export function findImagesByName( name, { limit, thumbSize } = {} ){
     'action': 'query'
     , 'prop': 'imageinfo'
     , 'generator': 'search'
-    , 'gsrsearch': `File:"${name}" NOT map NOT atlas NOT lineage NOT svg NOT phylogram NOT cladogram NOT Destroy_this_mad_brute NOT Classification`
+    , 'gsrsearch': `File:"${name}" NOT map NOT atlas NOT lineage NOT svg NOT phylogram NOT cladogram NOT Destroy_this_mad_brute NOT Classification NOT Anatomical_Man`
     , 'format': 'json'
     , 'origin': '*'
     , 'iiprop': 'url|size'

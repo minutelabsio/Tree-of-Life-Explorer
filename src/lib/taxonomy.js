@@ -5,7 +5,6 @@ import _mergeWith from 'lodash/mergeWith'
 import _isArray from 'lodash/isArray'
 import _indexOf from 'lodash/indexOf'
 import _reject from 'lodash/reject'
-import _filter from 'lodash/filter'
 import cacher from '@/lib/cacher'
 import * as otol from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
@@ -13,7 +12,7 @@ import * as gbif from '@/lib/gbif'
 import * as wikidata from '@/lib/wikidata'
 import * as wikimedia from '@/lib/wikimedia'
 import imageBlacklist from '@/lib/image-blacklist'
-import imageWhitelist from '@/lib/image-whitelist'
+import imageOverrides from '@/lib/image-overrides'
 
 const gbifMapping = {
   'key': false
@@ -150,10 +149,15 @@ function applyImageBlacklist( results ){
   })
 }
 
-function applyImageWhitelist( results ){
-  return _union( _filter( results, item => {
-    return _indexOf( imageWhitelist, _get(item, 'image.thumburl') ) > -1
-  } ), results )
+function applyImageOverrides( data, leaf ){
+  let override = imageOverrides[ leaf.node_id ]
+
+  if ( override ){
+    data.pic = _union(toHTTPS([ override.pic ]), data.pic )
+    data.thumbnail = _union(toHTTPS([ override.thumbnail ]), data.thumbnail )
+  }
+
+  return data
 }
 
 export function getImagesAndCommonNames( name, ncbiId, rank, options = {} ){
@@ -180,7 +184,6 @@ export function getImagesAndCommonNames( name, ncbiId, rank, options = {} ){
 
       return promise
         .then( data => applyImageBlacklist(data) )
-        .then( data => applyImageWhitelist(data) )
         .then( data => {
           let images = data.map( item => _get( item, 'image.url' ) )
           let thumbnails = data.map( item => _get( item, 'image.thumburl' ) )
@@ -232,6 +235,7 @@ export const getTxnInfo = cacher(Promise.coroutine(function* ( leaf, options ){
         , images: options.images
       }
     ).then( imgNameData => {
+      imgNameData = applyImageOverrides(imgNameData, leaf)
       return Object.assign({}, leaf.taxon, txnInfo, imgNameData)
     })
   })

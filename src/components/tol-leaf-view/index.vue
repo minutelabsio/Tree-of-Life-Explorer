@@ -79,21 +79,21 @@ function shortName( str, target ){
   return out
 }
 
-function isLowerRank( rank = '' ){
-  return [
-    'variety'
-    , 'species'
-    , 'subspecies'
-    , 'genus'
-    , 'subgenus'
-    , 'family'
-    , 'subfamily'
-    , 'class'
-    , 'subclass'
-    , 'order'
-    , 'superorder'
-  ].indexOf(rank) > -1
-}
+// function isLowerRank( rank = '' ){
+//   return [
+//     'variety'
+//     , 'species'
+//     , 'subspecies'
+//     , 'genus'
+//     , 'subgenus'
+//     , 'family'
+//     , 'subfamily'
+//     , 'class'
+//     , 'subclass'
+//     , 'order'
+//     , 'superorder'
+//   ].indexOf(rank) > -1
+// }
 
 const interactionHideDelay = 200
 
@@ -126,9 +126,9 @@ export default {
           this.otherCommonNames = info.commonName
 
           // no images for higher ranks
-          if ( !isLowerRank(this.txnInfo.rank) ){
-            return
-          }
+          // if ( !isLowerRank(this.txnInfo.rank) ){
+          //   return
+          // }
 
           if ( info.thumbnail ){
             let nImages = ['variety', 'species', 'subspecies'].indexOf(this.txnInfo.rank) === -1 ? 2 : 1
