@@ -67,24 +67,20 @@ export function getMRCA( idOrArray ){
   return Promise.resolve( otol.post('/tree_of_life/mrca', data) )
     .then( res => res.data.mrca )
     .then( data => {
-      if (!data.taxon){
-        return Promise.all([
-          Promise.map( idOrArray, getNode )
-          , getDescendantNames( data.node_id )
-        ]).spread( (nodes, childrenNames) => {
-          let lineage = getCommonLineage( nodes )
+      return Promise.all([
+        Promise.map( idOrArray, getNode )
+        , data.taxon ? data.taxon : getDescendantNames( data.node_id ).then( childrenNames => ({
+          name: `${childrenNames.join(' and ')}`
+        }))
+      ]).spread( (nodes, taxon) => {
+        let lineage = getCommonLineage( nodes )
 
-          data.taxon = {
-            name: `${childrenNames.join(' and ')}`
-          }
+        data.taxon = taxon
 
-          data.lineage = lineage
+        data.lineage = lineage
 
-          return data
-        })
-      }
-
-      return data
+        return data
+      })
     })
 }
 
