@@ -5,16 +5,22 @@ import _mapValues from 'lodash/mapValues'
 import _find from 'lodash/find'
 import _sortBy from 'lodash/sortBy'
 
-export function getDepth( tree, max = 0 ){
+export function assignDepth( tree, max = 0 ){
+  let depth
+
   if ( !tree.split ){
-    return max + 1
+    depth = max + 1
+    tree.depth = depth
+    return depth
   }
 
   if ( tree.leaf ){
     max += 1
   }
 
-  return tree.split.reduce( (m, tree) => Math.max(m, getDepth(tree, max)), max )
+  depth = tree.split.reduce( (m, tree) => Math.max(m, assignDepth(tree, max)), max )
+  tree.depth = depth
+  return depth
 }
 
 function toBranch( leaf ){
@@ -130,13 +136,13 @@ function joinTree( tree, branch ){
   return tipsAdded
 }
 
-function getNodeId( branch ){
-  return branch.leaf ? branch.leaf.node_id : branch.lineage[0].node_id
-}
+// function getNodeId( branch ){
+//   return branch.leaf ? branch.leaf.node_id : branch.lineage[0].node_id
+// }
 
 function treeSort( tree ){
   if (!tree.split) { return }
-  tree.split.sort( (a, b) => getNodeId(a) > getNodeId(b) )
+  tree.split.sort( (a, b) => a.depth > b.depth ? 1 : -1 )
   tree.split.forEach( treeSort )
 }
 
@@ -150,8 +156,7 @@ export function buildReducedTree( leafs ){
   }
 
   // assign a depth value to each branch
-  let depth = getDepth( tree )
-  tree.depth = depth
+  assignDepth( tree )
 
   // Sorting improves the consistency
   treeSort( tree )
