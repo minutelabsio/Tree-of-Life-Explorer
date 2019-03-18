@@ -36,8 +36,12 @@ export default {
     , thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/2014-11-23_067_Elefant_%28Elephantidae%29_anagoria.JPG/320px-2014-11-23_067_Elefant_%28Elephantidae%29_anagoria.JPG'
   }
   , 'ott770309': {
-    pic: 'https://upload.wikimedia.org/wikipedia/commons/4/46/PortraitGirl2005-1a.jpg'
-    , thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/PortraitGirl2005-1a.jpg/200px-PortraitGirl2005-1a.jpg'
+    pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/homo-sapiens.jpg'
+    , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/homo-sapiens.jpg'
+  }
+  , 'ott770315': {
+    pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/homo-sapiens.jpg'
+    , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/homo-sapiens.jpg'
   }
   , 'ott563166': {
     pic: 'https://upload.wikimedia.org/wikipedia/commons/d/dc/Felis_catus_02.jpg'
@@ -50,5 +54,21 @@ export default {
   , 'ott532127': {
     pic: 'https://upload.wikimedia.org/wikipedia/commons/c/c5/Snow_leoaprd_in_snow.jpg'
     , thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Snow_leoaprd_in_snow.jpg/200px-Snow_leoaprd_in_snow.jpg'
+  }
+  , 'ott78477': {
+    pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/selachii.jpg'
+    , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/selachii.jpg'
+  }
+  , 'ott1005907': {
+    pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/carassius-auratus.jpg'
+    , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/carassius-auratus.jpg'
+  }
+  , 'ott244265': {
+    pic: 'https://upload.wikimedia.org/wikipedia/commons/3/3b/Uganda-Kob.jpg'
+    , thumbnail: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Uganda-Kob.jpg/200px-Uganda-Kob.jpg'
+  }
+  , 'ott802117': {
+    pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/mollusca.jpg'
+    , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/mollusca.jpg'
   }
 }
