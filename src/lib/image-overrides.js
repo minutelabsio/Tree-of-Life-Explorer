@@ -83,4 +83,12 @@ export default {
     pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/bos-taurus.jpg'
     , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/bos-taurus.jpg'
   }
+  , 'ott312031': {
+    pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/homininae.jpg'
+    , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/homininae.jpg'
+  }
+  , 'ott417969': {
+    pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/gorilla.jpg'
+    , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/gorilla.jpg'
+  }
 }
