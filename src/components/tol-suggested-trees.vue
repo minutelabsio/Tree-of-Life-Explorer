@@ -47,12 +47,9 @@ const suggestions = [
     , image: 'https://upload.wikimedia.org/wikipedia/commons/f/fb/Lightmatter_chimp.jpg'
     , desc: 'Species of Ape near Humans on the tree of life'
     , ottIds: [
-      'ott312031'
+      'ott417969'
       , 'ott417957'
-      , 'ott351685'
-      , 'ott417965'
       , 'ott770315'
-      , 'ott770311'
       , 'ott417949'
     ]
   }
