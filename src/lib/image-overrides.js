@@ -71,4 +71,16 @@ export default {
     pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/mollusca.jpg'
     , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/mollusca.jpg'
   }
+  , 'ott510761': {
+    pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/hippopotamus-amphibius.jpg'
+    , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/hippopotamus-amphibius.jpg'
+  }
+  , 'ott510762': {
+    pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/hippopotamus-amphibius.jpg'
+    , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/hippopotamus-amphibius.jpg'
+  }
+  , 'ott490099': {
+    pic: 'https://cdn.minutelabs.io/tree-of-life-explorer/bos-taurus.jpg'
+    , thumbnail: 'http://cdn.minutelabs.io/tree-of-life-explorer/bos-taurus.jpg'
+  }
 }
