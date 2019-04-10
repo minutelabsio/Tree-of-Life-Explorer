@@ -14,8 +14,8 @@ import axios from 'axios'
 const SERVER_TIMEOUT = 10 * 1000
 
 const otol = axios.create({
-  // baseURL: 'https://api.opentreeoflife.org/v3'
-  baseURL: 'https://ot39.opentreeoflife.org/v3'
+  baseURL: 'https://api.opentreeoflife.org/v3'
+  // baseURL: 'https://ot39.opentreeoflife.org/v3'
   , timeout: SERVER_TIMEOUT
   , crossdomain: true
 })
