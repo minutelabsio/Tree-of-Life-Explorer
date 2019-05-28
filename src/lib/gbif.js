@@ -60,7 +60,7 @@ function setVernacularNames( entry ){
     }
   }
 
-  var vernacularNameList = entry.vernacularNames.filter(n => langs.indexOf(n.language) > -1)
+  var vernacularNameList = entry.vernacularNames.filter(n => !n.language || langs.indexOf(n.language) > -1)
   vernacularNameList = vernacularNameList.map( _flow([
     n => n.vernacularName
     , _startCase
