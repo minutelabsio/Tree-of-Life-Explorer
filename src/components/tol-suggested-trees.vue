@@ -1,5 +1,7 @@
 <template lang="pug">
 .suggested-trees
+  b-message(title="Note", type="is-danger", aria-close-label="Dismiss")
+    | The tree server is experiencing issues so the explorer may not function. This should be fixed soon so check back another time.
   .hero.is-primary
     .hero-body
       .container
