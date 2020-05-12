@@ -98,7 +98,7 @@ export const getNodeByName = cacher(function( name ){
   return getTxResultsByNames( name )
     .then( results => _find(results, {'name': name}) )
     .then( result => {
-      if (!result){
+      if (!result || !result.matches){
         throw new Error('Node not found')
       }
 
