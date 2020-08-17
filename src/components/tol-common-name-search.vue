@@ -57,19 +57,13 @@
 import _debounce from 'lodash/debounce'
 import _reject from 'lodash/reject'
 import _uniqBy from 'lodash/uniqBy'
-import _some from 'lodash/some'
-import _get from 'lodash/get'
 import cacher from '@/lib/cacher'
 import { getNodeByName, getTxResultsByNames } from '@/lib/otol'
 import * as gbif from '@/lib/gbif'
 import * as wikidata from '@/lib/wikidata'
 
-// flags that correspond to txn info that doesn't have an ott node
-const BADFLAGS = ['MERGED', 'INCONSISTENT']
-
 function filterByOTLMatches( results ){
   return getTxResultsByNames( results.map( el => el.canonicalName || el.scientificName ) )
-    .then( otlMatches => _reject( otlMatches, el => _some( _get(el, 'matches[0].taxon.flags'), f => BADFLAGS.indexOf(f) > -1 ) ) )
     .then( otlMatches => otlMatches.map( el => el.name ) )
     .then( otlNames => results.filter( el =>
       otlNames.indexOf(el.canonicalName || el.scientificName) > -1

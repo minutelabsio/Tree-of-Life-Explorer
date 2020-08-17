@@ -8,8 +8,14 @@ import _find from 'lodash/find'
 import _sortBy from 'lodash/sortBy'
 import _takeWhile from 'lodash/takeWhile'
 import _every from 'lodash/every'
+import _reject from 'lodash/reject'
+import _some from 'lodash/some'
+import _get from 'lodash/get'
 import cacher from './cacher'
 import axios from 'axios'
+
+// flags that correspond to txn info that doesn't have an ott node
+const BADFLAGS = ['MERGED', 'INCONSISTENT', 'barren']
 
 const SERVER_TIMEOUT = 10 * 1000
 
@@ -94,6 +100,11 @@ export function getTxResultsByNames( names = [] ){
 
   return Promise.resolve( otol.post('/tnrs/match_names', data) )
     .then( res => res.data.results )
+    .then( res => res.map(result => {
+      result.matches = _reject(result.matches, el => _some(_get(el, 'taxon.flags'), f => BADFLAGS.indexOf(f) > -1))
+      return result
+    }))
+    .then( res => _reject(res, r => !r.matches || !r.matches.length ))
 }
 
 // Helper for finding a OTOL node by its tx name
