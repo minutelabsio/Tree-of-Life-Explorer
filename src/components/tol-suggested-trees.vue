@@ -77,7 +77,7 @@ const suggestions = [
     , image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Two_littermates_cuddling_06.jpg/320px-Two_littermates_cuddling_06.jpg'
     , ottIds: [
       'ott763018'
-      , 'ott532127'
+      , 'ott532117'
       , 'ott563166'
       , 'ott563159'
       , 'ott886829'

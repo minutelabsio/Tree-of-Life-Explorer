@@ -279,7 +279,13 @@ export default {
 
     , onIdsChanged( ids ){
       if ( !ids ){ return }
-      Promise.map( ids, getLeaf )
+      Promise.map( ids, (id) =>
+        getLeaf(id).catch(err => {
+          this.onError(err)
+          return false
+        })
+      )
+        .filter( leaf => leaf )
         .then( leafs => (this.leafs = leafs) )
         .catch( e => this.onError( e ) )
         .finally( () => { this.loading = false } )

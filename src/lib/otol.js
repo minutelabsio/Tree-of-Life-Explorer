@@ -46,6 +46,9 @@ export const getNode = cacher(function( id ){
     , include_lineage: true
   }
   return Promise.resolve( otol.post('/tree_of_life/node_info', data) )
+    .catch(() =>
+      Promise.reject(new Error(`Can not find node "${id}" in OTOL database`))
+    )
     .then( res => res.data )
     .tap( data => {
       if ( data.response_for_mrca_of_broken_taxon ){
