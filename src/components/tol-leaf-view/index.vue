@@ -55,16 +55,21 @@
           a.toolbar-control(@click="hovering && $emit('remove', leaf.node_id)", @touchstart="hovering && $emit('remove', leaf.node_id)")
             b-icon(icon="close-network", size="is-large")
   .minimal(v-if="!isAddedToTree", @click="$emit('add-node', leaf.node_id)")
-    .card-title {{ (commonName || shortScientificName) | titleCase }}
+    .card-title {{ commonName || shortScientificName }}
     //- .pin-btn
     //-   b-icon(icon="file-plus", size="is-small")
 </template>
 
 <script>
+import _capitalize from 'lodash/capitalize'
 import LeafViewMenu from './leaf-view-menu'
 import { getTxnInfo, isMRCA } from '@/lib/taxonomy'
 import { getSubtree } from '@/lib/otol'
 import TaxonomyInfoWindow from '@/components/taxonomy-info-window'
+
+function titleCase( str = '' ){
+  return str.split(' ').map( w => _capitalize(w) ).join(' ')
+}
 
 function shortName( str, target ){
   let words = str.split(' ')
@@ -147,11 +152,11 @@ export default {
       if ( this.isMRCA ){ return '' }
       if ( !this.txnInfo || !this.txnInfo.vernacularNameList ){
         if ( this.otherCommonNames ){
-          return this.otherCommonNames[0]
+          return titleCase(this.otherCommonNames[0])
         }
         return ''
       }
-      return this.txnInfo.vernacularNameList
+      return titleCase(this.txnInfo.vernacularNameList)
     }
     , shortScientificName(){
       return shortName(this.scientificName, this.isMRCA ? 1000 : this.truncateLength)
