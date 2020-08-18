@@ -26,8 +26,8 @@
                 li.item(v-for="result in scientificResults")
                   a(@click="selectResult( result )")
                     span.tag {{ result.rank || '?' }}
-                    span.common-names.has-text-info {{ result.scientificName }}
-                    span.scientific-name {{ result.commonNames }}
+                    span.scientific-name.has-text-info {{ result.scientificName }}
+                    span.common-names {{ result.commonNames }}
         .empty-results-msg(v-if="searchEntry && !isFetching && !isFetchingSci && !results.length && !scientificResults.length")
           | No results. Is it spelled correctly?
   b-field(expanded)
